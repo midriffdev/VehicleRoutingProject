@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Order Management</h2>
+
+    <!-- File Upload Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Upload Order File</h5>
+            <form action="{% url 'upload_orders' %}" method="post" enctype="multipart/form-data">
+                 {% csrf_token %}
+                <div class="form-group">
+                    <label for="orderFile">Select Order File:</label>
+                    <input type="file" name="file" accept=".csv" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Orders Listing Table -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Order Listings</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Order Name</th>
+                        <th>Uploaded By</th>
+                        <th>Upload Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Sample Data; Replace with dynamic content from your server -->
+                    {% for i in orders %}
+                    <tr>
+                        <td>{{i.id}}</td>
+                        <td>{{i.product_name}}</td>
+                        <td>{{i.email}}</td>
+                        <td>{{i.created_at}}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm">view</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                  
+                  
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

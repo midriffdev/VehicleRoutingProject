@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        .signup-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .role-selection {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .role-selection label {
+            margin-right: 10px;
+        }
+
+        .submit-btn {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="signup-container">
+        <h2>Create Your Account</h2>
+        <form action="/signup" method="POST">
+            <!-- Business Information -->
+            <div class="form-section">
+                <label for="business">Primary Business</label>
+                <input type="text" id="business" name="business" placeholder="Enter your business name" required>
+            </div>
+
+            <!-- Billing Information -->
+            <div class="form-section">
+                <label for="billing-name">Billing Name</label>
+                <input type="text" id="billing-name" name="billing_name" placeholder="Enter your name" required>
+
+                <label for="billing-address">Billing Address</label>
+                <input type="text" id="billing-address" name="billing_address" placeholder="Enter your address"
+                    required>
+
+                <label for="billing-email">Billing Email</label>
+                <input type="email" id="billing-email" name="billing_email" placeholder="Enter your email" required>
+
+                <label for="billing-phone">Billing Phone</label>
+                <input type="text" id="billing-phone" name="billing_phone" placeholder="Enter your phone number"
+                    required>
+            </div>
+
+            <!-- Shipping Information -->
+            <div class="form-section">
+                <label for="shipping-address">Shipping Address (Optional)</label>
+                <input type="text" id="shipping-address" name="shipping_address" placeholder="Enter shipping address">
+            </div>
+
+            <!-- Role Selection -->
+            <div class="form-section role-selection">
+                <label><input type="radio" name="role" value="admin" required> Admin</label>
+                <label><input type="radio" name="role" value="customer" required> Customer</label>
+            </div>
+
+            <!-- Password -->
+            <div class="form-section">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
