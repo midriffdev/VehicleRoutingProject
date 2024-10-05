@@ -19,7 +19,7 @@
                                 <button type="button" class="btn btn-primary btn-md waves-effect waves-light"
                                     data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">Upload
                                 </button>
-                                <a href="ai-routes.html"
+                                <a href="{% url 'analyseRoutesAI' %}"
                                     class="btn btn-secondary btn-md waves-effect waves-light">Analyse
                                     Route By
                                     AI
@@ -41,10 +41,10 @@
                         </div>
                         <div class="modal-body">
                             <div>
-                                <form action="{% url 'upload_orders' %}" method="post" enctype="multipart/form-data" class="dropzone ">
+                                <form action="{% url 'upload_orders' %}" method="post" enctype="multipart/form-data" class="dropzone" id="myDropzone">
                                     {% csrf_token %}
                                     <div class="fallback">
-                                        <input name="file" type="file" multiple="" accept="csv">
+                                        <input name="file" type="file" accept="csv">
                                     </div>
                                     <div class="dz-message needsclick">
                                         <div class="mb-3">
@@ -127,6 +127,17 @@
             </div>
 
     </div> <!-- container-fluid -->
-            
+    <script>
+
+Dropzone.options.myDropzone = {
+  maxFiles: 1, // Allow only one file to be uploaded
+  init: function() {
+    this.on("maxfilesexceeded", function(file) {
+      this.removeAllFiles(); // Optional: Remove the previous file when a new one is added
+      this.addFile(file); // Add the new file
+    });
+  }
+};
+    </script>
 
 {% endblock %}
