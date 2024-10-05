@@ -18,9 +18,6 @@
                     <button type="submit" class="btn btn-primary">Past Due Payments (AI)</button>
                 </form> {% endcomment %}
 
-
-
-
                 <form action="{% url 'search_customers' %}" method="post" enctype="multipart/form-data"
                     class="d-flex align-items-end">
                     {% csrf_token %}
@@ -33,7 +30,6 @@
                             <option value="{{ value }}">{{ display }}</option>
                         </select>
                     </div>
-
                     <button type="submit" class="btn btn-primary">Past Due Payments (AI)</button>
                 </form>
 
