@@ -65,7 +65,7 @@ def vehicles(request):
         truck_name=request.POST.get('truck_name')
         driver_name=request.POST.get('driver_name')
         truck_number=request.POST.get('truck_number')
-        capacity=request.POST.get('capacity')
+        capacity=request.POST.get('capacity_volume')
         cost_per_km=request.POST.get('cost_per_km')
         contact_number=request.POST.get('contact_number')
 
