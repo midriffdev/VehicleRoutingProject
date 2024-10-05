@@ -57,6 +57,26 @@ def payments(request):
         }
         return render(request, 'home/payments.html',context)
 
+
+
+def vehicles(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/payments.html',context)
+
+
+
+
+
+
+
 def customers(request):
     if request.method == 'POST':
         print("welcome ji")
@@ -91,7 +111,7 @@ def single_order(request,pk):
         order=Order.objects.get(id=pk)
         order.order_status=order_status
         order.due_payment_date = order.created_at + timedelta(days=2)
-
+        order.payment_status = "due"
         order.save()
 
         html_message = render_to_string('home/orderemail.html', {'user': order.email})

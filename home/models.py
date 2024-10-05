@@ -18,6 +18,9 @@ class Order(models.Model):
         ('canceled', 'Canceled'),
         ('due', 'due'),
         ('past_due', 'past_due'),
+        ('escalation_pending', 'escalation_pending'),
+
+        
     ]
     email = models.EmailField()
     product_name = models.CharField(max_length=255)

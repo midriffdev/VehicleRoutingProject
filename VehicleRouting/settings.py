@@ -161,6 +161,9 @@ GEMINI_API_KEY=env("GEMINI_API_KEY")
 
 
 CRONJOBS = [
+   ('0 0 * * *', 'home.cron.today_due_emails'),   # every morning at 12:00 AM for due payemnts
    ('0 0 * * *', 'home.cron.due_payments_emails'),   # every morning at 12:00 AM
+
+   
   
 ]
