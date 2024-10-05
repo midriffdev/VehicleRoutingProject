@@ -1,110 +1,113 @@
-
 {% extends 'home/base.html' %}
 {% load static %}
 {% block content %}
 
 
 <div class="container-fluid">
-        <!-- start page title -->
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Orders</h4>
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0 font-size-18">Orders</h4>
 
-                    {% comment %} <form action="{% url 'search_customers' %}" method="post" enctype="multipart/form-data" class="">
-                        {% csrf_token %}
-                        <input type="hidden" name="search_status" value="past_due">
-                      
-                        <button type="submit" class="btn btn-primary">Past Due Payments (AI)</button>
-                    </form> {% endcomment %}
+                {% comment %} <form action="{% url 'search_customers' %}" method="post" enctype="multipart/form-data"
+                    class="">
+                    {% csrf_token %}
+                    <input type="hidden" name="search_status" value="past_due">
 
-                    
-                    
+                    <button type="submit" class="btn btn-primary">Past Due Payments (AI)</button>
+                </form> {% endcomment %}
 
-                    <form action="{% url 'search_customers' %}" method="post" enctype="multipart/form-data" class="">
-                        {% csrf_token %}
-                        <input type="hidden" name="search_status" value="past_due">
-                        
-                        <div class="form-group">
-                            <label for="payment_status">Payment Status:</label>
-                            <select name="payment_status" id="payment_status" class="form-control">
-                                    <option value="{{ value }}">{{ display }}</option>
-                            </select>
-                        </div>
-                    
-                        <button type="submit" class="btn btn-primary">Past Due Payments (AI)</button>
-                    </form>
-                    
+
+
+
+                <form action="{% url 'search_customers' %}" method="post" enctype="multipart/form-data"
+                    class="d-flex align-items-end">
+                    {% csrf_token %}
+                    <input type="hidden" name="search_status" value="past_due">
+
+                    <div class="form-group mb-0 me-2">
+                        <!-- <label for="payment_status">Payment Status:</label> -->
+                        <select name="payment_status" id="payment_status" class="form-control">
+                            <option value="" disabled selected> Payment Status</option>
+                            <option value="{{ value }}">{{ display }}</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Past Due Payments (AI)</button>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <!-- end page title -->
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order No.</th>
+                                <th>Customer Email</th>
+                                <th>Order Name</th>
+
+                                <th>Quantity</th>
+                                <th>Order Routes</th>
+                                <th>Order Status</th>
+                                <th>Payment Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for i in orders %}
+                            <tr>
+                                <td>{{i.id}}</td>
+                                <td>{{ i.email }}</td>
+
+                                <td>{{i.product_name}}</td>
+
+                                <td>{{i.quantity}}</td>
+                                <td>{{i.from_location}} - {{i.destination}}</td>
+                                <td style="color: blue;">{{i.order_status}}</td>
+                                <td>
+                                    <span
+                                        class="badge badge-pill badge-soft-success font-size-11">{{i.payment_status}}</span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'single_customer' i.id %}"
+                                        class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
+                                        View Details
+                                    </a>
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+
+
+                        </tbody>
+                    </table>
 
                 </div>
             </div>
-        </div>
-
-      
-
-
-
-
-
-
-
-        <!-- end page title -->
-
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Order No.</th>
-                                    <th>Customer Email</th>
-                                    <th>Order Name</th>
-                                 
-                                    <th>Quantity</th>
-                                    <th>Order Routes</th>
-                                    <th>Order Status</th>
-                                    <th>Payment Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {% for i in orders %}
-                                <tr>
-                                    <td>{{i.id}}</td>
-                                    <td>{{ i.email }}</td>
-
-                                    <td>{{i.product_name}}</td>
-                                  
-                                    <td>{{i.quantity}}</td>
-                                    <td>{{i.from_location}} - {{i.destination}}</td>
-                                    <td style="color: blue;">{{i.order_status}}</td>
-                                    <td>
-                                        <span
-                                            class="badge badge-pill badge-soft-success font-size-11">{{i.payment_status}}</span>
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'single_customer' i.id %}" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
-                                            View Details
-                                        </a>
-                                        
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                               
-                              
-                               
-                             
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
-            </div> <!-- end col -->
-        </div>
+        </div> <!-- end col -->
+    </div>
 
 </div> <!-- container-fluid -->
-        
+
 
 {% endblock %}

@@ -5,87 +5,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details - Driver View</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container {
-            margin-top: 30px;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-        .table th, .table td {
-            vertical-align: middle;
-        }
-        .btn-delivered {
-            background-color: #28a745;
-            color: white;
-        }
-        .btn-delivered:hover {
-            background-color: #218838;
-        }
-    </style>
 
 <body>
 
-    <div class="container">
-        <h2 class="text-center mb-4">Order Details - Driver View</h2>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Order Details - Driver View</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="orderTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Field</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>{{ order.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <td>{{ order.product_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Quantity</th>
+                                    <td>{{ order.quantity }}</td>
+                                </tr>
+                                <tr>
+                                    <th>From Location - Destination</th>
+                                    <td>{{ order.from_location }} - {{ order.destination }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Amount</th>
+                                    <td>${{ order.payment_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Order Status</th>
+                                    <td>{{ order.get_order_status_display }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Status</th>
+                                    <td>{{ order.get_payment_status_display }}</td>
+                                </tr>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Order Info Table with DataTable -->
-        <table id="orderTable" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Field</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th>Email</th>
-                    <td>{{ order.email }}</td>
-                </tr>
-                <tr>
-                    <th>Product Name</th>
-                    <td>{{ order.product_name }}</td>
-                </tr>
-                <tr>
-                    <th>Quantity</th>
-                    <td>{{ order.quantity }}</td>
-                </tr>
-                <tr>
-                    <th>From Location - Destination</th>
-                    <td>{{ order.from_location }} - {{ order.destination }}</td>
-                </tr>
-                <tr>
-                    <th>Payment Amount</th>
-                    <td>${{ order.payment_amount }}</td>
-                </tr>
-                <tr>
-                    <th>Order Status</th>
-                    <td>{{ order.get_order_status_display }}</td>
-                </tr>
-                <tr>
-                    <th>Payment Status</th>
-                    <td>{{ order.get_payment_status_display }}</td>
-                </tr>
-               
-            </tbody>
-        </table>
+        
+        
 
         <!-- Driver Action: Update Delivery Status -->
         <div class="text-center mt-4">
             <form method="post" action="{% url 'single_order' order.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="order_status" value="delivered" />
-                <button type="submit" class="btn btn-delivered btn-lg" {% if order.order_status == 'delivered' %}disabled{% endif %}>
+                <button type="submit" class="btn btn-success btn-lg" {% if order.order_status == 'delivered' %}disabled{% endif %}>
                     {% if order.order_status == 'delivered' %}
                         Delivered
                     {% else %}
@@ -101,13 +89,6 @@
         </div>
     </div>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- DataTable Initialization -->
     <script>
         $(document).ready(function() {
             $('#orderTable').DataTable({

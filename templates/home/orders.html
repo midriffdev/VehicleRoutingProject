@@ -41,7 +41,7 @@
                         </div>
                         <div class="modal-body">
                             <div>
-                                <form action="{% url 'upload_orders' %}" method="post" enctype="multipart/form-data" class="dropzone">
+                                <form action="{% url 'upload_orders' %}" method="post" enctype="multipart/form-data" class="dropzone ">
                                     {% csrf_token %}
                                     <div class="fallback">
                                         <input name="file" type="file" multiple="" accept="csv">
@@ -53,7 +53,9 @@
     
                                         <h4>Drop files here or click to upload.</h4>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                    <div class="d-flex justify-center">
+                                        <button type="submit" class="btn btn-primary mx-auto">Upload</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
