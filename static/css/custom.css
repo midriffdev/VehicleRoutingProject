@@ -16,6 +16,17 @@
 .removeheader .topnav {
     display: none;
 }
-.removeheader .page-content {
+.withoutheader .page-content {
     padding: calc(10px + 24px) calc(24px / 2) 60px calc(24px / 2) !important;
+}
+
+.roundDesign{
+    margin: auto;
+    width: 70px;
+    height: 70px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }

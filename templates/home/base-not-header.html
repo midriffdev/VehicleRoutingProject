@@ -57,13 +57,13 @@
 <body data-topbar="dark" data-layout="horizontal">
 
     <!-- Begin page -->
-    <div id="layout-wrapper">
+    <div id="layout-wrapper ">
         <header id="page-topbar">
             <div class="navbar-header">
                 <div class="d-flex">
                     <!-- LOGO -->
                     <div class="navbar-brand-box">
-                        <a href="index.html" class="logo logo-dark">
+                        <a href="javascript:void(0);" class="logo logo-dark">
                             <!-- <span class="logo-sm">
                                 <img src="{% static 'images/logo.svg' %} alt="" height="22">
                             </span>
@@ -73,7 +73,7 @@
                             AI MVP
                         </a>
 
-                        <a href="index.html" class="logo logo-light">
+                        <a href="javascript:void(0);" class="logo logo-light">
                             <!-- <span class="logo-sm">
                                 <img src="{% static 'images/logo-light.svg' %} alt="" height="22">
                             </span>
@@ -224,7 +224,7 @@
             </div>
         </header>
 
-        <div class="topnav">
+        <div class="topnav d-none">
             <div class="container-fluid">
                 <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
 
@@ -270,7 +270,7 @@
             </div>
         </div>
 
-        <div class="main-content">
+        <div class="main-content withoutheader">
             <div class="page-content">
                 {% block content %}
                 {% endblock content %}
