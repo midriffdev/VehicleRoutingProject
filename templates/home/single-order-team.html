@@ -1,0 +1,161 @@
+<div class="removeheader">
+    {% extends 'home/base.html' %}
+    {% load static %}
+    {% block content %}
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0 font-size-18">Customer Details</h4>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <table id="orderTable" class="table ">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>Email</th>
+                                        <td>{{ order.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <td>{{ order.product_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Quantity</th>
+                                        <td>{{ order.quantity }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>From Location - Destination</th>
+                                        <td>{{ order.from_location }} - {{ order.destination }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Payment Amount</th>
+                                        <td>${{ order.payment_amount }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Order Status</th>
+                                        <td>{{ order.get_order_status_display }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Payment Status</th>
+                                        <td>{{ order.get_payment_status_display }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Due Date</th>
+                                        <td>{{ order.due_payment_date }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+            
+
+            
+                           
+                        </div>
+                    </div>
+                    <!-- Order Info Table with DataTable -->
+                    
+                </div>
+    
+                <div class="col-md-4">
+                    <div class="card ">
+                        <div class="card-body">
+                            <div class="d-flex border-bottom ">
+                                <div class="me-2 ">
+                                    <h5 class="card-title mb-4">Order Activity</h5>
+                                </div>
+                            </div>
+                            <div data-simplebar class="mt-2" >
+                                <ul class="verti-timeline list-unstyled py-4">
+                                    <li class="event-list active">
+                                        <div class="event-timeline-dot">
+                                            <i class="bx bxs-check-circle fa-2x text-success"></i>
+                                        </div>
+                                        <div class="media">
+                                            <div class="me-3">
+                                                <h5 class="font-size-18">10 Nov <i class="bx bx-right-arrow-alt font-size-16 text-success align-middle ms-2"></i></h5>
+                                            </div>
+                                            <div class="media-body">
+                                                <div>
+                                                     <span class="font-weight-semibold font-size-16">Delivered</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="event-list">
+                                        <div class="event-timeline-dot">
+                                            <i class="bx bx-right-arrow-circle fa-2x"></i>
+                                        </div>
+                                        <div class="media">
+                                            <div class="me-3">
+                                                <h5 class="font-size-18">08 Nov <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
+                                            </div>
+                                            <div class="media-body">
+                                                <div>
+                                                    <span class="font-weight-semibold font-size-16">Due</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="event-list">
+                                        <div class="event-timeline-dot">
+                                            <i class="bx bx-right-arrow-circle fa-2x"></i>
+                                        </div>
+                                        <div class="media">
+                                            <div class="me-3">
+                                                <h5 class="font-size-18">02 Nov <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
+                                            </div>
+                                            <div class="media-body">
+                                                <div>
+                                                    <span class="font-weight-semibold font-size-16">Last Due</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="event-list">
+                                        <div class="event-timeline-dot">
+                                            <i class="bx bx-right-arrow-circle fa-2x"></i>
+                                        </div>
+                                        <div class="media">
+                                            <div class="me-3">
+                                                <h5 class="font-size-18">24 Oct <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
+                                            </div>
+                                            <div class="media-body">
+                                                <div>
+                                                    <span class="font-weight-semibold font-size-16">Last Mail</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-center justify-content-between d-flex py-2">
+                                <a href="{% url 'upload_orders' %}" class="btn btn-lg btn-secondary">Back to Orders</a>
+                                <a href="" class="btn btn-lg btn-danger">Black List</a>
+                                <a href="" class="btn btn-lg btn-success">Payment Done</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    
+    {% endblock %}
+</div>
+

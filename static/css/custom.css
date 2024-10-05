@@ -1,6 +1,21 @@
-.page-content {
-    padding: calc(0px + 24px) calc(24px / 2) 60px calc(24px / 2) !important;
-}
+
 .dz-error-message {
     display : none !important;
+}
+.verti-timeline .event-list {
+    padding: 5px 0 35px 40px;
+    margin-bottom: 20px;
+}
+.verti-timeline .event-list .event-timeline-dot {
+    left: -18px;
+}
+.verti-timeline {
+    border-left: 3px dashed #dae3f3;
+    margin: 0px 20px;
+}
+.removeheader .topnav {
+    display: none;
+}
+.removeheader .page-content {
+    padding: calc(10px + 24px) calc(24px / 2) 60px calc(24px / 2) !important;
 }

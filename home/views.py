@@ -102,6 +102,46 @@ def analyseRoutesAI(request):
             'orders':orders,
         }
         return render(request, 'home/ai-routes.html',context)
+    
+
+def escalationteam(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/escalation-team.html',context)
+    
+
+def ordersingleteam(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/single-order-team.html',context)
+    
+
+
+def switchAccounts(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/switch-accounts.html',context)
 
 
     
