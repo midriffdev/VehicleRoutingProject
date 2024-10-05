@@ -159,13 +159,10 @@ GEMINI_API_KEY=env("GEMINI_API_KEY")
 GOOGLEMAPSKEY=env('GOOGLEMAPSKEY')
 
 
-
-
 CRONJOBS = [
    ('0 0 * * *', 'home.cron.today_due_emails'),   # every morning at 12:00 AM for due payemnts
    ('0 0 * * *', 'home.cron.overdue_payments_emails'),   # every morning at 12:00 AM
    ('0 0 * * *', 'home.cron.final_warning_emails'),   # every morning at 12:00 AM
+   ('0 0 * * *', 'home.cron.tomorrow_due_emails'),   # every morning at 12:00 AM
 
-   
-  
 ]
