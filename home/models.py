@@ -3,6 +3,18 @@ from django.db import models
 # Create your models here.
 
 
+class Truck(models.Model):
+    truck_name = models.CharField(max_length=255)
+    driver_name = models.CharField(max_length=255)
+    truck_number = models.CharField(max_length=100, unique=True)
+    capacity = models.PositiveIntegerField()  # Assuming capacity is in kilograms or liters
+    cost_per_km = models.DecimalField(max_digits=10, decimal_places=2)
+    available = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.truck_name} ({self.truck_number})"
+
+
 
 class Order(models.Model):
     PRODUCT_STATUS_CHOICES = [
@@ -19,9 +31,9 @@ class Order(models.Model):
         ('due', 'due'),
         ('past_due', 'past_due'),
         ('escalation_pending', 'escalation_pending'),
-
-        
+  
     ]
+
     email = models.EmailField()
     product_name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField(default=0)
@@ -47,6 +59,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}'
+
 
 
 class Notifications(models.Model):
