@@ -97,10 +97,12 @@
                                         <td>{{i.email}}</td>
                                         <td>{{i.quantity}}</td>
                                         <td>{{i.from_location}} - {{i.destination}}</td>
-                                        <td>{{i.order_status}}</td>
+                                        <td >{{i.order_status}}</td>
                                         <td>
-                                            <span
-                                                class="badge badge-pill badge-soft-success font-size-11">{{i.payment_status}}</span>
+                                            <span class="badge badge-pill font-size-11 text-capitalize 
+                                                {% if i.payment_status == 'pending' %}badge-soft-warning{% elif i.payment_status == 'due' %}badge-soft-info{% else %}badge-soft-success{% endif %}">
+                                                {{ i.payment_status }}
+                                            </span>
                                         </td>
                                         <td>
                                             <!-- <button type="button"
