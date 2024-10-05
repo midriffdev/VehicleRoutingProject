@@ -9,11 +9,14 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-import os
+import environ,os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+env = environ.Env(DEBUG=(bool, False)) # set casting, default value
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -146,12 +149,13 @@ EMAIL_HOST = 'smtp.gmail.com'        # SMTP server host
 EMAIL_PORT = 587                     # SMTP port (use 465 for SSL)
 EMAIL_USE_TLS = True                 # Use TLS (True) or SSL (False if using SSL)
 EMAIL_USE_SSL = False                # Set to True if using SSL (port 465)
-EMAIL_HOST_USER = 'midriff.dev18@gmail.com'  # Your email
-EMAIL_HOST_PASSWORD = 'kttm fjra sxzd yihv'  # Your email account password or app password
-DEFAULT_FROM_EMAIL = 'midriff.dev18@gmail.com'  # Default from email (can be the same as EMAIL_HOST_USER)
 
+EMAIL_HOST_USER     = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
-GEMINI_API_KEY="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI"
+DEFAULT_FROM_EMAIL = env("EMAIL_HOST_USER")  
+
+GEMINI_API_KEY=env("GEMINI_API_KEY")
 
 
 
