@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.conf import settings
 from django.http import HttpResponse
 from huggingface_hub import login
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -251,7 +252,7 @@ def getroute(request):
 #     # project_id="gmprotrial"
 #     project_id="gmprotrial"
 #     # get_access_token()
-#     at = "AIzaSyCLtRAM1HWgjAt0JOMwQ3pnSLtH07UuRiA"
+#     at = settings.GOOGLEMAPSKEY
 #     url = f'https://routeoptimization.googleapis.com/v1/{project_id}'
 #     headers = {
 #         'Content-Type': 'application/json',
