@@ -18,11 +18,6 @@
 
 
 
-
-
-
-
-
     <!-- App favicon -->
     <!-- <link rel="shortcut icon" href="../assets/images/favicon.ico"> -->
 
@@ -226,9 +221,11 @@
 
         <div class="topnav">
             <div class="container-fluid">
-                <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
+                <nav id="navigation_bar" class="navbar navbar-light navbar-expand-lg topnav-menu">
 
-                    <div class="collapse navbar-collapse" id="topnav-menu-content">
+
+
+                    <div  class="collapse navbar-collapse" id="topnav-menu-content">
                         <ul class="navbar-nav">
 
                             <li class="nav-item dropdown">
@@ -266,6 +263,9 @@
 
                         </ul>
                     </div>
+
+
+
                 </nav>
             </div>
         </div>
@@ -297,10 +297,9 @@
 
     </div>
 
-
+    
     <script src="{% static 'libs/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
     <script src="{% static 'libs/metismenu/metisMenu.min.js' %}"></script>
     <script src="{% static 'libs/simplebar/simplebar.min.js' %}"></script>
     <script src="{% static 'libs/node-waves/waves.min.js' %}"></script>
@@ -317,19 +316,38 @@
     <script src="{% static 'libs/datatables.net-buttons/js/buttons.html5.min.js' %}"></script>
     <script src="{% static 'libs/datatables.net-buttons/js/buttons.print.min.js' %}"></script>
     <script src="{% static 'libs/datatables.net-buttons/js/buttons.colVis.min.js' %}"></script>
-
     <!-- Responsive examples -->
     <script src="{% static 'libs/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
     <script src="{% static 'libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
-
     <!-- Datatable init js -->
     <script src="{% static 'js/pages/datatables.init.js' %}"></script>
-
-
     <script src="{% static 'libs/dropzone/min/dropzone.min.js' %}"></script>
-
-
     <script src="{% static 'js/app.js' %}"></script>
+
+    <script>
+        window.onload = function() {
+            const role = localStorage.getItem('role');
+            const roleInput = document.getElementById('role');
+            if (role) {
+                console.log("Your role is: " + role); // Debugging log
+                roleInput.value = role;
+
+                if (role === "Customer") {
+                    const navigationBar = document.getElementById("navigation_bar");
+                    console.log("Navigation Bar display before:", getComputedStyle(navigationBar).display); 
+                    navigationBar.style.display = "none";
+                   
+                }
+            } else {
+                console.log("No role found in localStorage."); // Debugging log
+            }
+        };
+    </script>
+
+
+
+
+
 </body>
 
 

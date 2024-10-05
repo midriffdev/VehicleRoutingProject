@@ -150,8 +150,17 @@ def switchAccounts(request):
 def customers(request):
     if request.method == 'POST':
         print("welcome ji")
+        email_id=request.POST.get('email_id')
+        orders=Order.objects.filter(email=email_id).order_by('-id')
+
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/customers.html',context)
+
+
        
-        return redirect('home')  # Redirect to home or any other page
+        
     
     else:
         orders=Order.objects.all()
