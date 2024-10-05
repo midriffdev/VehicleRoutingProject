@@ -4,19 +4,38 @@ from django.http import HttpResponse
 from huggingface_hub import login
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from google.maps import routeoptimization_v1 as ro
+from geopy.geocoders import Nominatim
 import datetime, requests, json, subprocess
 
 # Get the access token
-def get_access_token():
-    result = subprocess.run(
-        ['gcloud', 'auth', 'application-default', 'print-access-token'], 
-        stdout=subprocess.PIPE
-    )
-    return result.stdout.decode('utf-8').strip()
+# def get_access_token():
+#     result = subprocess.run(
+#         ['gcloud', 'auth', 'application-default', 'print-access-token'], 
+#         stdout=subprocess.PIPE
+#     )
+#     return result.stdout.decode('utf-8').strip()
 
+
+def get_lat_long(location_name):
+    geolocator = Nominatim(user_agent="geoapiExercises")
+    location = geolocator.geocode(location_name)
+    if location:
+        latitude = location.latitude
+        longitude = location.longitude
+        return latitude, longitude
+    else:
+        return None
 
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
+    
+    
+    
+    a, b = get_lat_long('Mohali')
+    return HttpResponse(f'{a}, {b}')
+
+
+
     project_id="gmprotrial"
     client = ro.RouteOptimizationClient()
     request = ro.OptimizeToursRequest(
