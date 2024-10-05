@@ -10,6 +10,9 @@ urlpatterns = [
     path('payments', views.payments, name='payments'),
     path('vehicles', views.vehicles, name='vehicles'),
     path('analyseRoutesAI', views.analyseRoutesAI, name='analyseRoutesAI'),
+    path('escalationteam', views.escalationteam, name='escalationteam'),
+    path('ordersingleteam', views.ordersingleteam, name='ordersingleteam'),
+    path('switchAccounts', views.switchAccounts, name='switchAccounts'),
 
     
 

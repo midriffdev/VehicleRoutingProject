@@ -70,6 +70,7 @@ class Notifications(models.Model):
     created_at                  = models.DateTimeField(auto_now_add=True)
     is_read                     = models.BooleanField(default=False)
     link                        = models.TextField(null=True, blank=True)
+    count = models.PositiveIntegerField(default=0)
     status                      = models.CharField(choices=STATUS, max_length=10, default="Active")
 
     def __str__(self):

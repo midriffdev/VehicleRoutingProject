@@ -1,0 +1,91 @@
+
+
+    {% extends 'home/base-not-header.html' %}
+    {% load static %}
+    {% block content %}
+    
+    
+    <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="row mb-3">
+                        <div class="col-md-9">
+                            <h4 class="mb-sm-0 font-size-18">Orders</h4>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="col-form-label">Filter By Status</label>
+                            <select class="form-select">
+                                <option selected disabled>All</option>
+                                <option>Due</option>
+                                <option>Past Due</option>
+                                <option>Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+    
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Order No.</th>
+                                        <th>Order Name</th>
+                                        <th>Customer Email</th>
+                                        <th>Quantity</th>
+                                        <th>Order Routes</th>
+                                        <th>Order Status</th>
+                                        <th>Payment Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+    
+                                <tbody>
+                                    {% for i in orders %}
+                                    <tr>
+                                        <td>{{i.id}}</td>
+                                        <td>{{i.product_name}}</td>
+                                        <td class="text-primary fw-medium">{{i.email}}</td>
+                                        <td>{{i.quantity}}</td>
+                                        <td>{{i.from_location}} - {{i.destination}}</td>
+                                        <td >{{i.order_status}}</td>
+                                        <td>
+                                            <span class="badge badge-pill font-size-11 text-capitalize 
+                                                {% if i.payment_status == 'pending' %}badge-soft-warning{% elif i.payment_status == 'due' %}badge-soft-info{% else %}badge-soft-success{% endif %}">
+                                                {{ i.payment_status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <!-- <button type="button"
+                                                class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
+                                                View Details
+                                            </button> -->
+                                            <a href="{% url 'ordersingleteam' %}" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
+                                                View Details
+                                            </a>
+                                            
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                   
+                                  
+                                   
+                                 
+                                </tbody>
+                            </table>
+    
+                        </div>
+                    </div>
+                </div> <!-- end col -->
+            </div>
+    
+    </div> <!-- container-fluid -->
+    
+    
+    {% endblock %}
+

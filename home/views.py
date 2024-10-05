@@ -65,7 +65,7 @@ def vehicles(request):
         truck_name=request.POST.get('truck_name')
         driver_name=request.POST.get('driver_name')
         truck_number=request.POST.get('truck_number')
-        capacity=request.POST.get('capacity')
+        capacity=request.POST.get('capacity_volume')
         cost_per_km=request.POST.get('cost_per_km')
         contact_number=request.POST.get('contact_number')
 
@@ -102,6 +102,46 @@ def analyseRoutesAI(request):
             'orders':orders,
         }
         return render(request, 'home/ai-routes.html',context)
+    
+
+def escalationteam(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/escalation-team.html',context)
+    
+
+def ordersingleteam(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/single-order-team.html',context)
+    
+
+
+def switchAccounts(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/switch-accounts.html',context)
 
 
     
@@ -110,8 +150,17 @@ def analyseRoutesAI(request):
 def customers(request):
     if request.method == 'POST':
         print("welcome ji")
+        email_id=request.POST.get('email_id')
+        orders=Order.objects.filter(email=email_id).order_by('-id')
+
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/customers.html',context)
+
+
        
-        return redirect('home')  # Redirect to home or any other page
+        
     
     else:
         orders=Order.objects.all()
@@ -161,7 +210,6 @@ def single_customer(request,pk):
 
 
 
-
 def single_order(request,pk):
     if request.method == 'POST':
         print("order_status ")
@@ -172,11 +220,13 @@ def single_order(request,pk):
         order.payment_status = "due"
         order.save()
 
-        html_message = render_to_string('home/orderemail.html', {'user': order.email})
+        content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {order.due_payment_date}, or earlier.Thank you for choosing us!"
+
+        html_message = render_to_string('home/orderemail.html', {'user': order.email,'content':content})
         try: send_mail('Order delivered to you successfully.', strip_tags(html_message), settings.EMAIL_HOST_USER, [order.email,], html_message=html_message)
         except Exception as e: print("\n\n______________________unable to send mail", e)
 
-        Notifications.objects.create(content="Order delivered to you successfully.", title='Order delivered', receiver=order)
+        Notifications.objects.create(content=f"Your order has been successfully delivered. Kindly complete your payment by {order.due_payment_date}, or earlier.", title='Order delivered', receiver=order,count=1)
 
         return redirect(reverse('single_order', kwargs={'pk': pk}))
     

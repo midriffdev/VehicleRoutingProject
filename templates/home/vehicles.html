@@ -45,8 +45,8 @@
 
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
-                                                <label for="vehicle_number" class="form-label">Vehicle Number</label>
-                                                <input type="text" required maxlength="6" name="vehicle_number" class="form-control" id="vehicle_number"
+                                                <label for="truck_number" class="form-label">Vehicle Number</label>
+                                                <input type="text" required maxlength="6" name="truck_number" class="form-control" id="truck_number"
                                                        placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
                                             </div>
                                             
@@ -111,144 +111,48 @@
                             <thead class="table-light">
                                 <tr>
 
-                                    <th class="align-middle">Vehicle Type</th>
-                                    <th class="align-middle">Capacity</th>
-                                    <th class="align-middle">Fuel Efficiency</th>
-                                    <th class="align-middle">Registration Number</th>
+                                    <th class="align-middle">Vehicle Name</th>
                                     <th class="align-middle">Driver Name</th>
-                                    <th class="align-middle">Contact Number</th>
-                                    <th class="align-middle">Vehicle Status</th>
+                                    <th class="align-middle">Vehicle Numver</th>
+
+                                    <th class="align-middle">Capacity</th>
+
+
+                                    <th class="align-middle">
+                                        Cost</th>
+
+
+                                    <th class="align-middle">Availbility</th>
+                                   
+                                    
+                                    
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
 
-                                    <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2540</a> </td>
-                                    <td>Neal Matthews</td>
+                                    {% for i in vehicles %}
+
+                                    <td>{{i.truck_name}} </td>
+
+                                    <td>{{i.driver_name}}</td>
+                                    <td>{{i.truck_number}}</td>
+
+
+                                    <td>{{i.capacity}}</td>
+                                    <td>${{i.cost_per_km}}</td>
+                                   
                                     <td>
-                                        07 Oct, 2019
+                                        <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">{{i.available}}</span>
                                     </td>
-                                    <td>
-                                        $400
-                                    </td>
-                                    <td>
-                                        <span class="font-size-12">John Doe</span>
-                                    </td>
-                                    <td>
-                                        +123456987
-                                    </td>
-                                    <td>
-                                        <!-- Button trigger modal -->
-                                        <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">Active</span>
-                                    </td>
+                                    {% endfor %}
                                 </tr>
 
-                                <tr>
-
-                                    <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2541</a> </td>
-                                    <td>Jamal Burnett</td>
-                                    <td>
-                                        07 Oct, 2019
-                                    </td>
-                                    <td>
-                                        $380
-                                    </td>
-                                    <td>
-                                        <span class="font-size-12">Elvin</span>
-                                    </td>
-                                    <td>
-                                        +123456987
-                                    </td>
-                                    <td>
-                                        <!-- Button trigger modal -->
-                                        <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">Active</span>
-                                    </td>
-                                </tr>
-
-                                <tr>
-
-                                    <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2542</a> </td>
-                                    <td>Juan Mitchell</td>
-                                    <td>
-                                        06 Oct, 2019
-                                    </td>
-                                    <td>
-                                        $384
-                                    </td>
-                                    <td>
-                                        <span class="font-size-12">John Doe</span>
-                                    </td>
-                                    <td>
-                                        +123456987
-                                    </td>
-                                    <td>
-                                        <!-- Button trigger modal -->
-                                        <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">Active</span>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2543</a> </td>
-                                    <td>Barry Dick</td>
-                                    <td>
-                                        05 Oct, 2019
-                                    </td>
-                                    <td>
-                                        $412
-                                    </td>
-                                    <td>
-                                        <span class="font-size-12">John Doe</span>
-                                    </td>
-                                    <td>
-                                        +123456987
-                                    </td>
-                                    <td>
-                                        <!-- Button trigger modal -->
-                                        <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">Active</span>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2544</a> </td>
-                                    <td>Ronald Taylor</td>
-                                    <td>
-                                        04 Oct, 2019
-                                    </td>
-                                    <td>
-                                        $404
-                                    </td>
-                                    <td>
-                                        <span class="font-size-12">Elvin</span>
-                                    </td>
-                                    <td>
-                                        +123456987
-                                    </td>
-                                    <td>
-                                        <!-- Button trigger modal -->
-                                        <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">Active</span>
-                                    </td>
-                                </tr>
-                                <tr>
-
-                                    <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2545</a> </td>
-                                    <td>Jacob Hunter</td>
-                                    <td>
-                                        04 Oct, 2019
-                                    </td>
-                                    <td>
-                                        $392
-                                    </td>
-                                    <td>
-                                        <span class="font-size-12">John Doe</span>
-                                    </td>
-                                    <td>
-                                        +123456987
-                                    </td>
-                                    <td>
-                                        <!-- Button trigger modal -->
-                                        <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">Active</span>
-                                    </td>
-                                </tr>
+                               
+                               
+                               
+                               
+                               
                             </tbody>
                         </table>
                     </div>
