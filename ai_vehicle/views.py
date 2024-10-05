@@ -73,7 +73,7 @@ def getroute(request):
         # populate_polylines=True
 
     )
-    response = client.batch_optimize_tours(request=request)
+    response = client.optimize_tours(request=request)
     print("response________", response)
     return HttpResponse(response)
 
