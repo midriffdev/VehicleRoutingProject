@@ -79,8 +79,10 @@
                                 <td>{{i.from_location}} - {{i.destination}}</td>
                                 <td style="color: blue;">{{i.order_status}}</td>
                                 <td>
-                                    <span
-                                        class="badge badge-pill badge-soft-success font-size-11">{{i.payment_status}}</span>
+
+                                    payment_status
+                                    
+                        <span class="badge badge-pill badge-soft-success font-size-11">{{i.payment_status}}</span>
                                 </td>
                                 <td>
                                     <a href="{% url 'single_customer' i.id %}"
