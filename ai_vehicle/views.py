@@ -4,8 +4,9 @@ from django.http import HttpResponse
 from huggingface_hub import login
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from google.maps import routeoptimization_v1 as ro
-from geopy.geocoders import Nominatim
+from geopy.geocoders import Nominatim, GoogleV3
 import datetime, requests, json, subprocess
+from home.models import Order, Truck
 
 # Get the access token
 # def get_access_token():
@@ -17,253 +18,284 @@ import datetime, requests, json, subprocess
 
 
 def get_lat_long(location_name):
-    geolocator = Nominatim(user_agent="geoapiExercises")
+    geolocator = GoogleV3(api_key=settings.GOOGLEMAPSKEY)
+    # geolocator = Nominatim(user_agent="geoapiExercises12")
     location = geolocator.geocode(location_name)
     if location:
+
         latitude = location.latitude
         longitude = location.longitude
-        return latitude, longitude
+        print(f'{latitude}, {longitude}')
+        return {"latitude": latitude,"longitude": longitude}
     else:
+        print(f"\n\n__________location not found for {location_name}\n\n")
         return None
 
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
-    
-    
-    
-    a, b = get_lat_long('Mohali')
-    return HttpResponse(f'{a}, {b}')
+    reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"), "global_end_time": datetime.datetime.fromisoformat("2024-10-06T06:59:00.000Z")}
+
+    # a, b = get_lat_long('una, hp')
+    # return HttpResponse(f'{a}, {b}')
+
+    for i in Truck.objects.filter(available=True):
+        temp = {}
+        temp["start_location"] = {"latitude": settings.FROMLATITUDE,"longitude": settings.FROMLONGITUDE}
+        temp["load_limits"] = {"weight": {"max_load": i.capacity}}
+        temp["start_time_windows"] = [{"start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")}]
+        temp["end_time_windows"] = [{"end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")}]
+        temp["label"] = f'{i.truck_name}--{i.truck_number}--{i.driver_name}'
+        temp["cost_per_kilometer"] = int(i.cost_per_km)
+        reqjson["vehicles"].append(temp)    
 
 
+    for i in Order.objects.filter(order_status='pending'):
+        temp = {}
+        temp['deliveries'] = [{
+                "arrival_location": get_lat_long(i.destination),
+                "time_windows": [{
+                    "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
+                    "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+                }]
+            }]
+        temp["load_demands"] = {"weight": {"amount": i.quantity}}
+        temp["label"] = f'{i.destination}_{i.id}'
+        reqjson["shipments"].append(temp) 
+
+    print("reqjson______", reqjson)
+    # return HttpResponse(str(reqjson))
 
     project_id="gmprotrial"
     client = ro.RouteOptimizationClient()
     request = ro.OptimizeToursRequest(
         parent=f'projects/{project_id}',
-        model={
-            # "model": {
-                "shipments": [
-                    {
-                        "deliveries": [
-                            {
-                                "arrival_location": {
-                                    "latitude": 30.6983149,
-                                    "longitude": 76.6561808
-                                },
-                                # "duration": "600s",
-                                "time_windows": [
-                                    {
-                                        "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-                                        "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                                    }
-                                ]
-                            }
-                        ],
-                        "load_demands": {
-                            "weight": {
-                                "amount": "100"
-                            }
-                        },
-                        "label": "sas_wala"
-                    },
-                    {
-                        "deliveries": [
-                            {
-                                "arrival_location": {
-                                    "latitude": 31.6335177,
-                                    "longitude": 74.7877192
-                                },
-                                # "duration": "600s",
-                                "time_windows": [
-                                    {
-                                        "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-                                        "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                                    }
-                                ]
-                            }
-                        ],
-                        "load_demands": {
-                            "weight": {
-                                "amount": "100"
-                            }
-                        },
-                        "label": "amrit_wala"
-                    },
-                    {
-                        "deliveries": [
-                            {
-                                "arrival_location": {
-                                    "latitude": 26.8839819,
-                                    "longitude": 75.1996884
-                                },
-                                # "duration": "600s",
-                                "time_windows": [
-                                    {
-                                        "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-                                        "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                                    }
-                                ]
-                            }
-                        ],
-                        "load_demands": {
-                            "weight": {
-                                "amount": "200"
-                            }
-                        },
-                        "label": "jp_wala"
-                    },
-                    {
-                        "deliveries": [
-                            {
-                                "arrival_location": {
-                                    "latitude": 31.4707267,
-                                    "longitude": 76.2482434
-                                },
-                                # "duration": "600s",
-                                "time_windows": [
-                                    {
-                                        "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-                                        "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                                    }
-                                ]
-                            }
-                        ],
-                        "load_demands": {
-                            "weight": {
-                                "amount": "150"
-                            }
-                        },
-                        "label": "una_wala"
-                    },
-                    {
-                        "deliveries": [
-                            {
-                                "arrival_location": {
-                                    "latitude": 30.7322544,
-                                    "longitude": 76.6883125
-                                },
-                                # "duration": "600s",
-                                "time_windows": [
-                                    {
-                                        "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-                                        "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                                    }
-                                ]
-                            }
-                        ],
-                        "load_demands": {
-                            "weight": {
-                                "amount": "50"
-                            }
-                        },
-                        "label": "chd_wala"
-                    },
-                    # Add other shipments as in the original data
-                ],
-                "vehicles": [
-                    {
-                        "start_location": {
-                            "latitude": 28.6440836,
-                            "longitude": 77.0932313
-                        },
-                        "load_limits": {
-                            "weight": {
-                                "max_load": 200
-                            }
-                        },
-                        "start_time_windows": [
-                            {
-                                "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
-                            }
-                        ],
-                        "end_time_windows": [
-                            {
-                                "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                            }
-                        ],
-                        "label": "A_Truck",
-                        "cost_per_kilometer": 1
-                    },
-                    {
-                        "start_location": {
-                            "latitude": 28.6440836,
-                            "longitude": 77.0932313
-                        },
-                        "load_limits": {
-                            "weight": {
-                                "max_load": 150
-                            }
-                        },
-                        "start_time_windows": [
-                            {
-                                "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
-                            }
-                        ],
-                        "end_time_windows": [
-                            {
-                                "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                            }
-                        ],
-                        "label": "B_Truck",
-                        "cost_per_kilometer": 1
-                    },
-                    {
-                        "start_location": {
-                            "latitude": 28.6440836,
-                            "longitude": 77.0932313
-                        },
-                        "load_limits": {
-                            "weight": {
-                                "max_load": 50
-                            }
-                        },
-                        "start_time_windows": [
-                            {
-                                "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
-                            }
-                        ],
-                        "end_time_windows": [
-                            {
-                                "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                            }
-                        ],
-                        "label": "C_Truck",
-                        "cost_per_kilometer": 1
-                    },
-                    {
-                        "start_location": {
-                            "latitude": 28.6440836,
-                            "longitude": 77.0932313
-                        },
-                        "load_limits": {
-                            "weight": {
-                                "max_load": 300
-                            }
-                        },
-                        "start_time_windows": [
-                            {
-                                "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
-                            }
-                        ],
-                        "end_time_windows": [
-                            {
-                                "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
-                            }
-                        ],
-                        "label": "D_Truck",
-                        "cost_per_kilometer": 1
-                    },
-                ],
-                "global_start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-                "global_end_time": datetime.datetime.fromisoformat("2024-10-06T06:59:00.000Z")
-            }
-            # "populatePolylines": True
-            # }
-        , populate_polylines=True
+        model=reqjson,
+        # populate_polylines=True
+
     )
     response = client.optimize_tours(request=request)
-    # print(response)
+    print("response________", response)
     return HttpResponse(response)
+
+# model={
+#     # "model": {
+#         "shipments": [
+#             {
+#                 "deliveries": [
+#                     {
+#                         "arrival_location": {
+#                             "latitude": 30.6983149,
+#                             "longitude": 76.6561808
+#                         },
+#                         # "duration": "600s",
+#                         "time_windows": [
+#                             {
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                             }
+#                         ]
+#                     }
+#                 ],
+#                 "load_demands": {
+#                     "weight": {
+#                         "amount": "100"
+#                     }
+#                 },
+#                 "label": "sas_wala"
+#             },
+#             {
+#                 "deliveries": [
+#                     {
+#                         "arrival_location": {
+#                             "latitude": 31.6335177,
+#                             "longitude": 74.7877192
+#                         },
+#                         # "duration": "600s",
+#                         "time_windows": [
+#                             {
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                             }
+#                         ]
+#                     }
+#                 ],
+#                 "load_demands": {
+#                     "weight": {
+#                         "amount": "100"
+#                     }
+#                 },
+#                 "label": "amrit_wala"
+#             },
+#             {
+#                 "deliveries": [
+#                     {
+#                         "arrival_location": {
+#                             "latitude": 26.8839819,
+#                             "longitude": 75.1996884
+#                         },
+#                         # "duration": "600s",
+#                         "time_windows": [
+#                             {
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                             }
+#                         ]
+#                     }
+#                 ],
+#                 "load_demands": {
+#                     "weight": {
+#                         "amount": "200"
+#                     }
+#                 },
+#                 "label": "jp_wala"
+#             },
+#             {
+#                 "deliveries": [
+#                     {
+#                         "arrival_location": {
+#                             "latitude": 31.4707267,
+#                             "longitude": 76.2482434
+#                         },
+#                         # "duration": "600s",
+#                         "time_windows": [
+#                             {
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                             }
+#                         ]
+#                     }
+#                 ],
+#                 "load_demands": {
+#                     "weight": {
+#                         "amount": "150"
+#                     }
+#                 },
+#                 "label": "una_wala"
+#             },
+#             {
+#                 "deliveries": [
+#                     {
+#                         "arrival_location": {
+#                             "latitude": 30.7322544,
+#                             "longitude": 76.6883125
+#                         },
+#                         # "duration": "600s",
+#                         "time_windows": [
+#                             {
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                             }
+#                         ]
+#                     }
+#                 ],
+#                 "load_demands": {
+#                     "weight": {
+#                         "amount": "50"
+#                     }
+#                 },
+#                 "label": "chd_wala"
+#             },
+#             # Add other shipments as in the original data
+#         ],
+#         "vehicles": [
+#             {
+#                 "start_location": {
+#                     "latitude": 28.6440836,
+#                     "longitude": 77.0932313
+#                 },
+#                 "load_limits": {
+#                     "weight": {
+#                         "max_load": 200
+#                     }
+#                 },
+#                 "start_time_windows": [
+#                     {
+#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
+#                     }
+#                 ],
+#                 "end_time_windows": [
+#                     {
+#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                     }
+#                 ],
+#                 "label": "A_Truck",
+#                 "cost_per_kilometer": 1
+#             },
+#             {
+#                 "start_location": {
+#                     "latitude": 28.6440836,
+#                     "longitude": 77.0932313
+#                 },
+#                 "load_limits": {
+#                     "weight": {
+#                         "max_load": 150
+#                     }
+#                 },
+#                 "start_time_windows": [
+#                     {
+#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
+#                     }
+#                 ],
+#                 "end_time_windows": [
+#                     {
+#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                     }
+#                 ],
+#                 "label": "B_Truck",
+#                 "cost_per_kilometer": 1
+#             },
+#             {
+#                 "start_location": {
+#                     "latitude": 28.6440836,
+#                     "longitude": 77.0932313
+#                 },
+#                 "load_limits": {
+#                     "weight": {
+#                         "max_load": 50
+#                     }
+#                 },
+#                 "start_time_windows": [
+#                     {
+#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
+#                     }
+#                 ],
+#                 "end_time_windows": [
+#                     {
+#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                     }
+#                 ],
+#                 "label": "C_Truck",
+#                 "cost_per_kilometer": 1
+#             },
+#             {
+#                 "start_location": {
+#                     "latitude": 28.6440836,
+#                     "longitude": 77.0932313
+#                 },
+#                 "load_limits": {
+#                     "weight": {
+#                         "max_load": 300
+#                     }
+#                 },
+#                 "start_time_windows": [
+#                     {
+#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
+#                     }
+#                 ],
+#                 "end_time_windows": [
+#                     {
+#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                     }
+#                 ],
+#                 "label": "D_Truck",
+#                 "cost_per_kilometer": 1
+#             },
+#         ],
+#         "global_start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
+#         "global_end_time": datetime.datetime.fromisoformat("2024-10-06T06:59:00.000Z")
+#     }
+# "populatePolylines": True
+# }
 
 # GMPRO API trial
 # def index(request):
