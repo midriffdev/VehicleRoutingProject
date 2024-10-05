@@ -69,7 +69,7 @@ def vehicles(request):
         context={
             'orders':orders,
         }
-        return render(request, 'home/payments.html',context)
+        return render(request, 'home/vehicles.html',context)
 
 
 
