@@ -61,13 +61,32 @@ def payments(request):
 
 def vehicles(request):
     if request.method == 'POST':
-        print("welcome ji")
-        return redirect('home')  # Redirect to home or any other page
-    
+        print("vehicles ",request.POST)
+        truck_name=request.POST.get('truck_name')
+        driver_name=request.POST.get('driver_name')
+        truck_number=request.POST.get('truck_number')
+        capacity=request.POST.get('capacity')
+        cost_per_km=request.POST.get('cost_per_km')
+        contact_number=request.POST.get('contact_number')
+
+        try:
+            truck=Truck.objects.get(truck_number=truck_number)
+        except:
+
+            truck = Truck.objects.create(
+                truck_name=truck_name,
+                driver_name=driver_name,
+                truck_number=truck_number,
+                capacity=capacity,
+                cost_per_km=cost_per_km,
+            )
+        return redirect('vehicles')
+
     else:
-        orders=Order.objects.filter(order_status="delivered")
+        vehicles=Truck.objects.all()
+
         context={
-            'orders':orders,
+            'vehicles':vehicles,
         }
         return render(request, 'home/vehicles.html',context)
 
@@ -85,8 +104,7 @@ def analyseRoutesAI(request):
         return render(request, 'home/ai-routes.html',context)
 
 
-
-
+    
 
 
 def customers(request):
@@ -139,7 +157,11 @@ def single_customer(request,pk):
             'notifications':notifications,
         }
         return render(request, 'home/single_customer.html',context)
-    
+
+
+
+
+
 def single_order(request,pk):
     if request.method == 'POST':
         print("order_status ")
@@ -164,6 +186,7 @@ def single_order(request,pk):
             'order':order,
         }
         return render(request, 'home/single_order.html',context)
+
 
 def upload_orders(request):
     if request.method == 'POST':

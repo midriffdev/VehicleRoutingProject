@@ -15,6 +15,11 @@
                         </button>
                         <div class="modal fade add-vehicleModal" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel"
                 aria-hidden="true">
+
+                        <form action="{% url 'vehicles' %}" method="post" enctype="multipart/form-data"
+                            class="d-flex align-items-end">
+                            {% csrf_token %}
+
                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -25,80 +30,60 @@
                                         <div class="row">
                                             <!-- Vehicle Type -->
                                             <div class="col-md-6 mb-3">
-                                                <label for="vehicle_type" class="form-label">Vehicle Type</label>
-                                                <select class="form-select" id="vehicle_type">
-                                                    <option selected>Select vehicle type</option>
-                                                    <option value="truck">Truck</option>
-                                                    <option value="van">Van</option>
-                                                    <option value="bike">Bike</option>
-                                                </select>
+                                                <label for="truck_name" class="form-label">Vehicle Name</label>
+                                                <input type="text" required class="form-control" name="truck_name" id="truck_name" placeholder="Enter vehicle's name" pattern="[A-Za-z0-9\s]+" title="Please use alphanumeric characters only">
                                             </div>
-
+                                            
+                                           
                                             <!-- Capacity (Weight) -->
                                             <div class="col-md-6 mb-3">
-                                                <label for="capacity_weight" class="form-label">Capacity (Weight)</label>
-                                                <input type="number" class="form-control" id="capacity_weight"
-                                                    placeholder="Enter weight in kg or lbs">
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <!-- Capacity (Volume) -->
-                                            <div class="col-md-6 mb-3">
-                                                <label for="capacity_volume" class="form-label">Capacity (Volume)</label>
-                                                <input type="number" class="form-control" id="capacity_volume"
-                                                    placeholder="Enter volume in cubic meters or feet">
-                                            </div>
-
-                                            <!-- Fuel Efficiency -->
-                                            <div class="col-md-6 mb-3">
-                                                <label for="fuel_efficiency" class="form-label">Fuel Efficiency</label>
-                                                <input type="number" class="form-control" id="fuel_efficiency"
-                                                    placeholder="Enter fuel efficiency in km/l or miles/gal">
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <!-- Registration Number -->
-                                            <div class="col-md-6 mb-3">
-                                                <label for="registration_number" class="form-label">Registration Number</label>
-                                                <input type="text" class="form-control" id="registration_number"
-                                                    placeholder="Enter vehicle's registration number">
-                                            </div>
-
-                                            <!-- Driver Name -->
-                                            <div class="col-md-6 mb-3">
                                                 <label for="driver_name" class="form-label">Driver Name</label>
-                                                <input type="text" class="form-control" id="driver_name"
+                                                <input type="text" required  name="driver_name" class="form-control" id="driver_name"
                                                     placeholder="Enter driver's name">
                                             </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="vehicle_number" class="form-label">Vehicle Number</label>
+                                                <input type="text" required maxlength="6" name="vehicle_number" class="form-control" id="vehicle_number"
+                                                       placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-3">
+                                                <label for="capacity_volume" class="form-label">Capacity (Volume)</label>
+                                                <input type="number" required name="capacity_volume" class="form-control" id="capacity_volume"
+                                                       placeholder="Enter volume in cubic meters or feet" min="0" max="9999" maxlength="4" title="Please enter a valid number">
+                                            </div>
+                                            
                                         </div>
 
                                         <div class="row">
                                             <!-- Contact Number -->
                                             <div class="col-md-6 mb-3">
                                                 <label for="contact_number" class="form-label">Driver's Contact Number</label>
-                                                <input type="text" class="form-control" id="contact_number"
+                                                <input name="contact_number" maxlength="10"  required type="text" class="form-control" id="contact_number"
                                                     placeholder="Enter driver's contact number">
                                             </div>
-
                                             <!-- Vehicle Status -->
                                             <div class="col-md-6 mb-3">
-                                                <label for="vehicle_status" class="form-label">Vehicle Status</label>
-                                                <select class="form-select" id="vehicle_status">
-                                                    <option selected>Select status</option>
-                                                    <option value="available">Available</option>
-                                                    <option value="not-available">Not Available</option>
-                                                </select>
+                                                <label for="cost_per_km" class="form-label">Cost</label>
+                                                <input name="cost_per_km" maxlength="6"  required type="text" class="form-control" name="cost_per_km" id="cost_per_km"
+                                                    placeholder="Enter cost">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save Vehicle</button>
+                                        <button type="submit" class="btn btn-primary">Save Vehicle</button>
                                     </div>
                                 </div>
                             </div>
+
+                        </form>
+
+
+
                         </div>
                     </div>
                 </div>
