@@ -92,7 +92,7 @@
                                 {% for i in orders %}
                                 <tr>
                                     <td>{{i.id}}</td>
-                                    <td style="color: blue;">{{ i.email }}</td>
+                                    <td class="text-primary fw-medium">{{ i.email }}</td>
 
                                     <td>{{i.product_name}}</td>
                                   
@@ -101,7 +101,7 @@
                                     <td>{{i.order_status}}</td>
                                     <td>
                                         <span
-                                            class="badge badge-pill badge-soft-success font-size-11">{{i.payment_status}}</span>
+                                            class="badge badge-pill badge-soft-success font-size-11 text-capitalize">{{i.payment_status}}</span>
                                     </td>
                                     <td>
                                         <a href="{% url 'single_customer' i.id %}" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
