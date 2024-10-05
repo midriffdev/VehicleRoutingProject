@@ -72,6 +72,18 @@ def vehicles(request):
         return render(request, 'home/vehicles.html',context)
 
 
+def analyseRoutesAI(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/ai-routes.html',context)
+
 
 
 
@@ -92,8 +104,32 @@ def customers(request):
 
 def single_customer(request,pk):
     if request.method == 'POST':
-        print("welcome ji")
-        return redirect('home')  # Redirect to home or any other page
+        print("single_customer request")
+
+        payment_status=request.POST.get('payment_status')
+        order=Order.objects.get(id=pk)
+        order.payment_status=payment_status
+        order.order_status=order.payment_status
+        order.save()
+
+        html_message = render_to_string('home/orderemail.html', {'user': order.email})
+        try:
+            send_mail(
+                'Your payment was successful!',
+                strip_tags(html_message),
+                settings.EMAIL_HOST_USER,
+                [order.email],
+                html_message=html_message
+            )
+        except Exception as e:
+            print("\n\n______________________unable to send mail", e)
+
+        Notifications.objects.create(
+            content="Your payment has been successfully completed. Thank you for your order!",
+            title='Payment Successful',
+            receiver=order
+        )
+        return redirect(reverse('single_customer', kwargs={'pk': pk}))  
     
     else:
         order=Order.objects.get(id=pk)

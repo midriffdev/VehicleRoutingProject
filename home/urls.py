@@ -9,6 +9,7 @@ urlpatterns = [
     path('customers', views.customers, name='customers'),
     path('payments', views.payments, name='payments'),
     path('vehicles', views.vehicles, name='vehicles'),
+    path('analyseRoutesAI', views.analyseRoutesAI, name='analyseRoutesAI'),
 
     
 

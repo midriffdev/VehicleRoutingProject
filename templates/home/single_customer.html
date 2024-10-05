@@ -2,149 +2,158 @@
 {% load static %}
 {% block content %}
     <title>Order Details</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container {
-            margin-top: 30px;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-        .table th, .table td {
-            vertical-align: middle;
-        }
-        .btn-pay {
-            background-color: #28a745;
-            color: white;
-        }
-        .btn-pay:hover {
-            background-color: #218838;
-        }
-        .notification-section {
-            background-color: #f1f1f1;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .notification {
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-    </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2 class="text-center mb-4">Order Details</h2>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Customer Details</h4>
+                </div>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="orderTable" class="table ">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Field</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>{{ order.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <td>{{ order.product_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Quantity</th>
+                                    <td>{{ order.quantity }}</td>
+                                </tr>
+                                <tr>
+                                    <th>From Location - Destination</th>
+                                    <td>{{ order.from_location }} - {{ order.destination }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Amount</th>
+                                    <td>${{ order.payment_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Order Status</th>
+                                    <td>{{ order.get_order_status_display }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Payment Status</th>
+
+                                    <td>
+
+                                    {% if order.get_payment_status_display == 'completed' %}
+                                        Complete
+                                    {% else %}
+                                        Pending
+                                    {% endif %}
+
+                                </td>
+                        
+                                </tr>
+
+                                <tr>
+                                    <th>Due Date</th>
+                                    <td>{{ order.due_payment_date }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+        
+                        <!-- Pay Now Button -->
+                        <div class="text-center mt-4">
+                            {% if order.order_status == 'delivered' %}
+                             
+                            <form method="post" action="{% url 'single_customer' order.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="payment_status" value="completed" />
+                                <button type="submit" class="btn btn-lg btn-success">Pay Now</button>
+                            </form>
+
+                            {% else %}
+
+                                <button class="btn btn-secondary btn-lg" disabled>waiting for delivery</button>
+
+
+                            {% endif %}
+
+
+                            {% comment %} {% if order.order_status == 'delivered' %}
+                                <form method="post" action="{% url 'single_customer' order.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="payment_status" value="completed" />
+                                    <button type="submit" class="btn btn-lg btn-success">Pay Now</button>
+                                </form>
+                            {% elif order.order_status == 'completed' %}
+                                <button class="btn btn-lg btn-success" disabled>Payment Done</button>
+                            {% else %}
+                                <button class="btn btn-secondary btn-lg" disabled>Waiting for Delivery</button>
+                            {% endif %} {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        </div>
+        
+                        <!-- Back Button -->
+                        <div class="text-center mt-4">
+                            <a href="{% url 'upload_orders' %}" class="btn btn-secondary">Back to Orders</a>
+                        </div>
+                    </div>
+                </div>
                 <!-- Order Info Table with DataTable -->
-                <table id="orderTable" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Field</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>Email</th>
-                            <td>{{ order.email }}</td>
-                        </tr>
-                        <tr>
-                            <th>Product Name</th>
-                            <td>{{ order.product_name }}</td>
-                        </tr>
-                        <tr>
-                            <th>Quantity</th>
-                            <td>{{ order.quantity }}</td>
-                        </tr>
-                        <tr>
-                            <th>From Location - Destination</th>
-                            <td>{{ order.from_location }} - {{ order.destination }}</td>
-                        </tr>
-                        <tr>
-                            <th>Payment Amount</th>
-                            <td>${{ order.payment_amount }}</td>
-                        </tr>
-                        <tr>
-                            <th>Order Status</th>
-                            <td>{{ order.get_order_status_display }}</td>
-                        </tr>
-                        <tr>
-                            <th>Payment Status</th>
-                            <td>{{ order.get_payment_status_display }}</td>
-                        </tr>
-                        <tr>
-                            <th>Due Date</th>
-                            <td>{{ order.due_payment_date }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- Pay Now Button -->
-                <div class="text-center mt-4">
-                    {% if order.order_status == 'delivered' %}
-                        <a class="btn btn-pay btn-lg">Pay Now</a>
-                    {% else %}
-                        <button class="btn btn-secondary btn-lg" disabled>waiting for delivery</button>
-                    {% endif %}
-                </div>
-
-                <!-- Back Button -->
-                <div class="text-center mt-4">
-                    <a href="{% url 'upload_orders' %}" class="btn btn-secondary">Back to Orders</a>
-                </div>
+                
             </div>
 
             <div class="col-md-4">
-                <!-- Notification Section -->
+                <div class="card">
+                    <div class=card-body>
+                        <!-- Notification Section -->
                 <div class="notification-section">
-                    <h5 class="text-center">Notifications</h5>
+                    <h5 class="text-center py-3 border-bottom">Notifications</h5>
 
                     {% for n in notifications %}
-                    <div class="notification">
+                    <div class="alert alert-success">
                         <strong>{{n.title}}</strong>
-                        <p>{{n.content}}</p>
+                        <p class="mb-0">{{n.content}}</p>
                     </div>
                     {% endfor%}
                    
                     <!-- Add more notifications as needed -->
                 </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- DataTable Initialization -->
-    <script>
-        $(document).ready(function() {
-            $('#orderTable').DataTable({
-                "paging": false,
-                "info": false,
-                "searching": false,
-                "ordering": false
-            });
-        });
-    </script>
+    
 </body>
 
 {% endblock %}

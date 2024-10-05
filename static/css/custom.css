@@ -1,0 +1,6 @@
+.page-content {
+    padding: calc(0px + 24px) calc(24px / 2) 60px calc(24px / 2) !important;
+}
+.dz-error-message {
+    display : none !important;
+}
