@@ -48,7 +48,7 @@
                                 </tr>
                                 <tr>
                                     <th>Order Status</th>
-                                    <td>{{ order.get_order_status_display }}</td>
+                                    <td>{{ order.order_status }}</td>
                                 </tr>
 
                                 <tr>
@@ -56,7 +56,7 @@
 
                                     <td>
 
-                                    {% if order.get_payment_status_display == 'completed' %}
+                                    {% if order.payment_status == 'completed' %}
                                         Complete
                                     {% else %}
                                         Pending
@@ -75,49 +75,19 @@
         
                         <!-- Pay Now Button -->
                         <div class="text-center mt-4">
-                            {% if order.order_status == 'delivered' %}
-                             
-                            <form method="post" action="{% url 'single_customer' order.id %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="payment_status" value="completed" />
-                                <button type="submit" class="btn btn-lg btn-success">Pay Now</button>
-                            </form>
-
+                            {% if order.payment_status == 'completed' %}
+                                <!-- Do nothing if payment is completed -->
                             {% else %}
-
-                                <button class="btn btn-secondary btn-lg" disabled>waiting for delivery</button>
-
-
+                                {% if order.order_status == 'delivered' %}
+                                    <form method="post" action="{% url 'single_customer' order.id %}" id="pay_now_form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="payment_status" value="completed" />
+                                        <button type="submit" class="btn btn-lg btn-success" id="pay_now_button">Pay Now</button>
+                                    </form>
+                                {% else %}
+                                    <button class="btn btn-secondary btn-lg" disabled>Waiting for delivery</button>
+                                {% endif %}
                             {% endif %}
-
-
-                            {% comment %} {% if order.order_status == 'delivered' %}
-                                <form method="post" action="{% url 'single_customer' order.id %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="payment_status" value="completed" />
-                                    <button type="submit" class="btn btn-lg btn-success">Pay Now</button>
-                                </form>
-                            {% elif order.order_status == 'completed' %}
-                                <button class="btn btn-lg btn-success" disabled>Payment Done</button>
-                            {% else %}
-                                <button class="btn btn-secondary btn-lg" disabled>Waiting for Delivery</button>
-                            {% endif %} {% endcomment %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         </div>
         
                         <!-- Back Button -->

@@ -110,22 +110,33 @@ def escalationteam(request):
         return redirect('home')  # Redirect to home or any other page
     
     else:
-        orders=Order.objects.filter(order_status="delivered")
+        orders=Order.objects.filter(order_status="delivered",payment_status="escalation_pending").order_by("-id")
         context={
             'orders':orders,
         }
         return render(request, 'home/escalation-team.html',context)
     
 
-def ordersingleteam(request):
+from datetime import timedelta 
+def customer_single_order(request,pk):
     if request.method == 'POST':
-        print("welcome ji")
-        return redirect('home')  # Redirect to home or any other page
+        payment_status=request.POST.get('payment_status')
+        order=Order.objects.get(id=pk)
+        order.payment_status=payment_status
+        order.order_status=order.payment_status
+        order.save()  # Redirect to home or any other page
+        return redirect(reverse('customer_single_order', kwargs={'pk': pk}))
     
     else:
-        orders=Order.objects.filter(order_status="delivered")
+        order=Order.objects.get(id=pk)
+
+        order.delivered_payment_date = order.due_payment_date - timedelta(days=2)
+        order.order_due_payment = order.due_payment_date
+        order.past_due_payment = order.due_payment_date + timedelta(days=1)
+        order.final_due_payment = order.due_payment_date + timedelta(days=5)
+
         context={
-            'orders':orders,
+            'order':order,
         }
         return render(request, 'home/single-order-team.html',context)
     
@@ -196,7 +207,12 @@ def single_customer(request,pk):
             title='Payment Successful',
             receiver=order
         )
-        return redirect(reverse('single_customer', kwargs={'pk': pk}))  
+        if 'by_team_member' in request.POST:
+
+            return redirect(reverse('customer_single_order', kwargs={'pk': pk}))  
+        else:
+            return redirect(reverse('single_customer', kwargs={'pk': pk}))  
+
     
     else:
         order=Order.objects.get(id=pk)
@@ -218,6 +234,7 @@ def single_order(request,pk):
         order.order_status=order_status
         order.due_payment_date = order.created_at + timedelta(days=2)
         order.payment_status = "due"
+        order.send_email_count=1
         order.save()
 
         content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {order.due_payment_date}, or earlier.Thank you for choosing us!"

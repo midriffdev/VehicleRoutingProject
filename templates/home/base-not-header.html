@@ -199,7 +199,7 @@
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="rounded-circle header-profile-user"
                                 src="{% static 'images/defaultuserimg.png' %}" alt="Header Avatar">
-                            <span class="d-none d-xl-inline-block ms-1" key="t-henry">Roles</span>
+                            <span id="role_change" class="d-none d-xl-inline-block ms-1" key="t-henry">Roles</span>
                             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
@@ -330,6 +330,30 @@
 
 
     <script src="{% static 'js/app.js' %}"></script>
+
+    <script>
+        window.onload = function() {
+            const role = localStorage.getItem('role');
+           
+            if (role) {
+                console.log("Your role is: " + role); // Debugging log
+
+
+                const roleChange = document.getElementById("role_change");
+                 roleChange.textContent = role; // Set the text of the span to the role
+               
+
+                if (role === "Customer" || role === "Escalation_team") {
+                    const navigationBar = document.getElementById("navigation_bar");
+                    console.log("Navigation Bar display before:", getComputedStyle(navigationBar).display); 
+                    navigationBar.style.display = "none";
+                   
+                }
+            } else {
+                console.log("No role found in localStorage."); // Debugging log
+            }
+        };
+    </script>
 </body>
 
 
