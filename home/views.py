@@ -72,6 +72,18 @@ def vehicles(request):
         return render(request, 'home/vehicles.html',context)
 
 
+def analyseRoutesAI(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+        orders=Order.objects.filter(order_status="delivered")
+        context={
+            'orders':orders,
+        }
+        return render(request, 'home/ai-routes.html',context)
+
 
 
 
