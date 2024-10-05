@@ -29,7 +29,7 @@ def today_due_emails():
         )
 
 
-def due_payments_emails(): #  completed first payment
+def overdue_payments_emails(): #  completed first payment
     orders=Order.objects.filter(order_status="delivered",payment_status="due", due_payment_date__date__lt=datetime.datetime.now().date())
 
     for i in orders:
