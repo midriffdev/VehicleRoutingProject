@@ -41,6 +41,8 @@ def tomorrow_due_emails():
 def today_due_emails():
     orders = Order.objects.filter(order_status="delivered", payment_status="due", due_payment_date__date=datetime.datetime.now().date())
     for i in orders:
+        i.send_email_count=2
+        i.save()
 
         content=f"Your payment for Order {i.product_name} is due today. Please settle it by the end of the day to avoid any interruptions in service. Thank you!"
 
@@ -70,7 +72,9 @@ def overdue_payments_emails(): #  completed first payment
         Notifications.objects.create(content=f"Your payment for Order {i.product_name} is overdue; please settle it as soon as possible to avoid service interruptions. Thank you!", title=f'Payment Due for Your Order {i.product_name}.', receiver=i, count=3)
 
         i.payment_status="past_due"
+        i.send_email_count=3
         i.save()
+       
 
 
 def final_warning_emails():
@@ -92,6 +96,7 @@ def final_warning_emails():
             receiver=i
         )
         # Optionally, you can escalate the order's payment status
+        i.send_email_count=4
         i.payment_status = "escalation_pending"
         i.save()
 
