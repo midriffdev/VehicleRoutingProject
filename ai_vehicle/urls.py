@@ -6,5 +6,6 @@ urlpatterns = [
     # path('chatt', ChatbotView3.as_view(), name='chatt'),  # Define the chat endpoint
     path('getroute', getroute, name='getroute'),
     path('transform', transform, name='transform'),
+    path('download/<int:route_id>/', download_json, name='download_json'),
  
 ]
