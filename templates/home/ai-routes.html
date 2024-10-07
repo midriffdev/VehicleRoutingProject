@@ -6,7 +6,6 @@
                 <!-- <div class="loaderWrapper">
                     <div class="loader"></div>
                 </div> -->
-iroutes - - {{iroutes}}
                 <div class="container-fluid">
 
                     <!-- start page title -->
@@ -31,18 +30,20 @@ iroutes - - {{iroutes}}
                                                 <div class="text-center mb-4">
                                                     <div class="avatar-md mx-auto mb-4">
                                                         <div class="avatar-title bg-light rounded-circle text-primary h1">
-                                                            <i class="bx bx-info-circle                                                            "></i>
+                                                            <i class="bx bx-info-circle"></i>
                                                         </div>
                                                     </div>
                 
                                                     <div class="row justify-content-center">
                                                         <div class="col-xl-10">
                                                             <h4 class="text-primary">Downloading JSON file !</h4>
-                                                            <p class="text-muted font-size-14 mb-4">Redirecting to Website..</p>
-                
+                                                            <a target='blank' href="{% url 'download_json' gen_route_id %}">Download file</a>
+                                                            
+                                                            
                                                             <div class="alert alert-warning" role="alert">
-                                                               Please Upload This File For View results
+                                                                Please Upload This File For View results
                                                             </div>
+                                                            <a target='blank' href="http://66.179.208.9/">Go to Visuals</p>
                                                             
                                                         </div>
                                                     </div>
@@ -57,7 +58,9 @@ iroutes - - {{iroutes}}
                     </div>
                     <!-- end page title -->
 
-                    <div class="row">
+                    {%for i in iroutes%}
+                    {%if i.order%}
+                    <div class="row mb-3">
                         <div class="col-xl-3">
                             <div class="text-start p-4 alert alert-primary rounded-lg">
                                 <div class="avatar-sm mb-3 mt-1">
@@ -68,10 +71,16 @@ iroutes - - {{iroutes}}
                                 </div>
                                 <h5 class="pb-1 text-primary font-size-18 ">Truck Assigned</h5>
                                 <p class="text-primary font-size-15 mb-2 text-truncate">Truck Number :
-                                    <strong>PB073477</strong>
+                                    <strong>{{i.truck.truck_number}}</strong>
                                 </p>
                                 <p class="text-primary font-size-15 mb-2 text-truncate">Truck Capacity :
-                                    <strong>5000</strong>
+                                    <strong>{{i.truck.capacity}}</strong>
+                                </p>
+                                <p class="text-primary font-size-15 mb-2 text-truncate">Driver name :
+                                    <strong>{{i.truck.driver_name}}</strong>
+                                </p>
+                                <p class="text-primary font-size-15 mb-2 text-truncate">Cost per KM :
+                                    <strong>{{i.truck.cost_per_km}}</strong>
                                 </p>
                             </div>
                         </div>
@@ -83,21 +92,44 @@ iroutes - - {{iroutes}}
                                     <div class="col-6">
                                         <div>
                                             <p class="text-white font-size-15 mb-2 text-truncate yellowColor">Pickup Location</p>
-                                            <h5 class="text-white font-size-14 mb-2 text-truncate">New York</h5>
+                                            <h5 class="text-white font-size-14 mb-2 text-truncate">{{i.fstop}}</h5>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div>
                                             <p class="text-white font-size-15 mb-2 text-truncate yellowColor">Destination Location
                                             </p>
-                                            <h5 class="text-white font-size-14 mb-2 text-truncate">Chicago</h5>
+                                            <h5 class="text-white font-size-14 mb-2 text-truncate">{{i.lstop}}</h5>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="py-3">
                                     <p class="text-white font-size-20 mb-2 text-truncate lineDesign">All Orders Location</p>
                                     <div class="d-flex flex-nowrap pt-4 w-100 overflow-auto scroll-style">
+                                        {%if i.order%}
+                                        {%for shipment in i.order%}
                                         <div class="routeBox me-3 mb-1">
+                                            <div class="text-center">
+                                                <i class="bx bx-map text-warning font-size-20"></i>
+                                                <p class="text-warning">{{shipment.destination}}</p>
+                                            </div>
+                                            <div class="card shadow-none">
+                                                <div class="card-body">
+                                                    <div class="text-white text-letter-space">
+                                                        <p><span class="yellowColor">Order No</span> <br>#{{order.id}}</p>
+                                                        <p><span class="yellowColor">Order Quantity</span> <br>{{shipment.quantity}}</p>
+                                                        <p><span class="yellowColor">Order Price</span> <br>{{shipment.payment_amount}}</p>
+                                                        <p><span class="yellowColor">Customer Email</span> <br>{{shipment.email}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {%endfor%}
+                                        {%else%}
+                                            No orders for this truck to assign.
+                                        {%endif%}
+
+                                        {% comment %} <div class="routeBox me-3 mb-1">
                                             <div class="text-center">
                                                 <i class="bx bx-map text-warning font-size-20"></i>
                                                 <p class="text-warning">Zirakpur</p>
@@ -141,28 +173,15 @@ iroutes - - {{iroutes}}
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="routeBox me-3 mb-1">
-                                            <div class="text-center">
-                                                <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning">Zirakpur</p>
-                                            </div>
-                                            <div class="card shadow-none">
-                                                <div class="card-body">
-                                                    <div class="text-white text-letter-space">
-                                                        <p><span class="yellowColor">Order No</span> <br>12345</p>
-                                                        <p><span class="yellowColor">Order Name</span> <br>Logistics Delivery A</p>
-                                                        <p><span class="yellowColor">Customer Email</span> <br>customer212@gmail.com</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </div> {% endcomment %}
                                         
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    {%endif%}
+                    {%endfor%}
 
                 </div> <!-- container-fluid -->
 

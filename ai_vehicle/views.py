@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from huggingface_hub import login
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from google.maps import routeoptimization_v1 as ro
 from geopy.geocoders import Nominatim, GoogleV3
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToDict, MessageToJson
+from django.core.files.base import ContentFile
 import datetime, requests, json, subprocess
 from home.models import Order, Truck
+from .models import GenRoutes
 
 # Get the access token
 # def get_access_token():
@@ -31,6 +33,11 @@ def get_lat_long(location_name):
     else:
         print(f"\n\n__________location not found for {location_name}\n\n")
         return None
+
+def download_json(request, route_id):
+    gen_route = GenRoutes.objects.get(id=route_id)
+    response = FileResponse(gen_route.ijson, as_attachment=True, filename='request.json')
+    return response
 
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
@@ -74,8 +81,31 @@ def getroute(request):
         reqjson["shipments"].append(temp) 
 
     print("reqjson______", reqjson)
-    # return HttpResponse(str(reqjson))
 
+
+    newreqjson = reqjson
+
+    # newreqjson['global_start_time'] = newreqjson['global_start_time'].isoformat()
+    # newreqjson['global_end_tim'] = newreqjson['global_end_time'].isoformat()
+    del newreqjson['global_start_time']
+    del newreqjson['global_end_time']
+    for i in newreqjson['vehicles']:
+        # del i['start_time_windows']
+        # del i['end_time_windows']
+        del i['start_time_windows'][0]['start_time']
+        del i['end_time_windows'][0]['end_time']
+    for i in newreqjson['shipments']:
+        # del i['start_time_windows']
+        # del i['end_time_windows']  
+        del i['deliveries'][0]['time_windows'][0]['start_time']
+        del i['deliveries'][0]['time_windows'][0]['end_time']
+
+    print("ooops", reqjson)
+    print("ooops",  newreqjson)
+
+    json_file = ContentFile(json.dumps({"model": newreqjson, "populatePolylines": True}).encode('utf-8'), name='request.json')
+    gen_route = GenRoutes.objects.create(ijson=json_file)
+    
     project_id="gmprotrial"
     client = ro.RouteOptimizationClient()
     grequest = ro.OptimizeToursRequest(
@@ -86,25 +116,27 @@ def getroute(request):
     )
     response = client.optimize_tours(request=grequest)
 
-    json_output = MessageToDict(response._pb)
-    print("json_________", json_output['routes'])  
+    # json_output = MessageToJson(response._pb) ## RESPONSE JSON
+    dict_output = MessageToDict(response._pb)
 
-
-    data    = json_output['routes']
-    
     iroutes = []
-    for iroute in data:
-        iroutes.append({
-        'truck'     : iroute['vehicleLabel'],
-        'orders'    : [ Order.objects.get(id=i['shipmentLabel'].split('_')[1]) for i in iroute.get('visits', [])]
-        })
-        # iroutes['start']   = iroute.get('vehicleStartTime', None) 
+    for data in dict_output['routes']:
+        temp = {
+        'truck'     : Truck.objects.get(truck_number=data['vehicleLabel'].split('--')[1]),
+        'order'     : [ Order.objects.get(id=i['shipmentLabel'].split('_')[1]) for i in data.get('visits', [])],
+        'fstop'     : None,
+        'lstop'     : None,
+        'stime'     :data.get('vehicleStartTime', None) 
+        }
+        if data.get('visits', []): 
+            i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('_')[1])
+            temp['fstop'], temp['lstop'] = i.from_location, i.destination
+            
+        iroutes.append(temp)
 
     print("iroute______________s", iroutes)
     # return HttpResponse(json_output['routes'])
-    context={
-        'iroutes':iroutes
-    }
+    context={'iroutes':iroutes, 'gen_route_id' : gen_route.id}
     return render(request, 'home/ai-routes.html',context)
 # model={
 #     # "model": {
