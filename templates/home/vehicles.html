@@ -129,9 +129,10 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for i in vehicles %}
                                 <tr>
 
-                                    {% for i in vehicles %}
+                                   
 
                                     <td>{{i.truck_name}} </td>
 
@@ -145,8 +146,9 @@
                                     <td>
                                         <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">{{i.available}}</span>
                                     </td>
-                                    {% endfor %}
+                                    
                                 </tr>
+                                {% endfor %}
 
                                
                                
