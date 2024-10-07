@@ -6,10 +6,13 @@ from django.db import models
 class Truck(models.Model):
     truck_name = models.CharField(max_length=255)
     driver_name = models.CharField(max_length=255)
+    contact_number = models.CharField(max_length=100, null=True, blank=True, default=9876543213)
     truck_number = models.CharField(max_length=100, unique=True)
     capacity = models.PositiveIntegerField()  # Assuming capacity is in kilograms or liters
     cost_per_km = models.DecimalField(max_digits=10, decimal_places=2)
     available = models.BooleanField(default=True)
+
+    
 
     def __str__(self):
         return f"{self.truck_name} ({self.truck_number})"

@@ -148,7 +148,7 @@
                                     </td>
                                     <td>
                                         <div class="d-flex">
-                                            <button type="button" class="btn btn-secondary btn-sm btn-rounded  mr-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal">
+                                            <button type="button" class="btn btn-secondary btn-sm btn-rounded  mr-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal{{i.id}}">
                                                 Edit
                                             </button>
 
@@ -173,14 +173,16 @@
                                     </td>
                                     
                                 </tr>
-                                {% endfor %}
 
-                                <div class="modal fade add-EditvehicleModal" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel"
+
+                                <div class="modal fade add-EditvehicleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel"
                                 aria-hidden="true">
                 
-                                        <form action="{% url 'vehicles' %}" method="post" enctype="multipart/form-data"
+                                        <form action="{% url 'edit_vehicle' i.id %}" method="post" enctype="multipart/form-data"
                                             class="d-flex align-items-end">
                                             {% csrf_token %}
+
+                                            <input type="hidden" name="truck_id" value="{{i.id}}">
                 
                                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                 <div class="modal-content">
@@ -192,15 +194,16 @@
                                                         <div class="row">
                                                             <!-- Vehicle Type -->
                                                             <div class="col-md-6 mb-3">
+                                                                
                                                                 <label for="truck_name" class="form-label">Vehicle Name</label>
-                                                                <input type="text" required class="form-control" name="truck_name" id="truck_name" placeholder="Enter vehicle's name" pattern="[A-Za-z0-9\s]+" title="Please use alphanumeric characters only">
+                                                                <input type="text" required class="form-control" name="truck_name" value="{{i.truck_name}}" id="truck_name" placeholder="Enter vehicle's name" pattern="[A-Za-z0-9\s]+" title="Please use alphanumeric characters only">
                                                             </div>
                                                             
                                                            
                                                             <!-- Capacity (Weight) -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="driver_name" class="form-label">Driver Name</label>
-                                                                <input type="text" required  name="driver_name" class="form-control" id="driver_name"
+                                                                <input type="text" value="{{i.driver_name}}" required  name="driver_name" class="form-control" id="driver_name"
                                                                     placeholder="Enter driver's name">
                                                             </div>
                                                         </div>
@@ -208,13 +211,13 @@
                                                         <div class="row">
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="truck_number" class="form-label">Vehicle Number</label>
-                                                                <input type="text" required maxlength="10" name="truck_number" class="form-control" id="truck_number"
+                                                                <input type="text" required maxlength="10" name="truck_number" value="{{i.truck_number}}" class="form-control" id="truck_number"
                                                                        placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
                                                             </div>
                                                             
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="capacity_volume" class="form-label">Capacity (Volume)</label>
-                                                                <input type="number" required name="capacity_volume" class="form-control" id="capacity_volume"
+                                                                <input type="number" value="{{i.capacity}}" required name="capacity_volume" class="form-control" id="capacity_volume"
                                                                        placeholder="Enter volume in cubic meters or feet" min="0" max="9999" maxlength="4" title="Please enter a valid number">
                                                             </div>
                                                             
@@ -224,13 +227,13 @@
                                                             <!-- Contact Number -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="contact_number" class="form-label">Driver's Contact Number</label>
-                                                                <input name="contact_number" maxlength="10"  required type="text" class="form-control" id="contact_number"
+                                                                <input value="{{i.contact_number}}" name="contact_number" maxlength="10"  required type="text" class="form-control" id="contact_number"
                                                                     placeholder="Enter driver's contact number">
                                                             </div>
                                                             <!-- Vehicle Status -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="cost_per_km" class="form-label">Cost</label>
-                                                                <input name="cost_per_km" maxlength="6"  required type="text" class="form-control" name="cost_per_km" id="cost_per_km"
+                                                                <input value="{{i.cost_per_km}}" name="cost_per_km" maxlength="6"  required type="text" class="form-control" name="cost_per_km" id="cost_per_km"
                                                                     placeholder="Enter cost">
                                                             </div>
                                                         </div>
@@ -246,8 +249,22 @@
                 
                 
                 
-                                        </div>
+                                </div>
                                
+
+
+
+
+
+
+
+
+
+
+
+                                {% endfor %}
+
+                                
                                
                                
                                

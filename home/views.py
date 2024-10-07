@@ -62,8 +62,6 @@ def payments(request):
 def vehicles(request):
     if request.method == 'POST':
 
-
-
         print("vehicles ",request.POST)
         truck_name=request.POST.get('truck_name')
         driver_name=request.POST.get('driver_name')
@@ -92,6 +90,28 @@ def vehicles(request):
             'vehicles':vehicles,
         }
         return render(request, 'home/vehicles.html',context)
+
+
+
+def edit_vehicle(request,pk):
+    if request.method == 'POST':
+        vechcle=request.POST.get('truck_id')
+        vv=Truck.objects.get(id=vechcle)
+
+        print("vehicles ",request.POST)
+        vv.truck_name=request.POST.get('truck_name')
+        vv.driver_name=request.POST.get('driver_name')
+        vv.truck_number=request.POST.get('truck_number')
+        vv.capacity=request.POST.get('capacity_volume')
+        vv.cost_per_km=request.POST.get('cost_per_km')
+        vv.contact_number=request.POST.get('contact_number')
+        vv.save()
+        return redirect('vehicles')
+
+   
+
+
+
 
 
 
