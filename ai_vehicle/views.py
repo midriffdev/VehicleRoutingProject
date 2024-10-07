@@ -94,17 +94,22 @@ def getroute(request):
     
     iroutes = []
     for iroute in data:
-        iroutes.append({
-        'truck'     : iroute['vehicleLabel'],
-        'orders'    : [ Order.objects.get(id=i['shipmentLabel'].split('_')[1]) for i in iroute.get('visits', [])]
-        })
-        # iroutes['start']   = iroute.get('vehicleStartTime', None) 
+        temp = {
+        'truck'     : Truck.objects.get(truck_number=iroute['vehicleLabel'].split('--')[1]),
+        'order'     : [ Order.objects.get(id=i['shipmentLabel'].split('_')[1]) for i in iroute.get('visits', [])],
+        'fstop'     : None,
+        'lstop'     : None,
+        'stime'     :iroute.get('vehicleStartTime', None) 
+        }
+        if iroute.get('visits', []): 
+            i = Order.objects.get(id=iroute.get('visits', [])[-1]['shipmentLabel'].split('_')[1])
+            temp['fstop'], temp['lstop'] = i.from_location, i.destination
+            
+        iroutes.append(temp)
 
     print("iroute______________s", iroutes)
     # return HttpResponse(json_output['routes'])
-    context={
-        'iroutes':iroutes
-    }
+    context={'iroutes':iroutes}
     return render(request, 'home/ai-routes.html',context)
 # model={
 #     # "model": {
