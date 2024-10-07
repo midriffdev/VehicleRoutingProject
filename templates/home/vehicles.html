@@ -151,9 +151,24 @@
                                             <button type="button" class="btn btn-secondary btn-sm btn-rounded  mr-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal">
                                                 Edit
                                             </button>
-                                            <button type="button" class="btn btn-danger btn-sm btn-rounded" >
+
+                                            <form action="{% url 'delete_vehicle' i.id %}" method="post" enctype="multipart/form-data"
+                                            class="d-flex align-items-end">
+                                            {% csrf_token %}
+
+                                            <input type="hidden" name="truck_id" value="{{i.id}}">
+
+
+                                            <button  type="submit" class="btn btn-danger btn-sm btn-rounded" >
+
+
                                                 Delete
                                             </button>
+
+                                        </form>
+
+
+
                                         </div>
                                     </td>
                                     
