@@ -3,6 +3,7 @@ from django.shortcuts import render,redirect
 import csv
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 from .models import *  # Ensure you import your Order model
 
 
@@ -38,6 +39,7 @@ from django.conf import settings
 
 
 
+@csrf_exempt
 def signuppage(request):
     if request.method == 'POST':
         print("welcome ji")
@@ -45,6 +47,7 @@ def signuppage(request):
 
     return render(request, 'home/orders.html')
 
+@csrf_exempt
 def payments(request):
     if request.method == 'POST':
         print("welcome ji")
@@ -59,6 +62,7 @@ def payments(request):
 
 
 
+@csrf_exempt
 def vehicles(request):
     if request.method == 'POST':
         print("vehicles ",request.POST)
@@ -91,6 +95,7 @@ def vehicles(request):
         return render(request, 'home/vehicles.html',context)
 
 
+@csrf_exempt
 def analyseRoutesAI(request):
     if request.method == 'POST':
         print("welcome ji")
@@ -104,6 +109,7 @@ def analyseRoutesAI(request):
         return render(request, 'home/ai-routes.html',context)
     
 
+@csrf_exempt
 def escalationteam(request):
     if request.method == 'POST':
         print("welcome ji")
@@ -120,6 +126,7 @@ def escalationteam(request):
     
 
 from datetime import timedelta 
+@csrf_exempt
 def customer_single_order(request,pk):
     if request.method == 'POST':
         payment_status=request.POST.get('payment_status')
@@ -144,6 +151,7 @@ def customer_single_order(request,pk):
     
 
 
+@csrf_exempt
 def switchAccounts(request):
     if request.method == 'POST':
         print("welcome ji")
@@ -160,6 +168,7 @@ def switchAccounts(request):
     
 
 
+@csrf_exempt
 def customers(request):
     if request.method == 'POST':
         print("welcome ji")
@@ -182,6 +191,7 @@ def customers(request):
         }
         return render(request, 'home/customers.html',context)
 
+@csrf_exempt
 def single_customer(request,pk):
     if request.method == 'POST':
         print("single_customer request")
@@ -227,7 +237,7 @@ def single_customer(request,pk):
 
 
 
-
+@csrf_exempt
 def single_order(request,pk):
     if request.method == 'POST':
         print("order_status ")
@@ -256,7 +266,7 @@ def single_order(request,pk):
         }
         return render(request, 'home/single_order.html',context)
 
-
+@csrf_exempt
 def upload_orders(request):
     if request.method == 'POST':
         
@@ -297,6 +307,7 @@ def upload_orders(request):
 
 
 
+@csrf_exempt
 def check_orders(orders, s_keyword):
     print(orders, "question >>>>>>>>>>>>>>>>>>>>>>>")
     print(s_keyword, "answer >>>>>>>>>>>>>>>>>>>>>>>")
@@ -316,6 +327,7 @@ def check_orders(orders, s_keyword):
     return response.text.strip()
 
 
+@csrf_exempt
 def search_customers(request):
     if request.method == 'POST':
         print("ENTER ji")
@@ -341,10 +353,12 @@ def search_customers(request):
 
 
 
+@csrf_exempt
 def get_delivered_orders():
     delivered_orders = Order.objects.filter(order_status="delivered")
     return delivered_orders
 
+@csrf_exempt
 def generate_email_content(order):
     url = "https://gemini.api.endpoint/your_endpoint"  # Replace with actual endpoint
     headers = {
