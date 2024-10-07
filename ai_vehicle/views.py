@@ -51,7 +51,7 @@ def getroute(request):
 
 
 
-    reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"), "global_end_time": datetime.datetime.fromisoformat("2024-10-06T06:59:00.000Z")}
+    reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00"), "global_end_time": datetime.datetime.fromisoformat("2024-10-06T06:59:00.00+00:00")}
 
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
@@ -60,8 +60,8 @@ def getroute(request):
         temp = {}
         temp["start_location"] = {"latitude": settings.FROMLATITUDE,"longitude": settings.FROMLONGITUDE}
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
-        temp["start_time_windows"] = [{"start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")}]
-        temp["end_time_windows"] = [{"end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")}]
+        temp["start_time_windows"] = [{"start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00")}]
+        temp["end_time_windows"] = [{"end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")}]
         temp["label"] = f'{i.truck_name}--{i.truck_number}--{i.driver_name}'
         temp["cost_per_kilometer"] = int(i.cost_per_km)
         reqjson["vehicles"].append(temp)    
@@ -72,8 +72,8 @@ def getroute(request):
         temp['deliveries'] = [{
                 "arrival_location": get_lat_long(i.destination),
                 "time_windows": [{
-                    "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-                    "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+                    "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00"),
+                    "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
                 }]
             }]
         temp["load_demands"] = {"weight": {"amount": i.quantity}}
@@ -151,8 +151,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                             }
 #                         ]
 #                     }
@@ -174,8 +174,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                             }
 #                         ]
 #                     }
@@ -197,8 +197,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                             }
 #                         ]
 #                     }
@@ -220,8 +220,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                             }
 #                         ]
 #                     }
@@ -243,8 +243,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                                 "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00"),
+#                                 "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                             }
 #                         ]
 #                     }
@@ -271,12 +271,12 @@ def getroute(request):
 #                 },
 #                 "start_time_windows": [
 #                     {
-#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
+#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00")
 #                     }
 #                 ],
 #                 "end_time_windows": [
 #                     {
-#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                     }
 #                 ],
 #                 "label": "A_Truck",
@@ -294,12 +294,12 @@ def getroute(request):
 #                 },
 #                 "start_time_windows": [
 #                     {
-#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
+#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00")
 #                     }
 #                 ],
 #                 "end_time_windows": [
 #                     {
-#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                     }
 #                 ],
 #                 "label": "B_Truck",
@@ -317,12 +317,12 @@ def getroute(request):
 #                 },
 #                 "start_time_windows": [
 #                     {
-#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
+#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00")
 #                     }
 #                 ],
 #                 "end_time_windows": [
 #                     {
-#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                     }
 #                 ],
 #                 "label": "C_Truck",
@@ -340,20 +340,20 @@ def getroute(request):
 #                 },
 #                 "start_time_windows": [
 #                     {
-#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z")
+#                         "start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00")
 #                     }
 #                 ],
 #                 "end_time_windows": [
 #                     {
-#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.000Z")
+#                         "end_time": datetime.datetime.fromisoformat("2024-10-05T23:00:00.00+00:00")
 #                     }
 #                 ],
 #                 "label": "D_Truck",
 #                 "cost_per_kilometer": 1
 #             },
 #         ],
-#         "global_start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"),
-#         "global_end_time": datetime.datetime.fromisoformat("2024-10-06T06:59:00.000Z")
+#         "global_start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.00+00:00"),
+#         "global_end_time": datetime.datetime.fromisoformat("2024-10-06T06:59:00.00+00:00")
 #     }
 # "populatePolylines": True
 # }
