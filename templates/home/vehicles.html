@@ -148,9 +148,9 @@
                                     </td>
                                     <td>
                                         <div class="d-flex">
-                                            <button type="button" class="btn btn-secondary btn-sm btn-rounded  mr-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal">
+                                            {% comment %} <button type="button" class="btn btn-secondary btn-sm btn-rounded  mr-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal">
                                                 Edit
-                                            </button>
+                                            </button> {% endcomment %}
 
                                             <form action="{% url 'delete_vehicle' i.id %}" method="post" enctype="multipart/form-data"
                                             class="d-flex align-items-end">
