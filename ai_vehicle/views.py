@@ -51,7 +51,7 @@ def getroute(request):
 
 
 
-    reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"), "global_end_time": datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}
+    reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"), "global_end_time": datetime.datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}
 
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
@@ -60,8 +60,8 @@ def getroute(request):
         temp = {}
         temp["start_location"] = {"latitude": settings.FROMLATITUDE,"longitude": settings.FROMLONGITUDE}
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
-        temp["start_time_windows"] = [{"start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
-        temp["end_time_windows"] = [{"end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
+        temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
+        temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
         temp["label"] = f'{i.truck_name}--{i.truck_number}--{i.driver_name}'
         temp["cost_per_kilometer"] = int(i.cost_per_km)
         reqjson["vehicles"].append(temp)    
@@ -72,8 +72,8 @@ def getroute(request):
         temp['deliveries'] = [{
                 "arrival_location": get_lat_long(i.destination),
                 "time_windows": [{
-                    "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
-                    "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+                    "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
+                    "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
                 }]
             }]
         temp["load_demands"] = {"weight": {"amount": i.quantity}}
@@ -151,8 +151,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
-#                                 "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                                 "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
+#                                 "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                             }
 #                         ]
 #                     }
@@ -174,8 +174,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
-#                                 "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                                 "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
+#                                 "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                             }
 #                         ]
 #                     }
@@ -197,8 +197,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
-#                                 "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                                 "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
+#                                 "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                             }
 #                         ]
 #                     }
@@ -220,8 +220,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
-#                                 "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                                 "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
+#                                 "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                             }
 #                         ]
 #                     }
@@ -243,8 +243,8 @@ def getroute(request):
 #                         # "duration": "600s",
 #                         "time_windows": [
 #                             {
-#                                 "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
-#                                 "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                                 "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
+#                                 "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                             }
 #                         ]
 #                     }
@@ -271,12 +271,12 @@ def getroute(request):
 #                 },
 #                 "start_time_windows": [
 #                     {
-#                         "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                         "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                     }
 #                 ],
 #                 "end_time_windows": [
 #                     {
-#                         "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                         "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                     }
 #                 ],
 #                 "label": "A_Truck",
@@ -294,12 +294,12 @@ def getroute(request):
 #                 },
 #                 "start_time_windows": [
 #                     {
-#                         "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                         "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                     }
 #                 ],
 #                 "end_time_windows": [
 #                     {
-#                         "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                         "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                     }
 #                 ],
 #                 "label": "B_Truck",
@@ -317,12 +317,12 @@ def getroute(request):
 #                 },
 #                 "start_time_windows": [
 #                     {
-#                         "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                         "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                     }
 #                 ],
 #                 "end_time_windows": [
 #                     {
-#                         "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                         "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                     }
 #                 ],
 #                 "label": "C_Truck",
@@ -340,20 +340,20 @@ def getroute(request):
 #                 },
 #                 "start_time_windows": [
 #                     {
-#                         "start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                         "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                     }
 #                 ],
 #                 "end_time_windows": [
 #                     {
-#                         "end_time": datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#                         "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #                     }
 #                 ],
 #                 "label": "D_Truck",
 #                 "cost_per_kilometer": 1
 #             },
 #         ],
-#         "global_start_time": datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
-#         "global_end_time": datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+#         "global_start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
+#         "global_end_time": datetime.datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
 #     }
 # "populatePolylines": True
 # }
