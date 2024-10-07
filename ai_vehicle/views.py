@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.conf import settings
 from django.http import HttpResponse
 from huggingface_hub import login
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from google.maps import routeoptimization_v1 as ro
 from geopy.geocoders import Nominatim, GoogleV3
+from google.protobuf.json_format import MessageToDict
 import datetime, requests, json, subprocess
 from home.models import Order, Truck
 
@@ -33,6 +34,16 @@ def get_lat_long(location_name):
 
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
+    # if request.method == 'POST':
+    #     print("welcome ji")
+    #     return redirect('home')  # Redirect to home or any other page
+    
+    
+
+
+
+
+
     reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.fromisoformat("2024-10-05T09:00:00.000Z"), "global_end_time": datetime.datetime.fromisoformat("2024-10-06T06:59:00.000Z")}
 
     # a, b = get_lat_long('una, hp')
@@ -67,16 +78,34 @@ def getroute(request):
 
     project_id="gmprotrial"
     client = ro.RouteOptimizationClient()
-    request = ro.OptimizeToursRequest(
+    grequest = ro.OptimizeToursRequest(
         parent=f'projects/{project_id}',
         model=reqjson,
         # populate_polylines=True
 
     )
-    response = client.optimize_tours(request=request)
-    print("response________", response)
-    return HttpResponse(response)
+    response = client.optimize_tours(request=grequest)
 
+    json_output = MessageToDict(response._pb)
+    print("json_________", json_output['routes'])  
+
+
+    data    = json_output['routes']
+    
+    iroutes = []
+    for iroute in data:
+        iroutes.append({
+        'truck'     : iroute['vehicleLabel'],
+        'orders'    : [ Order.objects.get(id=i['shipmentLabel'].split('_')[1]) for i in iroute.get('visits', [])]
+        })
+        # iroutes['start']   = iroute.get('vehicleStartTime', None) 
+
+    print("iroute______________s", iroutes)
+    # return HttpResponse(json_output['routes'])
+    context={
+        'iroutes':iroutes
+    }
+    return render(request, 'home/ai-routes.html',context)
 # model={
 #     # "model": {
 #         "shipments": [
