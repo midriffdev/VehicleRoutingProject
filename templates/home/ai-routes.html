@@ -2,6 +2,11 @@
 {% load static %}
 {% block content %}
 
+                
+                <!-- <div class="loaderWrapper">
+                    <div class="loader"></div>
+                </div> -->
+iroutes - - {{iroutes}}
                 <div class="container-fluid">
 
                     <!-- start page title -->
@@ -11,11 +16,40 @@
                                 <h4 class="mb-sm-0 font-size-18">Analysed Routes</h4>
 
                                 <div class="page-title-right">
-                                    <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Orders</a></li>
-                                        <li class="breadcrumb-item active">Analyse Route By
-                                            AI</li>
-                                    </ol>
+                                    <button type="button" class="btn btn-primary btn-md waves-effect waves-light"
+                                    data-bs-toggle="modal" data-bs-target=".view-routes-in-map">View Routes In Map
+                                    </button>
+                                </div>
+                                <div class="modal fade view-routes-in-map" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <!-- <div class="modal-header">
+                                                <h5 class="modal-title">Upload Order CSV</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div> -->
+                                            <div class="modal-body">
+                                                <div class="text-center mb-4">
+                                                    <div class="avatar-md mx-auto mb-4">
+                                                        <div class="avatar-title bg-light rounded-circle text-primary h1">
+                                                            <i class="bx bx-info-circle                                                            "></i>
+                                                        </div>
+                                                    </div>
+                
+                                                    <div class="row justify-content-center">
+                                                        <div class="col-xl-10">
+                                                            <h4 class="text-primary">Downloading JSON file !</h4>
+                                                            <p class="text-muted font-size-14 mb-4">Redirecting to Website..</p>
+                
+                                                            <div class="alert alert-warning" role="alert">
+                                                               Please Upload This File For View results
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
                                 </div>
 
                             </div>
@@ -24,196 +58,106 @@
                     <!-- end page title -->
 
                     <div class="row">
-                        <div class="col-xl-12 col-sm-6">
-                            <div class="card mb-3">
-                                <div class="row align-items-center">
-                                    <div class="col-xl-3 border-end">
-                                        <div class="text-start p-4 ">
-                                            <div class="avatar-sm mb-3 mt-1">
-                                                <span
-                                                    class="avatar-title rounded bg-success bg-soft text-success font-size-14">
-                                                    <i class="bx bxs-truck fa-2x"></i>
-                                                </span>
-                                            </div>
-                                            <h5 class="pb-1">Truck Assigned</h5>
-                                            <p class="text-muted mb-2 text-truncate">Truck Number :
-                                                <strong>PB073477</strong>
-                                            </p>
-                                            <p class="text-muted mb-2 text-truncate">Truck Capacity :
-                                                <strong>5000</strong>
-                                            </p>
+                        <div class="col-xl-3">
+                            <div class="text-start p-4 alert alert-primary rounded-lg">
+                                <div class="avatar-sm mb-3 mt-1">
+                                    <span
+                                        class="avatar-title rounded bg-primary bg-soft text-primary font-size-14">
+                                        <i class="bx bxs-truck fa-2x"></i>
+                                    </span>
+                                </div>
+                                <h5 class="pb-1 text-primary font-size-18 ">Truck Assigned</h5>
+                                <p class="text-primary font-size-15 mb-2 text-truncate">Truck Number :
+                                    <strong>PB073477</strong>
+                                </p>
+                                <p class="text-primary font-size-15 mb-2 text-truncate">Truck Capacity :
+                                    <strong>5000</strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-9 routeCard rounded-lg">
+                            <div class="p-4 text-center text-xl-start">
+                                <div class="row pb-3 border-Custom-bottom">
+                                    <p class="text-white font-size-20 mb-2 text-truncate lineDesign">Main Route</p>
+                                    <div class="col-6">
+                                        <div>
+                                            <p class="text-white font-size-15 mb-2 text-truncate yellowColor">Pickup Location</p>
+                                            <h5 class="text-white font-size-14 mb-2 text-truncate">New York</h5>
                                         </div>
                                     </div>
-
-                                    <div class="col-xl-9">
-                                        <div class="p-4 text-center text-xl-start">
-                                            <div class="pb-3 border-bottom ">
-                                                <p class="text-muted mb-2 text-truncate">Orders</p>
-                                                <div class="d-flex flex-wrap">
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12345</h5>
-                                                        Logistics Delivery A
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12346</h5>
-                                                        Supply Run B
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12347</h5>
-                                                        Freight Shipment C
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12348</h5>
-                                                        Warehouse Delivery D
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <div class="row py-4">
-                                                <div class="col-6">
-                                                    <div>
-                                                        <p class="text-muted mb-2 text-truncate">Pickup Location</p>
-                                                        <h5>New York</h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div>
-                                                        <p class="text-muted mb-2 text-truncate">Destination Location
-                                                        </p>
-                                                        <h5>Chicago</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-
+                                    <div class="col-6">
+                                        <div>
+                                            <p class="text-white font-size-15 mb-2 text-truncate yellowColor">Destination Location
+                                            </p>
+                                            <h5 class="text-white font-size-14 mb-2 text-truncate">Chicago</h5>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card mb-3">
-                                <div class="row align-items-center">
-                                    <div class="col-xl-3 border-end">
-                                        <div class="text-start p-4 ">
-                                            <div class="avatar-sm mb-3 mt-1">
-                                                <span
-                                                    class="avatar-title rounded bg-success bg-soft text-success font-size-14">
-                                                    <i class="bx bxs-truck fa-2x"></i>
-                                                </span>
+                                <div class="py-3">
+                                    <p class="text-white font-size-20 mb-2 text-truncate lineDesign">All Orders Location</p>
+                                    <div class="d-flex flex-nowrap pt-4 w-100 overflow-auto scroll-style">
+                                        <div class="routeBox me-3 mb-1">
+                                            <div class="text-center">
+                                                <i class="bx bx-map text-warning font-size-20"></i>
+                                                <p class="text-warning">Zirakpur</p>
                                             </div>
-                                            <h5 class="pb-1">Truck Assigned</h5>
-                                            <p class="text-muted mb-2 text-truncate">Truck Number :
-                                                <strong>PB073477</strong>
-                                            </p>
-                                            <p class="text-muted mb-2 text-truncate">Truck Capacity :
-                                                <strong>5000</strong>
-                                            </p>
+                                            <div class="card shadow-none">
+                                                <div class="card-body">
+                                                    <div class="text-white text-letter-space">
+                                                        <p><span class="yellowColor">Order No</span> <br>12345</p>
+                                                        <p><span class="yellowColor">Order Name</span> <br>Logistics Delivery A</p>
+                                                        <p><span class="yellowColor">Customer Email</span> <br>customer212@gmail.com</p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-xl-9">
-                                        <div class="p-4 text-center text-xl-start">
-                                            <div class="pb-3 border-bottom ">
-                                                <p class="text-muted mb-2 text-truncate">Orders</p>
-                                                <div class="d-flex flex-wrap">
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12345</h5>
-                                                        Logistics Delivery A
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12346</h5>
-                                                        Supply Run B
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12347</h5>
-                                                        Freight Shipment C
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12348</h5>
-                                                        Warehouse Delivery D
-                                                    </div>
-
-                                                </div>
+                                        <div class="routeBox me-3 mb-1">
+                                            <div class="text-center">
+                                                <i class="bx bx-map text-warning font-size-20"></i>
+                                                <p class="text-warning">Zirakpur</p>
                                             </div>
-                                            <div class="row py-4">
-                                                <div class="col-6">
-                                                    <div>
-                                                        <p class="text-muted mb-2 text-truncate">Pickup Location</p>
-                                                        <h5>New York</h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div>
-                                                        <p class="text-muted mb-2 text-truncate">Destination Location
-                                                        </p>
-                                                        <h5>Chicago</h5>
+                                            <div class="card shadow-none">
+                                                <div class="card-body">
+                                                    <div class="text-white text-letter-space">
+                                                        <p><span class="yellowColor">Order No</span> <br>12345</p>
+                                                        <p><span class="yellowColor">Order Name</span> <br>Logistics Delivery A</p>
+                                                        <p><span class="yellowColor">Customer Email</span> <br>customer212@gmail.com</p>
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card mb-3">
-                                <div class="row align-items-center">
-                                    <div class="col-xl-3 border-end">
-                                        <div class="text-start p-4 ">
-                                            <div class="avatar-sm mb-3 mt-1">
-                                                <span
-                                                    class="avatar-title rounded bg-success bg-soft text-success font-size-14">
-                                                    <i class="bx bxs-truck fa-2x"></i>
-                                                </span>
+                                        <div class="routeBox me-3 mb-1">
+                                            <div class="text-center">
+                                                <i class="bx bx-map text-warning font-size-20"></i>
+                                                <p class="text-warning">Zirakpur</p>
                                             </div>
-                                            <h5 class="pb-1">Truck Assigned</h5>
-                                            <p class="text-muted mb-2 text-truncate">Truck Number :
-                                                <strong>PB073477</strong>
-                                            </p>
-                                            <p class="text-muted mb-2 text-truncate">Truck Capacity :
-                                                <strong>5000</strong>
-                                            </p>
+                                            <div class="card shadow-none">
+                                                <div class="card-body">
+                                                    <div class="text-white text-letter-space">
+                                                        <p><span class="yellowColor">Order No</span> <br>12345</p>
+                                                        <p><span class="yellowColor">Order Name</span> <br>Logistics Delivery A</p>
+                                                        <p><span class="yellowColor">Customer Email</span> <br>customer212@gmail.com</p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-xl-9">
-                                        <div class="p-4 text-center text-xl-start">
-                                            <div class="pb-3 border-bottom ">
-                                                <p class="text-muted mb-2 text-truncate">Orders</p>
-                                                <div class="d-flex flex-wrap">
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12345</h5>
-                                                        Logistics Delivery A
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12346</h5>
-                                                        Supply Run B
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12347</h5>
-                                                        Freight Shipment C
-                                                    </div>
-                                                    <div class="alert alert-info me-1 mb-1" role="alert">
-                                                        <h5 class="mb-0 text-info">12348</h5>
-                                                        Warehouse Delivery D
-                                                    </div>
-
-                                                </div>
+                                        <div class="routeBox me-3 mb-1">
+                                            <div class="text-center">
+                                                <i class="bx bx-map text-warning font-size-20"></i>
+                                                <p class="text-warning">Zirakpur</p>
                                             </div>
-                                            <div class="row py-4">
-                                                <div class="col-6">
-                                                    <div>
-                                                        <p class="text-muted mb-2 text-truncate">Pickup Location</p>
-                                                        <h5>New York</h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div>
-                                                        <p class="text-muted mb-2 text-truncate">Destination Location
-                                                        </p>
-                                                        <h5>Chicago</h5>
+                                            <div class="card shadow-none">
+                                                <div class="card-body">
+                                                    <div class="text-white text-letter-space">
+                                                        <p><span class="yellowColor">Order No</span> <br>12345</p>
+                                                        <p><span class="yellowColor">Order Name</span> <br>Logistics Delivery A</p>
+                                                        <p><span class="yellowColor">Customer Email</span> <br>customer212@gmail.com</p>
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
+                                        
                                     </div>
                                 </div>
                             </div>
