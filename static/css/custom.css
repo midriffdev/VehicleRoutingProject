@@ -30,3 +30,75 @@
     justify-content: center;
     border-radius: 50%;
 }
+.routeCard {
+    background-color : #2a3042 !important;
+}
+.routeBox {
+    width: 200px;
+    position: relative;
+    flex: 0 0 250px;
+}
+.routeBox:before {
+    content: "";
+    width: 106%;
+    height:12%;
+    border: 1px dashed #f1b44c;
+    position: absolute;
+    left: 50%;
+    top: -22px;
+    border-bottom: 0;
+    border-right: 0;
+}
+.routeBox:first-child:after{
+    content: "";
+    width: 50%;
+    height: 8%;
+    border: 1px dashed #f1b44c;
+    position: absolute;
+    left: 0;
+    top: -22px;
+    border-bottom: 0;
+    border-right: 0;
+    border-left: 0;
+}
+.routeBox:last-child:before {
+    border-top: none;
+}
+.routeBox  .card {
+    border: 1px solid #f1b44c!important;
+    background: transparent;
+}
+
+
+
+
+/* width */
+.scroll-style::-webkit-scrollbar {
+    width: 5px;
+    height: 14px;
+    border-radius: 50px;
+}
+
+/* Track */
+.scroll-style::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 50px;
+}
+
+/* Handle */
+.scroll-style::-webkit-scrollbar-thumb {
+    background: #f1b44c!important;
+    border-radius: 50px;
+}
+
+/* Handle on hover */
+.scroll-style::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.text-letter-space p{
+    letter-spacing: 1px;
+}
+.yellowColor {
+    color : #f1b44c!important;
+}
