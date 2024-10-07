@@ -65,6 +65,9 @@ def payments(request):
 @csrf_exempt
 def vehicles(request):
     if request.method == 'POST':
+
+
+
         print("vehicles ",request.POST)
         truck_name=request.POST.get('truck_name')
         driver_name=request.POST.get('driver_name')
@@ -93,6 +96,21 @@ def vehicles(request):
             'vehicles':vehicles,
         }
         return render(request, 'home/vehicles.html',context)
+
+
+
+
+@csrf_exempt
+def delete_vehicle(request,pk):
+    print(request.POST,"defres")
+    if request.method == 'POST':
+        vechcle=request.POST.get('truck_id')
+        vv=Truck.objects.filter(id=vechcle).delete()
+      
+        # Redirect to home or any other page
+        return redirect('vehicles')
+    
+   
 
 
 @csrf_exempt

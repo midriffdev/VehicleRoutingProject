@@ -21,6 +21,7 @@ urlpatterns = [
 
 
     
+    path('delete_vehicle/<int:pk>', views.delete_vehicle, name='delete_vehicle'),
     path('single_customer/<int:pk>', views.single_customer, name='single_customer'),
     path('single_order/<int:pk>', views.single_order, name='single_order'),
 
