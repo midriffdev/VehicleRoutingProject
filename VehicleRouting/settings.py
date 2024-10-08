@@ -25,6 +25,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure--=@3f!($xix34^8+nv_5^cc33p95g*#k@m%2#i4#507rx-5c_)'
 
+
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -168,3 +171,6 @@ CRONJOBS = [
    ('0 0 * * *', 'home.cron.tomorrow_due_emails'),   # every morning at 12:00 AM
 
 ]
+
+if int(env("IS_SERVER")): 
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/home/root/.config/gcloud/application_default_credentials.json" # for linux
