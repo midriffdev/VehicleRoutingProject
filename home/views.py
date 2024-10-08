@@ -1,28 +1,20 @@
 from django.shortcuts import render,redirect
-
 import csv
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from .models import *  # Ensure you import your Order model
 
-
 from django.urls import reverse
 from datetime import timedelta
-
 
 from django.core.mail import send_mail, EmailMessage  #for email send
 from django.template.loader import render_to_string #for email send
 from django.utils.html import strip_tags #for email send
 from django.conf import settings #for email send host name
 
-
-
 import os
-
-
 import google.generativeai as genai
-
 
 genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI"
 )
@@ -32,10 +24,8 @@ from decouple import config
 
 GEMINI_API_KEY="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI"
 
-
 import requests
 from django.conf import settings
-
 
 
 
@@ -52,7 +42,6 @@ def payments(request):
     if request.method == 'POST':
         print("welcome ji")
         return redirect('home')  # Redirect to home or any other page
-    
     else:
         orders=Order.objects.filter(order_status="delivered")
         context={
@@ -95,8 +84,6 @@ def vehicles(request):
         }
         return render(request, 'home/vehicles.html',context)
 
-
-
 def edit_vehicle(request,pk):
     if request.method == 'POST':
         vechcle=request.POST.get('truck_id')
@@ -113,13 +100,6 @@ def edit_vehicle(request,pk):
         return redirect('vehicles')
 
    
-
-
-
-
-
-
-
 @csrf_exempt
 def delete_vehicle(request,pk):
     print(request.POST,"defres")
@@ -218,10 +198,6 @@ def customers(request):
         }
         return render(request, 'home/customers.html',context)
 
-
-       
-        
-    
     else:
         orders=Order.objects.all()
         context={
@@ -274,28 +250,103 @@ def single_customer(request,pk):
         return render(request, 'home/single_customer.html',context)
 
 
+from django.utils import timezone
+
+
 
 @csrf_exempt
 def single_order(request,pk):
     if request.method == 'POST':
-        print("order_status ")
-        order_status=request.POST.get('order_status')
-        order=Order.objects.get(id=pk)
-        order.order_status=order_status
-        order.due_payment_date = order.created_at + timedelta(days=2)
-        order.payment_status = "due"
-        order.send_email_count=1
-        order.save()
 
-        content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {order.due_payment_date}, or earlier.Thank you for choosing us!"
+        if 'send_reminder' in request.POST:
+            print("order_status ")
+            send_reminder=request.POST.get('send_reminder')
 
-        html_message = render_to_string('home/orderemail.html', {'user': order.email,'content':content})
-        try: send_mail('Order delivered to you successfully.', strip_tags(html_message), settings.EMAIL_HOST_USER, [order.email,], html_message=html_message)
-        except Exception as e: print("\n\n______________________unable to send mail", e)
+            if send_reminder == 'due_reminder':
 
-        Notifications.objects.create(content=f"Your order has been successfully delivered. Kindly complete your payment by {order.due_payment_date}, or earlier.", title='Order delivered', receiver=order,count=1)
+                order=Order.objects.get(id=pk)
+                
+                content=f"Your payment for Order {order.product_name} is due today. Please settle it by the end of the day to avoid any interruptions in service. Thank you!"
 
-        return redirect(reverse('single_order', kwargs={'pk': pk}))
+                html_message = render_to_string('home/orderemail.html', {'user': order.email,'content':content})
+                try: send_mail('Payment Due Today for Your Order', strip_tags(html_message), settings.EMAIL_HOST_USER, [order.email,], html_message=html_message)
+                except Exception as e: print("\n\n______________________unable to send mail", e)
+
+                Notifications.objects.create(
+                    content=f"Your payment for Order {order.product_name} is due today. Please settle it by the end of the day to avoid any interruptions in service. Thank you!",
+                    title=f'Payment Due Today for Your Order {order.product_name}',
+                    count=2,
+                    receiver=order
+                )
+
+                order.payment_status = "past_due"
+                order.send_email_count=2
+                order.due_reminder_sent_date = timezone.now()
+                order.save()
+
+                return redirect(reverse('single_order', kwargs={'pk': pk}))
+            
+            if send_reminder == 'past_due_reminder':
+
+                i=Order.objects.get(id=pk)
+                
+                content=f"Your payment for Order {i.product_name} is overdue; please settle it as soon as possible to avoid service interruptions. Thank you!"
+
+                html_message = render_to_string('home/orderemail.html', {'user': i.email,'content':content})
+                try: send_mail(f'Urgent: Payment Pending for Your Order {i.product_name}.', strip_tags(html_message), settings.EMAIL_HOST_USER, [i.email,], html_message=html_message)
+                except Exception as e: print("\n\n______________________unable to send mail", e)
+
+                Notifications.objects.create(content=f"Your payment for Order {i.product_name} is overdue; please settle it as soon as possible to avoid service interruptions. Thank you!", title=f'Payment Due for Your Order {i.product_name}.', receiver=i, count=3)
+
+                i.payment_status="past_due"
+                i.send_email_count=3
+                i.past_due_reminder_sent_date = timezone.now()
+                i.save()
+
+                return redirect(reverse('single_order', kwargs={'pk': pk}))
+            
+            if send_reminder == 'last_reminder':
+
+                i=Order.objects.get(id=pk)
+                
+                content=f"Dear Customer, your payment for Order {i.product_name} has been pending for more than 5 days. Please settle it immediately to avoid escalation to our collections department. We value your prompt action in this matter. Thank you!"
+                html_message = render_to_string('home/orderemail.html', {'user': i.email,'content':content})
+                try: send_mail('Urgent: Payment Pending for Your Order.', strip_tags(html_message), settings.EMAIL_HOST_USER, [i.email,], html_message=html_message)
+                except Exception as e: print("\n\n______________________unable to send mail", e)
+
+                Notifications.objects.create(
+                    content=f"Dear Customer, your payment for Order {i.product_name} has been pending for more than 5 days. Please settle it immediately to avoid escalation to our collections department. We value your prompt action in this matter. Thank you!",
+                    title=f"Urgent: Payment Pending for Your Order {i.product_name}",
+                    count=4,
+                    receiver=i
+                )
+                # Optionally, you can escalate the order's payment status
+                i.send_email_count=4
+                i.payment_status = "escalation_pending"
+                i.final_reminder_sent_date = timezone.now()
+                i.save()
+                return redirect(reverse('single_order', kwargs={'pk': pk}))
+            
+        else:
+            print("order_status ")
+            order_status=request.POST.get('order_status')
+            order=Order.objects.get(id=pk)
+            order.order_status=order_status
+            order.due_payment_date = order.created_at + timedelta(days=2)
+            order.payment_status = "due"
+            order.send_email_count=1
+            order.delivered_date = timezone.now()
+            order.save()
+
+            content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {order.due_payment_date}, or earlier.Thank you for choosing us!"
+
+            html_message = render_to_string('home/orderemail.html', {'user': order.email,'content':content})
+            try: send_mail('Order delivered to you successfully.', strip_tags(html_message), settings.EMAIL_HOST_USER, [order.email,], html_message=html_message)
+            except Exception as e: print("\n\n______________________unable to send mail", e)
+
+            Notifications.objects.create(content=f"Your order has been successfully delivered. Kindly complete your payment by {order.due_payment_date}, or earlier.", title='Order delivered', receiver=order,count=1)
+
+            return redirect(reverse('single_order', kwargs={'pk': pk}))
     
     else:
         order=Order.objects.get(id=pk)
