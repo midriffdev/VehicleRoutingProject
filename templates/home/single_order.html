@@ -29,6 +29,12 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <th>Product id</th>
+                                    <td>#13A{{ order.id|title }}</td>
+                                </tr>
+
+                                
+                                <tr>
                                     <th>Name</th>
                                     <td>{{ order.cname|title }}</td>
                                 </tr>
@@ -92,12 +98,11 @@
     
                             
                                         <div class="me-3"> 
-                                            <h5 class="font-size-18 fw-normal">{{order.delivered_date}} 
-    
+                                           
+                                            <h5 class="font-size-18 fw-normal"> {% if order.delivered_date %}{{order.delivered_date}} {% endif %}
                                                     <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i>
-                                              
-                                            
                                             </h5>
+                                            
                                         </div>
                                         <div class="media-body d-flex align-items-center">
                                             <div class="me-3">
@@ -115,10 +120,11 @@
                                                  disabled
                                                  
                                                  {% endif %}
+                                                  class="btn btn-success btn-sm"
 
                                                  >
                                                     {% if order.order_status == 'pending' %}
-                                                    class="btn btn-success btn-sm"
+                                                   
                                                     Mark as delivered
                                                         
                                                     {% else %}
@@ -134,36 +140,47 @@
                                     <div class="event-timeline-dot">
                                         {% if order.send_email_count  > 1 %}
                                         <i class="bx bxs-check-circle fa-2x text-success"></i>
-                                       
-                                        
                                     {% else %}
                                     <i class="bx bx-right-arrow-circle fa-2x text-secondary"></i>
-                                       
                                     {% endif %}
                                     </div>
+
+
+                                    
                                     <div class="media">
                                         <div class="me-3">
                                             <h5 class="font-size-18 fw-normal">
-
-
-                                                {% comment %} {{order.due_payment_date}}  {% endcomment %}
-                                                
+                                                {% if order.due_reminder_sent_date %} {{order.due_reminder_sent_date}}  {% endif %}
                                                 <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
                                         </div>
                                         <div class="media-body d-flex align-items-center">
                                             <div  class="me-3">
                                                 <span class="font-weight-semibold font-size-16">Due Reminder</span>
                                             </div>
+
+
                                             <form method="post" action="{% url 'single_order' order.id %}">
                                                 {% csrf_token %}
+
                                                 <input type="hidden" name="send_reminder" value="due_reminder" />
-                                                <button type="submit" class="btn btn-success btn-sm" {% if order.order_status == 'delivered' %}disabled{% endif %}>
-                                                    {% if order.order_status == 'delivered' %}
-                                                        Delivered
+
+                                                {% if order.send_email_count == 1 %} 
+                                                        <button type="submit" class="btn btn-success btn-sm" class="btn btn-secondary btn-sm"> Send Reminder</button>
+                                                {% else%}
+                                                    {% if order.send_email_count  > 1 %}
+                                                            <button type="button" disabled class="btn btn-success btn-sm" >
+                                                                Done
+                                                            </button>
                                                     {% else %}
-                                                    Send Reminder
+                                                            <button type="button" disabled class="btn btn-secondary btn-sm" >
+                                                                Pending
+                                                            </button>
                                                     {% endif %}
-                                                </button>
+                                                {% endif %}
+
+
+
+
                                             </form>
                                         </div>
                                     </div>
@@ -172,15 +189,16 @@
                                     <div class="event-timeline-dot">
                                         {% if order.send_email_count > 2 %}
                                         <i class="bx bxs-check-circle fa-2x text-success"></i>
-                                       
                                     {% else %}
                                     <i class="bx bx-right-arrow-circle fa-2x text-secondary"></i>
-                                        
                                     {% endif %}
                                     </div>
                                     <div class="media">
                                         <div class="me-3">
-                                            <h5 class="font-size-18 fw-normal">{{order.past_due_payment}} <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
+                                            <h5 class="font-size-18 fw-normal">
+                                                {% if order.past_due_payment %} {{order.past_due_payment}}  {% endif %}
+
+                                                <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
                                         </div>
                                         <div class="media-body d-flex align-items-center">
                                             <div  class="me-3"> 
@@ -189,13 +207,29 @@
                                             <form method="post" action="{% url 'single_order' order.id %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="send_reminder" value="past_due_reminder" />
-                                                <button type="submit" class="btn btn-success btn-sm" {% if order.order_status == 'delivered' %}disabled{% endif %}>
-                                                    {% if order.order_status == 'delivered' %}
-                                                        Delivered
+
+
+
+                                                {% if order.send_email_count == 2 %} 
+                                                        <button type="submit" class="btn btn-success btn-sm" class="btn btn-secondary btn-sm"> Send Reminder</button>
+                                                {% else%}
+                                                    {% if order.send_email_count  > 2 %}
+                                                            <button type="button" disabled class="btn btn-success btn-sm" >
+                                                                Done
+                                                            </button>
                                                     {% else %}
-                                                    Send Reminder
+                                                            <button type="button" disabled class="btn btn-secondary btn-sm" >
+                                                                Pending
+                                                            </button>
                                                     {% endif %}
-                                                </button>
+                                                {% endif %}
+
+
+                                               
+
+
+
+
                                             </form>
                                         </div>
                                     </div>
@@ -213,7 +247,10 @@
                                     </div>
                                     <div class="media">
                                         <div class="me-3">
-                                            <h5 class="font-size-18 fw-normal">{{order.final_due_payment}} <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
+                                            <h5 class="font-size-18 fw-normal">
+
+                                                {% if order.final_due_payment %} {{order.final_due_payment}}  {% endif %}
+                                                <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
                                         </div>
                                         <div class="media-body d-flex align-items-center">
                                             <div  class="me-3">
@@ -222,13 +259,31 @@
                                             <form method="post" action="{% url 'single_order' order.id %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="send_reminder" value="last_reminder" />
-                                                <button type="submit" class="btn btn-success btn-sm" {% if order.order_status == 'delivered' %}disabled{% endif %}>
-                                                    {% if order.order_status == 'delivered' %}
-                                                        Delivered
+                                                {% comment %} <button type="submit" class="btn btn-success btn-sm" {% if order.order_status == 'delivered' %}disabled{% endif %}>
+                                                    {% if order.final_reminder_sent_date %}
+                                                    Send Reminder
+                                                {% else %}
+                                                    Done
+                                                {% endif %}
+                                                </button> {% endcomment %}
+
+
+                                                {% if order.send_email_count == 3 %} 
+                                                        <button type="submit" class="btn btn-success btn-sm" class="btn btn-secondary btn-sm"> Send Reminder</button>
+                                                {% else%}
+                                                    {% if order.send_email_count  > 3 %}
+                                                            <button type="button" disabled class="btn btn-success btn-sm" >
+                                                                Done
+                                                            </button>
                                                     {% else %}
-                                                        Send Reminder
+                                                            <button type="button" disabled class="btn btn-secondary btn-sm" >
+                                                                Pending
+                                                            </button>
                                                     {% endif %}
-                                                </button>
+                                                {% endif %}
+
+
+
                                             </form>
                                         </div>
                                     </div>
