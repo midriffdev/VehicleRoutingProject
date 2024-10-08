@@ -62,7 +62,8 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Order No.</th>
-                                    <th>Customer Email</th>
+                                    {% comment %} <th>Customer Name</th> {% endcomment %}
+                                    <th>Customer</th>
                                     <th>Order Name</th>
                                  
                                     <th>Quantity</th>
@@ -77,7 +78,8 @@
                                 {% for i in orders %}
                                 <tr>
                                     <td>{{i.id}}</td>
-                                    <td class="text-primary fw-medium">{{ i.email }}</td>
+                                    {% comment %} <td class="text-primary fw-medium"></td> {% endcomment %}
+                                    <td class="text-primary fw-medium">{{ i.cname|title }}<br>({{ i.email }})</td>
 
                                     <td>{{i.product_name}}</td>
                                   

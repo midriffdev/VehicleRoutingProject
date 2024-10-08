@@ -35,7 +35,7 @@
                                     <tr>
                                         <th>Order No.</th>
                                         <th>Order Name</th>
-                                        <th>Customer Email</th>
+                                        <th>Customer</th>
                                         <th>Quantity</th>
                                         <th>Order Routes</th>
                                         <th>Order Status</th>
@@ -49,7 +49,7 @@
                                     <tr>
                                         <td>{{i.id}}</td>
                                         <td>{{i.product_name}}</td>
-                                        <td class="text-primary fw-medium">{{i.email}}</td>
+                                        <td class="text-primary fw-medium">{{i.cname|title}}<br>({{i.email}})</td>
                                         <td>{{i.quantity}}</td>
                                         <td>{{i.from_location}} - {{i.destination}}</td>
                                         <td >{{i.order_status}}</td>

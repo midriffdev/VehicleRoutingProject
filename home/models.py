@@ -38,6 +38,7 @@ class Order(models.Model):
     ]
 
     email = models.EmailField()
+    cname = models.CharField(max_length=75)
     product_name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField(default=0)
     from_location = models.CharField(max_length=255)

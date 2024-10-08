@@ -47,11 +47,9 @@
                     <tr>
                         <td>{{i.id}}</td>
                         <td>{{i.product_name}}</td>
-                        <td>{{i.email}}</td>
+                        <td>{{i.cname|title}}<br>({{i.email}})</td>
                         <td>{{i.created_at}}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm">view</button>
-                        </td>
+                        <td><button class="btn btn-danger btn-sm">view</button></td>
                     </tr>
                     {% endfor %}
                   

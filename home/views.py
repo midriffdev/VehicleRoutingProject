@@ -1,42 +1,20 @@
-from django.shortcuts import render,redirect
-
-import csv
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from .models import *  # Ensure you import your Order model
-
-
 from django.urls import reverse
 from datetime import timedelta
-
-
 from django.core.mail import send_mail, EmailMessage  #for email send
 from django.template.loader import render_to_string #for email send
 from django.utils.html import strip_tags #for email send
 from django.conf import settings #for email send host name
-
-
-
-import os
-
-
-import google.generativeai as genai
-
-
-genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI"
-)
-
-
 from decouple import config
-
-GEMINI_API_KEY="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI"
-
-
-import requests
 from django.conf import settings
+import google.generativeai as genai
+from .models import *  # Ensure you import your Order model
+import requests, os, csv
 
-
+genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI")
+GEMINI_API_KEY="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI"
 
 
 @csrf_exempt
@@ -59,8 +37,6 @@ def payments(request):
             'orders':orders,
         }
         return render(request, 'home/payments.html',context)
-
-
 
 @csrf_exempt
 def vehicles(request):
@@ -95,8 +71,6 @@ def vehicles(request):
         }
         return render(request, 'home/vehicles.html',context)
 
-
-
 @csrf_exempt
 def edit_vehicle(request,pk):
     if request.method == 'POST':
@@ -113,14 +87,6 @@ def edit_vehicle(request,pk):
         vv.save()
         return redirect('vehicles')
 
-   
-
-
-
-
-
-
-
 @csrf_exempt
 def delete_vehicle(request,pk):
     print(request.POST,"defres")
@@ -130,9 +96,6 @@ def delete_vehicle(request,pk):
       
         # Redirect to home or any other page
         return redirect('vehicles')
-    
-   
-
 
 @csrf_exempt
 def analyseRoutesAI(request):
@@ -147,7 +110,6 @@ def analyseRoutesAI(request):
         }
         return render(request, 'home/ai-routes.html',context)
     
-
 @csrf_exempt
 def escalationteam(request):
     if request.method == 'POST':
@@ -163,8 +125,6 @@ def escalationteam(request):
         }
         return render(request, 'home/escalation-team.html',context)
     
-
-from datetime import timedelta 
 @csrf_exempt
 def customer_single_order(request,pk):
     if request.method == 'POST':
@@ -188,8 +148,6 @@ def customer_single_order(request,pk):
         }
         return render(request, 'home/single-order-team.html',context)
     
-
-
 @csrf_exempt
 def switchAccounts(request):
     if request.method == 'POST':
@@ -202,10 +160,6 @@ def switchAccounts(request):
             'orders':orders,
         }
         return render(request, 'home/switch-accounts.html',context)
-
-
-    
-
 
 @csrf_exempt
 def customers(request):
@@ -241,7 +195,7 @@ def single_customer(request,pk):
         order.order_status=order.payment_status
         order.save()
 
-        html_message = render_to_string('home/orderemail.html', {'user': order.email})
+        html_message = render_to_string('home/orderemail.html', {'user': order.cname})
         try:
             send_mail(
                 'Your payment was successful!',
@@ -274,8 +228,6 @@ def single_customer(request,pk):
         }
         return render(request, 'home/single_customer.html',context)
 
-
-
 @csrf_exempt
 def single_order(request,pk):
     if request.method == 'POST':
@@ -290,7 +242,7 @@ def single_order(request,pk):
 
         content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {order.due_payment_date}, or earlier.Thank you for choosing us!"
 
-        html_message = render_to_string('home/orderemail.html', {'user': order.email,'content':content})
+        html_message = render_to_string('home/orderemail.html', {'user': order.cname,'content':content})
         try: send_mail('Order delivered to you successfully.', strip_tags(html_message), settings.EMAIL_HOST_USER, [order.email,], html_message=html_message)
         except Exception as e: print("\n\n______________________unable to send mail", e)
 
@@ -316,12 +268,13 @@ def upload_orders(request):
 
             for row in csv_reader:
                 print(row, "row....................")  
-                email = row[0]  
-                product_name = row[1]  
-                quantity = int(row[2]) 
-                from_location = row[3]  
-                destination = row[4]  
-                payment_amount = float(row[5]) 
+                cname = row[0]  
+                email = row[1]  
+                product_name = row[2]  
+                quantity = int(row[3]) 
+                from_location = row[4]  
+                destination = row[5]  
+                payment_amount = float(row[6]) 
 
                 order = Order.objects.create(
                     product_name=product_name,
@@ -329,6 +282,7 @@ def upload_orders(request):
                     destination=destination,
                     from_location=from_location,
                     email=email,
+                    cname=cname,
                     payment_amount=payment_amount,
                     order_status='pending',  
                 )
@@ -341,10 +295,6 @@ def upload_orders(request):
             'orders':orders,
         }
         return render(request, 'home/orders.html',context) 
-
-
-
-
 
 @csrf_exempt
 def check_orders(orders, s_keyword):
@@ -364,7 +314,6 @@ def check_orders(orders, s_keyword):
 
     print(response.text, "response............................................")
     return response.text.strip()
-
 
 @csrf_exempt
 def search_customers(request):
@@ -389,8 +338,6 @@ def search_customers(request):
             'orders':orders,
         }
         return render(request, 'home/payments.html',context)
-
-
 
 @csrf_exempt
 def get_delivered_orders():
