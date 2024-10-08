@@ -1,9 +1,6 @@
 from django.shortcuts import render,redirect
-import csv
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from .models import *  # Ensure you import your Order model
 
 from django.urls import reverse
 from datetime import timedelta
@@ -11,7 +8,6 @@ from django.utils import timezone
 from django.core.mail import send_mail, EmailMessage  #for email send
 from django.template.loader import render_to_string #for email send
 from django.utils.html import strip_tags #for email send
-from django.conf import settings #for email send host name
 from decouple import config
 from django.conf import settings
 import google.generativeai as genai
@@ -98,7 +94,6 @@ def delete_vehicle(request,pk):
         vv=Truck.objects.filter(id=vechcle).delete()
         return redirect('vehicles')
     
-   
 @csrf_exempt
 def analyseRoutesAI(request):
     if request.method == 'POST':
@@ -226,10 +221,6 @@ def single_customer(request,pk):
         }
         return render(request, 'home/single_customer.html',context)
 
-
-
-
-
 @csrf_exempt
 def single_order(request,pk):
     if request.method == 'POST':
@@ -334,10 +325,6 @@ def single_order(request,pk):
         }
         return render(request, 'home/single_order.html',context)
 
-
-
-
-
 @csrf_exempt
 def upload_orders(request):
     if request.method == 'POST':
@@ -376,10 +363,6 @@ def upload_orders(request):
             'orders':orders,
         }
         return render(request, 'home/orders.html',context) 
-
-
-from django.contrib import messages
-
 
 def delete_all_orders(request):
     if request.method == 'POST':
