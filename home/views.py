@@ -314,13 +314,16 @@ def single_order(request,pk):
             order.delivered_date = timezone.now()
             order.save()
 
-            content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {order.due_payment_date}, or earlier.Thank you for choosing us!"
+
+            due_date_formatted = order.due_payment_date.strftime('%Y-%m-%d')
+
+            content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {due_date_formatted}, or earlier.Thank you for choosing us!"
 
             html_message = render_to_string('home/orderemail.html', {'user': order.cname,'content':content})
             try: send_mail('Order delivered to you successfully.', strip_tags(html_message), settings.EMAIL_HOST_USER, [order.email,], html_message=html_message)
             except Exception as e: print("\n\n______________________unable to send mail", e)
 
-            Notifications.objects.create(content=f"Your order has been successfully delivered. Kindly complete your payment by {order.due_payment_date}, or earlier.", title='Order delivered', receiver=order,count=1)
+            Notifications.objects.create(content=f"Your order has been successfully delivered. Kindly complete your payment by <strong>{due_date_formatted}</strong>, or earlier.", title='Order delivered', receiver=order,count=1)
 
             return redirect(reverse('single_order', kwargs={'pk': pk}))
     
