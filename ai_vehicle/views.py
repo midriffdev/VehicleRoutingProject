@@ -80,7 +80,7 @@ def getroute(request):
         temp["label"] = f'{i.destination}_{i.id}'
         reqjson["shipments"].append(temp) 
 
-    print("reqjson______", reqjson)
+    # print("reqjson______", reqjson)
 
 
     newreqjson = reqjson
@@ -100,8 +100,6 @@ def getroute(request):
         del i['deliveries'][0]['time_windows'][0]['start_time']
         del i['deliveries'][0]['time_windows'][0]['end_time']
 
-    print("ooops", reqjson)
-    print("ooops",  newreqjson)
 
     json_file = ContentFile(json.dumps({"model": newreqjson, "populatePolylines": True}).encode('utf-8'), name='request.json')
     gen_route = GenRoutes.objects.create(ijson=json_file)
@@ -120,23 +118,26 @@ def getroute(request):
     dict_output = MessageToDict(response._pb)
 
     iroutes = []
+    obtained_orders = []
     for data in dict_output['routes']:
         temp = {
         'truck'     : Truck.objects.get(truck_number=data['vehicleLabel'].split('--')[1]),
         'order'     : [ Order.objects.get(id=i['shipmentLabel'].split('_')[1]) for i in data.get('visits', [])],
         'fstop'     : None,
         'lstop'     : None,
-        'stime'     :data.get('vehicleStartTime', None) 
+        'stime'     : data.get('vehicleStartTime', None) 
         }
+        obtained_orders.extend([i.id for i in temp['order']])
         if data.get('visits', []): 
             i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('_')[1])
             temp['fstop'], temp['lstop'] = i.from_location, i.destination
             
         iroutes.append(temp)
+    pendingorders = Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)
 
-    print("iroute______________s", iroutes)
+    print("iroute______________s", iroutes, obtained_orders, pendingorders)
     # return HttpResponse(json_output['routes'])
-    context={'iroutes':iroutes, 'gen_route_id' : gen_route.id}
+    context={'iroutes':iroutes, 'gen_route_id':gen_route.id, 'pendingorders':pendingorders}
     return render(request, 'home/ai-routes.html',context)
 # model={
 #     # "model": {
@@ -626,9 +627,9 @@ def getroute(request):
 #     print("timed______________", datetime.datetime.now() - a)
 #     return HttpResponse(response)
 
-def transform(request):
-    # Load the model and tokenizer
-    model_name = "gemma-model-name"  # Replace with the actual model name from Hugging Face
-    model = AutoModelForCausalLM.from_pretrained(model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    return HttpResponse('Done')
+# def transform(request):
+#     # Load the model and tokenizer
+#     model_name = "gemma-model-name"  # Replace with the actual model name from Hugging Face
+#     model = AutoModelForCausalLM.from_pretrained(model_name)
+#     tokenizer = AutoTokenizer.from_pretrained(model_name)
+#     return HttpResponse('Done')

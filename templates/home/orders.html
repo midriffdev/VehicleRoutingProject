@@ -83,7 +83,7 @@
                                 <form action="{% url 'upload_orders' %}" method="post" enctype="multipart/form-data" class="dropzone" id="myDropzone">
                                     {% csrf_token %}
                                     <div class="fallback">
-                                        <input name="file" type="file" accept="csv">
+                                        <input name="file" type="file" accept="csv" required>
                                     </div>
                                     <div class="dz-message needsclick">
                                         <div class="mb-3">
@@ -119,7 +119,7 @@
                                     <tr>
                                         <th>Order No.</th>
                                         <th>Order Name</th>
-                                        <th>Customer Email</th>
+                                        <th>Customer</th>
                                         <th>Quantity</th>
                                         <th>Order Routes</th>
                                         <th>Order Status</th>
@@ -133,7 +133,7 @@
                                     <tr>
                                         <td>{{i.id}}</td>
                                         <td>{{i.product_name}}</td>
-                                        <td>{{i.email}}</td>
+                                        <td>{{i.cname|title}}<br>({{i.email}})</td>
                                         <td>{{i.quantity}}</td>
                                         <td>{{i.from_location}} - {{i.destination}}</td>
                                         <td >{{i.order_status}}</td>

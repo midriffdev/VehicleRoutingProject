@@ -118,7 +118,7 @@
                                                         <p><span class="yellowColor">Order No</span> <br>#{{shipment.id}}</p>
                                                         <p><span class="yellowColor">Order Quantity</span> <br>{{shipment.quantity}}</p>
                                                         <p><span class="yellowColor">Order Price</span> <br>{{shipment.payment_amount}}</p>
-                                                        <p><span class="yellowColor">Customer Email</span> <br>{{shipment.email}}</p>
+                                                        <p><span class="yellowColor">Customer</span> <br>{{shipment.cname|title}}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -126,54 +126,7 @@
                                         {%endfor%}
                                         {%else%}
                                             No orders for this truck to assign.
-                                        {%endif%}
-
-                                        {% comment %} <div class="routeBox me-3 mb-1">
-                                            <div class="text-center">
-                                                <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning">Zirakpur</p>
-                                            </div>
-                                            <div class="card shadow-none">
-                                                <div class="card-body">
-                                                    <div class="text-white text-letter-space">
-                                                        <p><span class="yellowColor">Order No</span> <br>12345</p>
-                                                        <p><span class="yellowColor">Order Name</span> <br>Logistics Delivery A</p>
-                                                        <p><span class="yellowColor">Customer Email</span> <br>customer212@gmail.com</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="routeBox me-3 mb-1">
-                                            <div class="text-center">
-                                                <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning">Zirakpur</p>
-                                            </div>
-                                            <div class="card shadow-none">
-                                                <div class="card-body">
-                                                    <div class="text-white text-letter-space">
-                                                        <p><span class="yellowColor">Order No</span> <br>12345</p>
-                                                        <p><span class="yellowColor">Order Name</span> <br>Logistics Delivery A</p>
-                                                        <p><span class="yellowColor">Customer Email</span> <br>customer212@gmail.com</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="routeBox me-3 mb-1">
-                                            <div class="text-center">
-                                                <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning">Zirakpur</p>
-                                            </div>
-                                            <div class="card shadow-none">
-                                                <div class="card-body">
-                                                    <div class="text-white text-letter-space">
-                                                        <p><span class="yellowColor">Order No</span> <br>12345</p>
-                                                        <p><span class="yellowColor">Order Name</span> <br>Logistics Delivery A</p>
-                                                        <p><span class="yellowColor">Customer Email</span> <br>customer212@gmail.com</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> {% endcomment %}
-                                        
+                                        {%endif%}                                        
                                     </div>
                                 </div>
                             </div>
@@ -181,6 +134,59 @@
                     </div>
                     {%endif%}
                     {%endfor%}
+
+                    {%if pendingorders%}<hr>
+                    <div class="row mb-3">
+                        <div class="col-xl-3">
+                            <div class="text-start p-4 alert alert-primary rounded-lg">
+                                <div class="avatar-sm mb-3 mt-1">
+                                    <span
+                                        class="avatar-title rounded bg-primary bg-soft text-primary font-size-14">
+                                        <i class="bx bxs-detail fa-2x"></i>
+                                    </span>
+                                </div>
+                                <h5 class="pb-1 text-primary font-size-18 ">Pending orders</h5>
+                                <p class="text-primary font-size-15 mb-2 text-truncate">Orders could not be sent<br> due to space not available.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-9 routeCard rounded-lg">
+                            <div class="p-4 text-center text-xl-start">
+                                <div class="row pb-3 border-Custom-bottom">
+                                    <div class="col-6">
+                                        <div>
+                                            <p class="text-white font-size-15 mb-2 text-truncate yellowColor">Count</p>
+                                            <h5 class="text-white font-size-14 mb-2 text-truncate">{{pendingorders.count}}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="py-3">
+                                    <p class="text-white font-size-20 mb-2 text-truncate lineDesign">All Orders</p>
+                                    <div class="d-flex flex-nowrap pt-4 w-100 overflow-auto scroll-style">
+                                        {%for shipment in pendingorders%}
+                                        <div class="routeBox me-3 mb-1">
+                                            <div class="text-center">
+                                                <i class="bx bx-map text-warning font-size-20"></i>
+                                                <p class="text-warning">{{shipment.destination}}</p>
+                                            </div>
+                                            <div class="card shadow-none">
+                                                <div class="card-body">
+                                                    <div class="text-white text-letter-space">
+                                                        <p><span class="yellowColor">Order No</span> <br>#{{shipment.id}}</p>
+                                                        <p><span class="yellowColor">Order Quantity</span> <br>{{shipment.quantity}}</p>
+                                                        <p><span class="yellowColor">Order Price</span> <br>{{shipment.payment_amount}}</p>
+                                                        <p><span class="yellowColor">Customer</span> <br>{{shipment.cname|title}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {%endfor%}          
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {%endif%}
 
                 </div> <!-- container-fluid -->
 

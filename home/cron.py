@@ -18,7 +18,7 @@ def tomorrow_due_emails():
     for order in orders:
         content = f"Your payment for Order {order.product_name} is due tomorrow. Please ensure it is settled on time to avoid any interruptions in service. Thank you!"
 
-        html_message = render_to_string('home/orderemail.html', {'user': order.email, 'content': content})
+        html_message = render_to_string('home/orderemail.html', {'user': order.cname, 'content': content})
         
         try:
             send_mail(
@@ -46,7 +46,7 @@ def today_due_emails():
 
         content=f"Your payment for Order {i.product_name} is due today. Please settle it by the end of the day to avoid any interruptions in service. Thank you!"
 
-        html_message = render_to_string('home/orderemail.html', {'user': i.email,'content':content})
+        html_message = render_to_string('home/orderemail.html', {'user': i.cname,'content':content})
         try: send_mail('Payment Due Today for Your Order', strip_tags(html_message), settings.EMAIL_HOST_USER, [i.email,], html_message=html_message)
         except Exception as e: print("\n\n______________________unable to send mail", e)
 
@@ -65,7 +65,7 @@ def overdue_payments_emails(): #  completed first payment
 
         content=f"Your payment for Order {i.product_name} is overdue; please settle it as soon as possible to avoid service interruptions. Thank you!"
 
-        html_message = render_to_string('home/orderemail.html', {'user': i.email,'content':content})
+        html_message = render_to_string('home/orderemail.html', {'user': i.cname,'content':content})
         try: send_mail(f'Urgent: Payment Pending for Your Order {i.product_name}.', strip_tags(html_message), settings.EMAIL_HOST_USER, [i.email,], html_message=html_message)
         except Exception as e: print("\n\n______________________unable to send mail", e)
 
@@ -85,7 +85,7 @@ def final_warning_emails():
     
     for i in orders:
         content=f"Dear Customer, your payment for Order {i.product_name} has been pending for more than 5 days. Please settle it immediately to avoid escalation to our collections department. We value your prompt action in this matter. Thank you!"
-        html_message = render_to_string('home/orderemail.html', {'user': i.email,'content':content})
+        html_message = render_to_string('home/orderemail.html', {'user': i.cname,'content':content})
         try: send_mail('Urgent: Payment Pending for Your Order.', strip_tags(html_message), settings.EMAIL_HOST_USER, [i.email,], html_message=html_message)
         except Exception as e: print("\n\n______________________unable to send mail", e)
 

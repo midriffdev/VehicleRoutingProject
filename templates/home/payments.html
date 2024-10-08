@@ -56,7 +56,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Order No.</th>
-                                <th>Customer Email</th>
+                                <th>Customer</th>
                                 <th>Order Name</th>
 
                                 <th>Quantity</th>
@@ -71,7 +71,7 @@
                             {% for i in orders %}
                             <tr>
                                 <td>{{i.id}}</td>
-                                <td>{{ i.email }}</td>
+                                <td>{{i.cname|title}}<br>({{ i.email }})</td>
 
                                 <td>{{i.product_name}}</td>
 
