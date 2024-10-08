@@ -1,9 +1,6 @@
 from django.shortcuts import render,redirect
-import csv
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from .models import *  # Ensure you import your Order model
 
 from django.urls import reverse
 from datetime import timedelta
@@ -11,7 +8,6 @@ from django.utils import timezone
 from django.core.mail import send_mail, EmailMessage  #for email send
 from django.template.loader import render_to_string #for email send
 from django.utils.html import strip_tags #for email send
-from django.conf import settings #for email send host name
 from decouple import config
 from django.conf import settings
 import google.generativeai as genai
