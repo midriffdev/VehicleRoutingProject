@@ -25,10 +25,8 @@ def get_lat_long(location_name):
     # geolocator = Nominatim(user_agent="geoapiExercises12")
     location = geolocator.geocode(location_name)
     if location:
-
         latitude = location.latitude
         longitude = location.longitude
-        print(f'{latitude}, {longitude}')
         return {"latitude": latitude,"longitude": longitude}
     else:
         print(f"\n\n__________location not found for {location_name}\n\n")
@@ -41,16 +39,7 @@ def download_json(request, route_id):
 
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
-    # if request.method == 'POST':
-    #     print("welcome ji")
-    #     return redirect('home')  # Redirect to home or any other page
     
-    
-
-
-
-
-
     reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"), "global_end_time": datetime.datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}
 
     # a, b = get_lat_long('una, hp')
@@ -70,7 +59,7 @@ def getroute(request):
     for i in Order.objects.filter(order_status='pending'):
         temp = {}
         temp['deliveries'] = [{
-                "arrival_location": get_lat_long(i.destination),
+                "arrival_location": {"latitude": i.lat,"longitude": i.long} if i.lat else get_lat_long(i.destination),
                 "time_windows": [{
                     "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
                     "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")

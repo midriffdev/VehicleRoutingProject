@@ -64,6 +64,8 @@ class Order(models.Model):
     due_payment_date = models.DateField(null=True, blank=True)  # Date by which payment should be made
     past_due_payment_date = models.DateField(null=True, blank=True)  # Date by which payment is late
 
+    lat     = models.CharField(max_length=15, blank=True, null=True)
+    long    = models.CharField(max_length=15, blank=True, null=True)
 
 
 

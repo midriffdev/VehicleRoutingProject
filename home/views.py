@@ -343,6 +343,8 @@ def upload_orders(request):
                 from_location = row[4]  
                 destination = row[5]  
                 payment_amount = float(row[6]) 
+                lat = row[7] if row[7] else None
+                long = row[8] if row[7] else None
 
                 order = Order.objects.create(
                     product_name=product_name,
@@ -353,6 +355,8 @@ def upload_orders(request):
                     cname=cname,
                     payment_amount=payment_amount,
                     order_status='pending',  
+                    lat=lat,
+                    long=long,
                 )
                    
         return redirect('upload_orders') 
