@@ -84,6 +84,9 @@ def vehicles(request):
         }
         return render(request, 'home/vehicles.html',context)
 
+
+
+@csrf_exempt
 def edit_vehicle(request,pk):
     if request.method == 'POST':
         vechcle=request.POST.get('truck_id')

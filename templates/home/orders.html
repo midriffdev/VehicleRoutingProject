@@ -19,14 +19,20 @@
                                 <button type="button" class="btn btn-primary btn-md waves-effect waves-light"
                                     data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">Upload
                                 </button>
-                                <a href="{% url 'getroute' %}"
-                                    class="btn btn-secondary btn-md waves-effect waves-light">Analyse
-                                    Route By
-                                    AI
-                                </a>
+
+
+                               
+                                {%if orders%}
+
+                                <a href="{% url 'getroute' %}" class="btn btn-secondary btn-md waves-effect waves-light">Analyse Route By AI</a>
+
                                 <button type="button" class="btn btn-primary btn-md waves-effect waves-light"
                                 data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">Delete All Orders
-                            </button>
+                                </button>
+
+
+
+                                {%endif%}
                             </div>
                         </div>
                         
