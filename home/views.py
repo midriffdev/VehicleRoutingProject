@@ -7,7 +7,6 @@ from .models import *  # Ensure you import your Order model
 
 from django.urls import reverse
 from datetime import timedelta
-from django.contrib import messages
 from django.utils import timezone
 from django.core.mail import send_mail, EmailMessage  #for email send
 from django.template.loader import render_to_string #for email send
