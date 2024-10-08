@@ -117,7 +117,7 @@ def escalationteam(request):
         orders=Order.objects.filter(order_status="delivered",payment_status="escalation_pending").order_by("-id")
         all_orders=Order.objects.filter(order_status="delivered").order_by("-id")
         context={
-            'orders':all_orders,
+            'orders':orders,
             'all_orders':all_orders,
         }
         return render(request, 'home/escalation-team.html',context)
