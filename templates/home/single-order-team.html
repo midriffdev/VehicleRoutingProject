@@ -101,14 +101,9 @@
                                         <div class="media">
 
                                 
-                                            <div class="me-3"> 
-                                                <h5 class="font-size-18 fw-normal">{{order.delivered_payment_date}} 
-
-                                                        <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i>
-                                                  
-                                                
-                                                </h5>
-                                            </div>
+                                            <h5 class="font-size-18 fw-normal"> {% if order.delivered_date %}{{order.delivered_date}} {% endif %}
+                                                <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i>
+                                        </h5>
                                             <div class="media-body">
                                                 <div>
                                                      <span class="font-weight-semibold font-size-16">Delivered</span>
@@ -129,7 +124,9 @@
                                         </div>
                                         <div class="media">
                                             <div class="me-3">
-                                                <h5 class="font-size-18 fw-normal">{{order.due_payment_date}} <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
+                                                <h5 class="font-size-18 fw-normal">
+                                                    {% if order.due_reminder_sent_date %} {{order.due_reminder_sent_date}}  {% endif %}
+                                                    <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
                                             </div>
                                             <div class="media-body">
                                                 <div>
@@ -150,7 +147,10 @@
                                         </div>
                                         <div class="media">
                                             <div class="me-3">
-                                                <h5 class="font-size-18 fw-normal">{{order.past_due_payment}} <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
+                                                <h5 class="font-size-18 fw-normal">
+                                                    {% if order.past_due_payment %} {{order.past_due_payment}}  {% endif %}
+    
+                                                    <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
                                             </div>
                                             <div class="media-body">
                                                 <div>
@@ -172,7 +172,11 @@
                                         </div>
                                         <div class="media">
                                             <div class="me-3">
-                                                <h5 class="font-size-18 fw-normal">{{order.final_due_payment}} <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
+                                                <h5 class="font-size-18 fw-normal">
+                                                    888
+    
+                                                    {% if order.final_due_payment %} {{order.final_due_payment}}  {% endif %}
+                                                    <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i></h5>
                                             </div>
                                             <div class="media-body">
                                                 <div>
