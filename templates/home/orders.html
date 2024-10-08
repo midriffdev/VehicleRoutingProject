@@ -6,6 +6,14 @@
 
     <div class="container-fluid">
             <!-- start page title -->
+            {% if messages %}
+                <div>
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -26,11 +34,33 @@
 
                                 <a href="{% url 'getroute' %}" class="btn btn-secondary btn-md waves-effect waves-light">Analyse Route By AI</a>
 
-                                <button type="button" class="btn btn-primary btn-md waves-effect waves-light"
-                                data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">Delete All Orders
-                                </button>
+                              <!-- Delete All Orders Button -->
+                              <button type="button" class="btn btn-danger btn-md waves-effect waves-light"
+                              data-bs-toggle="modal" data-bs-target="#deleteAllOrdersModal">
+                              <i class="fas fa-trash" style="color: white;"></i> Delete All Orders
+                              </button>
 
-
+                              <!-- Confirmation Modal -->
+                              <div class="modal fade" id="deleteAllOrdersModal" tabindex="-1" aria-labelledby="deleteAllOrdersModalLabel" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="deleteAllOrdersModalLabel">Confirm Deletion</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      Are you sure you want to delete all orders? This action cannot be undone.
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                      <form action="{% url 'delete_all_orders' %}" method="post">
+                                          {% csrf_token %}
+                                          <button type="submit" class="btn btn-danger">Delete All Orders</button>
+                                      </form>
+                                  </div>
+                              </div>
+                              </div>
+                              </div>
 
                                 {%endif%}
                             </div>

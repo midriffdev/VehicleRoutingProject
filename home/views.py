@@ -7,12 +7,13 @@ from .models import *  # Ensure you import your Order model
 
 from django.urls import reverse
 from datetime import timedelta
-
+from django.utils import timezone
 from django.core.mail import send_mail, EmailMessage  #for email send
 from django.template.loader import render_to_string #for email send
 from django.utils.html import strip_tags #for email send
 from django.conf import settings #for email send host name
 
+from datetime import timedelta 
 import os
 import google.generativeai as genai
 
@@ -49,8 +50,6 @@ def payments(request):
         }
         return render(request, 'home/payments.html',context)
 
-
-
 @csrf_exempt
 def vehicles(request):
     if request.method == 'POST':
@@ -84,8 +83,6 @@ def vehicles(request):
         }
         return render(request, 'home/vehicles.html',context)
 
-
-
 @csrf_exempt
 def edit_vehicle(request,pk):
     if request.method == 'POST':
@@ -101,21 +98,16 @@ def edit_vehicle(request,pk):
         vv.contact_number=request.POST.get('contact_number')
         vv.save()
         return redirect('vehicles')
-
-   
+ 
 @csrf_exempt
 def delete_vehicle(request,pk):
     print(request.POST,"defres")
     if request.method == 'POST':
         vechcle=request.POST.get('truck_id')
         vv=Truck.objects.filter(id=vechcle).delete()
-      
-        # Redirect to home or any other page
         return redirect('vehicles')
     
    
-
-
 @csrf_exempt
 def analyseRoutesAI(request):
     if request.method == 'POST':
@@ -146,7 +138,6 @@ def escalationteam(request):
         return render(request, 'home/escalation-team.html',context)
     
 
-from datetime import timedelta 
 @csrf_exempt
 def customer_single_order(request,pk):
     if request.method == 'POST':
@@ -171,7 +162,6 @@ def customer_single_order(request,pk):
         return render(request, 'home/single-order-team.html',context)
     
 
-
 @csrf_exempt
 def switchAccounts(request):
     if request.method == 'POST':
@@ -187,8 +177,6 @@ def switchAccounts(request):
 
 
     
-
-
 @csrf_exempt
 def customers(request):
     if request.method == 'POST':
@@ -253,7 +241,6 @@ def single_customer(request,pk):
         return render(request, 'home/single_customer.html',context)
 
 
-from django.utils import timezone
 
 
 
@@ -358,6 +345,10 @@ def single_order(request,pk):
         }
         return render(request, 'home/single_order.html',context)
 
+
+
+
+
 @csrf_exempt
 def upload_orders(request):
     if request.method == 'POST':
@@ -396,13 +387,21 @@ def upload_orders(request):
         return render(request, 'home/orders.html',context) 
 
 
+from django.contrib import messages
 
 
+def delete_all_orders(request):
+    if request.method == 'POST':
+        Notifications.objects.all().delete()
+        Order.objects.all().delete()  
+        messages.success(request, "All orders have been successfully deleted.")
+        return redirect('upload_orders')
+    else:
+        messages.warning(request, "Invalid request. Please confirm the action.")
+        return redirect('upload_orders')
 
 @csrf_exempt
 def check_orders(orders, s_keyword):
-    print(orders, "question >>>>>>>>>>>>>>>>>>>>>>>")
-    print(s_keyword, "answer >>>>>>>>>>>>>>>>>>>>>>>")
 
     # Assuming orders is a list of dictionaries representing orders
     order_list = [order for order in orders]  # Ensuring we have a list of orders

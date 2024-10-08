@@ -5,6 +5,7 @@ from home import views
 
 urlpatterns = [
     path('', views.upload_orders, name='upload_orders'),
+    path('delete-all-orders/', delete_all_orders, name='delete_all_orders'),
     path('signup', views.signuppage, name='signup'),
     path('customers', views.customers, name='customers'),
     path('payments', views.payments, name='payments'),

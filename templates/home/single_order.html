@@ -88,7 +88,7 @@
     
                             
                                         <div class="me-3"> 
-                                            <h5 class="font-size-18 fw-normal">{{order.delivered_payment_date}} 
+                                            <h5 class="font-size-18 fw-normal">{{order.delivered_date}} 
     
                                                     <i class="bx bx-right-arrow-alt font-size-16 text-secondary align-middle ms-2"></i>
                                               
@@ -104,10 +104,17 @@
                                                 <input type="hidden" name="order_status" value="delivered" />
                                                 <button 
                                                 type="submit" 
-                                                class="btn btn-success btn-sm"
-                                                 {% if order.order_status == 'completed' or order.order_status == 'delivered' %}disabled{% endif %}
+                                                
+                                                 {% if order.order_status == 'completed' or order.order_status == 'delivered' %}
+                                                 class="btn btn-secondary btn-sm"
+
+                                                 disabled
+                                                 
+                                                 {% endif %}
+
                                                  >
                                                     {% if order.order_status == 'pending' %}
+                                                    class="btn btn-success btn-sm"
                                                     Mark as delivered
                                                         
                                                     {% else %}
