@@ -52,11 +52,21 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  # Automatically set when the order is created
     updated_at = models.DateTimeField(auto_now=True) 
 
-    # Payment-related fields
-   
+
+    delivered_date = models.DateTimeField(null=True, blank=True)
+    due_reminder_sent_date = models.DateTimeField(null=True, blank=True)
+    past_due_reminder_sent_date = models.DateTimeField(null=True, blank=True)
+    final_reminder_sent_date = models.DateTimeField(null=True, blank=True)
+
+
+
     payment_date = models.DateField(null=True, blank=True)  # Date when payment is sucessfully donee
     due_payment_date = models.DateField(null=True, blank=True)  # Date by which payment should be made
     past_due_payment_date = models.DateField(null=True, blank=True)  # Date by which payment is late
+
+
+
+
     late_payment_status = models.BooleanField(default=False)  # To indicate if the payment is late
     due_days = models.PositiveIntegerField(default=0)
   
