@@ -97,6 +97,7 @@ def vehicles(request):
 
 
 
+@csrf_exempt
 def edit_vehicle(request,pk):
     if request.method == 'POST':
         vechcle=request.POST.get('truck_id')
