@@ -3,8 +3,8 @@
     {% load static %}
     {% block content %}
 
-
     <div class="container-fluid">
+        
             <!-- start page title -->
             {% if messages %}
                 <div>
@@ -32,7 +32,7 @@
                                
                                 {%if orders%}
 
-                                <a href="{% url 'getroute' %}" class="btn btn-secondary btn-md waves-effect waves-light">Analyse Route By AI</a>
+                                <a href="{% url 'getroute' %}" class="btn btn-secondary btn-md waves-effect waves-light" onclick="document.querySelector('.loaderWrapper').classList.remove('d-none');">Analyse Route By AI</a>
 
                               <!-- Delete All Orders Button -->
                               <button type="button" class="btn btn-danger btn-md waves-effect waves-light"
@@ -121,7 +121,7 @@
                                         <th>Order</th>
                                         <th>Customer</th>
                                         <th>Quantity</th>
-                                        <th>Order Routes</th>
+                                        <th>Destination</th>
                                         <th>Status</th>
                                         <th>Payment</th>
                                         <th>Action</th>
@@ -135,7 +135,7 @@
                                         <td>{{i.product_name}}</td>
                                         <td>{{i.cname|title}}<br>({{i.email}})</td>
                                         <td>{{i.quantity}}</td>
-                                        <td>{{i.from_location}} - {{i.destination}}</td>
+                                        <td>{{i.destination}}</td>
                                         <td >{{i.order_status}}</td>
                                         <td>
                                             <span class="badge badge-pill font-size-11 text-capitalize 

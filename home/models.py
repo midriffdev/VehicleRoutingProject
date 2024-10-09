@@ -41,7 +41,7 @@ class Order(models.Model):
     cname = models.CharField(max_length=75,default='Alex')
     product_name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField(default=0)
-    from_location = models.CharField(max_length=255)
+    from_location = models.CharField(max_length=255, blank=True, null=True)
     destination = models.CharField(max_length=255)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2)# Adjust max_digits and decimal_places as needed
 

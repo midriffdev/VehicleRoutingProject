@@ -41,7 +41,7 @@
 .routeBox:before {
     content: "";
     width: 106%;
-    height:12%;
+    height:8%;
     border: 1px dashed #f1b44c;
     position: absolute;
     left: 50%;
@@ -136,3 +136,16 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+
+  .pendingOrder .routeBox:before, .pendingOrder .routeBox:after {
+    border-color: #000 !important;
+}
+.pendingOrder .routeBox .card {
+    border-color: #000 !important;
+}
+
+.pendingOrder .scroll-style::-webkit-scrollbar-thumb {
+    background: #ccc !important;
+    border-radius: 50px;
+}
