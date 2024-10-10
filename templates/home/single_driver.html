@@ -108,9 +108,71 @@
                 </div>
                     </div>
                 </div>
-                
+                --REPORT OR EMERGENCY BUTTON HERE--
             </div>
         </div>
+        {%if truck.routedata%}
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Assigned Orders</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order id</th>
+                                    <th>Order</th>
+                                    <th>Customer</th>
+                                    <th>Quantity</th>
+                                    <th>Destination</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for i in truck.routedata.orders.all %}
+                                <tr>
+                                    <td>#13A{{i.id}}</td>
+                                    <td>{{i.product_name}}</td>
+                                    <td>{{i.cname|title}}<br>({{i.email}})</td>
+                                    <td>{{i.quantity}}</td>
+                                    <td>{{i.destination}}</td>
+                                    <td >{{i.order_status}}</td>
+                                    <td>
+                                        <span class="badge badge-pill font-size-11 text-capitalize 
+                                            {% if i.payment_status == 'pending' %}badge-soft-warning{% elif i.payment_status == 'due' %}badge-soft-info{% else %}badge-soft-success{% endif %}">
+                                            {{ i.payment_status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button type="button" class="btn btn-success btn-sm btn-rounded  mr-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal{{i.id}}">
+                                                Mark as delivered
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                               
+                              
+                               
+                             
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div>
+        {%endif%}
     </div>
 
     

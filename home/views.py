@@ -189,7 +189,7 @@ def customers(request):
         return render(request, 'home/customers.html',context)
 
 @csrf_exempt
-def drivers(request):
+def drivers(request, pk=None):
     if request.method == 'POST':
         print("welcome ji")
         email_id=request.POST.get('email_id')
@@ -197,10 +197,8 @@ def drivers(request):
         context={ 'truck':truck.first() }
         return render(request, 'home/single_driver.html',context)
     else:
-        # orders=Order.objects.all()
-        context={
-            # 'orders':orders,
-        }
+        truck=Truck.objects.filter(id=pk)
+        context={ 'truck':truck.first() }
         return render(request, 'home/single_driver.html',context)
 
 @csrf_exempt
