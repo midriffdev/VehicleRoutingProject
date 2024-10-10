@@ -164,7 +164,7 @@
                                     <td>${{i.cost_per_km}}</td>
                                    
                                     <td>
-                                        <span class="badge badge-pill badge-soft-success font-size-11 text-capitalize">{{i.available}}</span>
+                                        <span class="badge badge-pill badge-soft-{%if i.available%}success{%else%}danger{%endif%} font-size-11 text-capitalize">{%if i.available%}Yes{%else%}No{%endif%}</span>
                                     </td>
                                     <td>
                                         <div class="d-flex">
