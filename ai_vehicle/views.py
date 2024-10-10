@@ -145,10 +145,10 @@ def getroute(request):
 
 
     gen_route = GenRoutes.objects.create(ijson=json_file)
-    # gen_route.pendingorders.set(pendingorders)
-    # for i in iroutes:
-    #     gen_route
-
+    gen_route.pendorders.set(pendingorders)
+    for i in iroutes:
+        a = gen_route.truckdata.create(truck=i.truck, fstop=i.fstop, lstop=i.lstop)
+        a.orders.set(*i.order)
 
     print("iroute______________s", iroutes, obtained_orders, pendingorders)
     # return HttpResponse(json_output['routes'])
