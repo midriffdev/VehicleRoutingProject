@@ -1,7 +1,11 @@
 from django.db import models
+from home.models import Truck, Order
 
 class truckdata(models.Model):
-    truck   = models.ForeignKey("app.Model", verbose_name=_(""), on_delete=models.CASCADE)
+    truck   = models.ForeignKey(Truck, on_delete=models.CASCADE)
+    orders  = models.ManyToManyField(Order)
+    fstop   = models.CharField(max_length=30)
+    lstop   = models.CharField(max_length=30)
 class GenRoutes(models.Model):
     # truck   = models.ForeignKey("Truck", on_delete=models.CASCADE)
     # orders  = models.ManyToManyField("Order", blank=True, null=True)
