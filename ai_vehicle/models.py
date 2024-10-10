@@ -1,6 +1,7 @@
 from django.db import models
 
-# Create your models here.
+class truckdata(models.Model):
+    truck   = models.ForeignKey("app.Model", verbose_name=_(""), on_delete=models.CASCADE)
 class GenRoutes(models.Model):
     # truck   = models.ForeignKey("Truck", on_delete=models.CASCADE)
     # orders  = models.ManyToManyField("Order", blank=True, null=True)

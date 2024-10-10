@@ -45,6 +45,37 @@
                                     </div><!-- /.modal-dialog -->
                                 </div>
 
+
+
+                                <div class="page-title-right">
+                                    <button type="button" class="btn btn-primary btn-md waves-effect waves-light"
+                                    data-bs-toggle="modal" data-bs-target=".assign_routes_to_trucks">Assign routes to trucks
+                                    </button>
+                                </div>
+                                <div class="modal fade assign_routes_to_trucks" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="text-center mb-4">
+                                                    <div class="avatar-md mx-auto mb-4">
+                                                        <div class="avatar-title bg-light rounded-circle text-primary h1">
+                                                            <i class="bx bx-info-circle"></i>
+                                                        </div>
+                                                    </div>
+                
+                                                    <div class="row justify-content-center">
+                                                        <div class="col-xl-10">
+                                                            <h6 class="text-primary mb-3">Do you confirm to assign below mentioned routes to specific trucks. This will set the route for specific trucks and their availabilty.</h6>
+                                                            <a href="{%url 'assign_routes_to_trucks' gen_route_id %}" class="btn btn-primary">Yes, assign</a>
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Let me think</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div>
+
                             </div>
                         </div>
                     </div>

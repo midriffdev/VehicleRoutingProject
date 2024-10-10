@@ -1,0 +1,119 @@
+{% extends 'home/base-not-header.html' %}
+{% load static %}
+{% block content %}
+    <title>Order Details</title>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Driver Dashboard</h4>
+                    {{truck}}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="orderTable" class="table ">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Field</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Truck Name</th>
+                                    <td>{{ truck.truck_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Truck Number</th>
+                                    <td>{{ truck.truck_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Driver Name</th>
+                                    <td>{{ truck.driver_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Driver Email</th>
+                                    <td>{{ truck.driver_email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Driver Contact</th>
+                                    <td>{{ truck.contact_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Truck Capacity</th>
+                                    <td>{{ truck.capacity }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Truck costs/km</th>
+                                    <td>{{ truck.cost_per_km }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Available</th>
+                                    <td>{%if truck.available%}Yes{%else%}No{%endif%}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+        
+                        <!-- Pay Now Button -->
+                        <div class="text-center mt-4">
+                            {% if order.payment_status == 'completed' %}
+                                <!-- Do nothing if payment is completed -->
+                            {% else %}
+                                {% if order.order_status == 'delivered' %}
+                                    <form method="post" action="{% url 'single_customer' order.id %}" id="pay_now_form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="payment_status" value="completed" />
+                                        <button type="submit" class="btn btn-lg btn-success" id="pay_now_button">Pay Now</button>
+                                    </form>
+                                {% else %}
+                                    <button class="btn btn-secondary btn-lg" disabled>Waiting for delivery</button>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+        
+                        <!-- Back Button -->
+                        {% comment %} <div class="text-center mt-4">
+                            <a href="{% url 'customers' %}" class="btn btn-secondary">Back to Orders</a>
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+                <!-- Order Info Table with DataTable -->
+                
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class=card-body>
+                        <!-- Notification Section -->
+                         <img src="{{truck.truck_image.url}}">
+                <div class="notification-section">
+                    <h5 class="text-center py-3 border-bottom">Notifications</h5>
+
+                    {% for n in notifications %}
+                    <div class="alert alert-success">
+                        <strong>{{n.title}}</strong>
+                        <p class="mb-0">{{n.content}}</p>
+                    </div>
+                    {% endfor%}
+                   
+                    <!-- Add more notifications as needed -->
+                </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+
+{% endblock %}

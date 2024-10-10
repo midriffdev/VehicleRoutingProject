@@ -58,6 +58,10 @@ def download_json(request, route_id):
     response = FileResponse(gen_route.ijson, as_attachment=True, filename='request.json')
     return response
 
+def assign_routes_to_trucks(request, route_id):
+    """assign trucks and set availabilty"""
+    GenRoutes.objects.filter()
+
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
     reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"), "global_end_time": datetime.datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}
@@ -75,7 +79,6 @@ def getroute(request):
         temp["cost_per_kilometer"] = int(i.cost_per_km)
         reqjson["vehicles"].append(temp)    
 
-
     for i in Order.objects.filter(order_status='pending'):
         temp = {}
         temp['deliveries'] = [{
@@ -89,46 +92,19 @@ def getroute(request):
         temp["label"] = f'{i.destination}_{i.id}'
         reqjson["shipments"].append(temp) 
 
-    # print("reqjson______", reqjson)
-
-    print("____making json downloadable")
-
-    newreqjson = reqjson
-
-    # newreqjson['global_start_time'] = newreqjson['global_start_time'].isoformat()
-    # newreqjson['global_end_tim'] = newreqjson['global_end_time'].isoformat()
-    del newreqjson['global_start_time']
-    del newreqjson['global_end_time']
-    for i in newreqjson['vehicles']:
-        # del i['start_time_windows']
-        # del i['end_time_windows']
-        del i['start_time_windows'][0]['start_time']
-        del i['end_time_windows'][0]['end_time']
-    for i in newreqjson['shipments']:
-        # del i['start_time_windows']
-        # del i['end_time_windows']  
-        del i['deliveries'][0]['time_windows'][0]['start_time']
-        del i['deliveries'][0]['time_windows'][0]['end_time']
-
-
-    json_file = ContentFile(json.dumps({"model": newreqjson, "populatePolylines": True}).encode('utf-8'), name='request.json')
-    gen_route = GenRoutes.objects.create(ijson=json_file)
 
     print("____punching for response json")
-
-    
     project_id="gmprotrial"
     client = ro.RouteOptimizationClient()
     grequest = ro.OptimizeToursRequest(
         parent=f'projects/{project_id}',
         model=reqjson,
         # populate_polylines=True
-
     )
     response = client.optimize_tours(request=grequest)
-
     # json_output = MessageToJson(response._pb) ## RESPONSE JSON
     dict_output = MessageToDict(response._pb)
+
 
     iroutes = []
     obtained_orders = []
@@ -144,10 +120,35 @@ def getroute(request):
         if data.get('visits', []): 
             i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('_')[1])
             temp['fstop'], temp['lstop'] = hq.name, i.destination
-            
         iroutes.append(temp)
     pendingorders = Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)
     pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
+
+
+    print("____making json downloadable")
+    newreqjson = reqjson
+    # newreqjson['global_start_time'] = newreqjson['global_start_time'].isoformat()
+    # newreqjson['global_end_tim'] = newreqjson['global_end_time'].isoformat()
+    del newreqjson['global_start_time']
+    del newreqjson['global_end_time']
+    for i in newreqjson['vehicles']:
+        # del i['start_time_windows']
+        # del i['end_time_windows']
+        del i['start_time_windows'][0]['start_time']
+        del i['end_time_windows'][0]['end_time']
+    for i in newreqjson['shipments']:
+        # del i['start_time_windows']
+        # del i['end_time_windows']  
+        del i['deliveries'][0]['time_windows'][0]['start_time']
+        del i['deliveries'][0]['time_windows'][0]['end_time']
+    json_file = ContentFile(json.dumps({"model": newreqjson, "populatePolylines": True}).encode('utf-8'), name='request.json')
+
+
+    gen_route = GenRoutes.objects.create(ijson=json_file)
+    # gen_route.pendingorders.set(pendingorders)
+    # for i in iroutes:
+    #     gen_route
+
 
     print("iroute______________s", iroutes, obtained_orders, pendingorders)
     # return HttpResponse(json_output['routes'])

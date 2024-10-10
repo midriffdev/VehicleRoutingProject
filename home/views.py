@@ -178,6 +178,21 @@ def customers(request):
         return render(request, 'home/customers.html',context)
 
 @csrf_exempt
+def drivers(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        email_id=request.POST.get('email_id')
+        truck=Truck.objects.filter(driver_email=email_id)
+        context={ 'truck':truck.first() }
+        return render(request, 'home/single_driver.html',context)
+    else:
+        # orders=Order.objects.all()
+        context={
+            # 'orders':orders,
+        }
+        return render(request, 'home/single_driver.html',context)
+
+@csrf_exempt
 def single_customer(request,pk):
     if request.method == 'POST':
         print("single_customer request")
