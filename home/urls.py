@@ -15,6 +15,7 @@ urlpatterns = [
     path('escalationteam', views.escalationteam, name='escalationteam'),
     path('customer_single_order/<int:pk>', views.customer_single_order, name='customer_single_order'),
     path('switchAccounts', views.switchAccounts, name='switchAccounts'),
+    path('reports', views.reports, name='reports'),
 
     
 

@@ -122,6 +122,18 @@ def escalationteam(request):
         }
         return render(request, 'home/escalation-team.html',context)
     
+
+
+@csrf_exempt
+def reports(request):
+    if request.method == 'POST':
+        print("welcome ji")
+        return redirect('home')  # Redirect to home or any other page
+    
+    else:
+           return render(request, 'home/reports.html')
+    
+    
 @csrf_exempt
 def customer_single_order(request,pk):
     if request.method == 'POST':
