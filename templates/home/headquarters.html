@@ -7,64 +7,54 @@
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0 font-size-18">All Headquarters</h4>
-
                 <div class="page-title-right">
                     <div class="button-items">
                         <button type="button" class="btn btn-primary btn-md waves-effect waves-light"
                             data-bs-toggle="modal" data-bs-target=".add-vehicleModal">Add new headquarter
                         </button>
-                        <div class="modal fade add-vehicleModal" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel"
-                aria-hidden="true">
-
-                        <form method="post" enctype="multipart/form-data"
-                            class="d-flex align-items-end">
-                            {% csrf_token %}
-
+                        <div class="modal fade add-vehicleModal" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                 <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="add-vehicleModalLabel">Add new headquarter</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <input type="hidden" name="action" value="add">
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <!-- Vehicle Type -->
-                                            <div class="col-md-12 mb-3">
-                                                <label for="hname" class="form-label">Name</label>
-                                                <input type="text" required class="form-control" name="hname" id="hname" placeholder="Enter location name" title="Please use alphanumeric characters only">
+                                    <form method="post" enctype="multipart/form-data" class="">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="add-vehicleModalLabel">Add new headquarter</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <input type="hidden" name="action" value="add">
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <!-- Vehicle Type -->
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="hname" class="form-label">Name</label>
+                                                    <input type="text" required class="form-control" name="hname" id="hname" placeholder="Enter location name" title="Please use alphanumeric characters only">
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="latitude" class="form-label">Latitude</label>
+                                                    <input type="text" required maxlength="10" name="latitude" class="form-control" id="latitude" placeholder="Enter latitude"  title="Please use alphanumeric characters only">
+                                                </div>                                            
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="longitude" class="form-label">Longitude</label>
+                                                    <input name="longitude" maxlength="10"  required type="text" class="form-control" id="longitude" placeholder="Enter longitude">
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12 mb-3">
-                                                <label for="latitude" class="form-label">Latitude</label>
-                                                <input type="text" required maxlength="10" name="latitude" class="form-control" id="latitude" placeholder="Enter latitude"  title="Please use alphanumeric characters only">
-                                            </div>                                            
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Add</button>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12 mb-3">
-                                                <label for="longitude" class="form-label">Longitude</label>
-                                                <input name="longitude" maxlength="10"  required type="text" class="form-control" id="longitude" placeholder="Enter longitude">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Add</button>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
-
-                        </form>
-
-
-
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -116,52 +106,48 @@
                                 </tr>
 
 
-                                <div class="modal fade add-EditvehicleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel"
-                                aria-hidden="true">
-                
-                                        <form method="post" enctype="multipart/form-data"
-                                            class="d-flex align-items-end">
-                                            {% csrf_token %}
-
-                                            <input type="hidden" name="hqid" value="{{i.id}}">
-                                            <input type="hidden" name="action" value="edit">
-                
-                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="add-vehicleModalLabel">Edit headquarter</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="row">
-                                                            <!-- Vehicle Type -->
-                                                            <div class="col-md-12 mb-3">
-                                                                <label for="hname" class="form-label">Name</label>
-                                                                <input type="text" required class="form-control" name="hname" id="hname" placeholder="Enter location name" title="Please use alphanumeric characters only" value="{{i.name}}">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="row">
-                                                            <div class="col-md-12 mb-3">
-                                                                <label for="latitude" class="form-label">Latitude</label>
-                                                                <input type="text" required maxlength="10" name="latitude" class="form-control" id="latitude" placeholder="Enter latitude"  title="Please use alphanumeric characters only" value="{{i.lat}}">
-                                                            </div>                                            
-                                                        </div>
-                
-                                                        <div class="row">
-                                                            <div class="col-md-12 mb-3">
-                                                                <label for="longitude" class="form-label">Longitude</label>
-                                                                <input name="longitude" maxlength="10"  required type="text" class="form-control" id="longitude" placeholder="Enter longitude" value="{{i.long}}">
-                                                            </div>
+                                <div class="modal fade add-EditvehicleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel" aria-hidden="true">
+                                    
+                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                            <form method="post" enctype="multipart/form-data" class="d-flex align-items-end">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="hqid" value="{{i.id}}">
+                                                <input type="hidden" name="action" value="edit">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="add-vehicleModalLabel">Edit headquarter</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <!-- Vehicle Type -->
+                                                        <div class="col-md-12 mb-3">
+                                                            <label for="hname" class="form-label">Name</label>
+                                                            <input type="text" required class="form-control" name="hname" id="hname" placeholder="Enter location name" title="Please use alphanumeric characters only" value="{{i.name}}">
                                                         </div>
                                                     </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-primary">Update</button>
+            
+                                                    <div class="row">
+                                                        <div class="col-md-12 mb-3">
+                                                            <label for="latitude" class="form-label">Latitude</label>
+                                                            <input type="text" required maxlength="10" name="latitude" class="form-control" id="latitude" placeholder="Enter latitude"  title="Please use alphanumeric characters only" value="{{i.lat}}">
+                                                        </div>                                            
                                                     </div>
+            
+                                                    <div class="row">
+                                                        <div class="col-md-12 mb-3">
+                                                            <label for="longitude" class="form-label">Longitude</label>
+                                                            <input name="longitude" maxlength="10"  required type="text" class="form-control" id="longitude" placeholder="Enter longitude" value="{{i.long}}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Update</button>
                                                 </div>
                                             </div>
                                         </form>
+                                    </div>
                                 </div>
                                {% endfor %}
                             </tbody>
