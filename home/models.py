@@ -1,7 +1,5 @@
 from django.db import models
-
-# Create your models here.
-
+# from ai_vehicle.models import routedata
 
 class Truck(models.Model):
     truck_name                          = models.CharField(max_length=255)
@@ -13,13 +11,9 @@ class Truck(models.Model):
     capacity                            = models.PositiveIntegerField()  # Assuming capacity is in kilograms or liters
     cost_per_km                         = models.DecimalField(max_digits=10, decimal_places=2)
     available                           = models.BooleanField(default=True)
+    routedata                           = models.ForeignKey('ai_vehicle.routedata', null=True, blank=True, on_delete=models.PROTECT)
 
-    
-
-    def __str__(self):
-        return f"{self.truck_name} ({self.truck_number})"
-
-
+    def __str__(self): return f"{self.truck_name} ({self.truck_number}) | avl-{self.available} | onreoute-{bool(self.routedata)}"
 
 class Order(models.Model):
     PRODUCT_STATUS_CHOICES = [

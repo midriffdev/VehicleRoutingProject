@@ -9,7 +9,7 @@ from google.protobuf.json_format import MessageToDict, MessageToJson
 from django.core.files.base import ContentFile
 import datetime, requests, json, subprocess
 from home.models import Order, Truck
-from .models import GenRoutes, HeadQuarter
+from .models import GenRoutes, HeadQuarter, Truckdata, routedata
 
 # Get the access token
 # def get_access_token():
@@ -60,7 +60,14 @@ def download_json(request, route_id):
 
 def assign_routes_to_trucks(request, route_id):
     """assign trucks and set availabilty"""
-    GenRoutes.objects.filter()
+    genroute = GenRoutes.objects.get(id=route_id)
+    for i in genroute.truckdata.all():
+        i.truck.routedata = i.routedata
+        i.truck.available = False
+        i.truck.save()
+    return redirect('vehicles')
+
+
 
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
@@ -147,8 +154,11 @@ def getroute(request):
     gen_route = GenRoutes.objects.create(ijson=json_file)
     gen_route.pendorders.set(pendingorders)
     for i in iroutes:
-        a = gen_route.truckdata.create(truck=i.truck, fstop=i.fstop, lstop=i.lstop)
-        a.orders.set(*i.order)
+        if i['order']:
+            b = routedata.objects.create(fstop=i['fstop'], lstop=i['lstop'])
+            [b.orders.add(ord) for ord in i['order']]
+            a = gen_route.truckdata.create(truck=i['truck'], routedata = b)
+    gen_route.save()
 
     print("iroute______________s", iroutes, obtained_orders, pendingorders)
     # return HttpResponse(json_output['routes'])
