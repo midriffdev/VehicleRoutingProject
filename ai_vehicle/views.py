@@ -60,6 +60,7 @@ def download_json(request, route_id):
 
 def assign_routes_to_trucks(request, route_id):
     """assign trucks and set availabilty"""
+    Truck.objects.filter().update(available=True, routedata=None) 
     genroute = GenRoutes.objects.get(id=route_id)
     for i in genroute.truckdata.all():
         i.truck.routedata = i.routedata
