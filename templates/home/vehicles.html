@@ -33,22 +33,44 @@
                                                 <label for="truck_name" class="form-label">Vehicle Name</label>
                                                 <input type="text" required class="form-control" name="truck_name" id="truck_name" placeholder="Enter vehicle's name" pattern="[A-Za-z0-9\s]+" title="Please use alphanumeric characters only">
                                             </div>
-                                            
-                                           
-                                            <!-- Capacity (Weight) -->
-                                            <div class="col-md-6 mb-3">
-                                                <label for="driver_name" class="form-label">Driver Name</label>
-                                                <input type="text" required  name="driver_name" class="form-control" id="driver_name"
-                                                    placeholder="Enter driver's name">
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label for="truck_number" class="form-label">Vehicle Number</label>
                                                 <input type="text" required maxlength="10" name="truck_number" class="form-control" id="truck_number"
                                                        placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
                                             </div>
+                                            
+                                           
+                                            <!-- Capacity (Weight) -->
+                                           
+                                        </div>
+
+                                        <div class="row">
+
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="driver_name" class="form-label">Driver Name</label>
+                                                <input type="text" required  name="driver_name" class="form-control" id="driver_name"
+                                                    placeholder="Enter driver's name">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="driver_email" class="form-label">Driver Email</label>
+                                                <input type="text" required  name="driver_email" class="form-control" id="driver_name"
+                                                    placeholder="Enter driver's name">
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="contact_number" class="form-label">Driver's Contact Number</label>
+                                                <input name="contact_number" maxlength="10"  required type="text" class="form-control" id="contact_number"
+                                                    placeholder="Enter driver's contact number">
+                                            </div>
+
+
+
+
+
+
+                                            
                                             
                                             <div class="col-md-6 mb-3">
                                                 <label for="capacity_volume" class="form-label">Capacity (Volume)</label>
@@ -60,11 +82,7 @@
 
                                         <div class="row">
                                             <!-- Contact Number -->
-                                            <div class="col-md-6 mb-3">
-                                                <label for="contact_number" class="form-label">Driver's Contact Number</label>
-                                                <input name="contact_number" maxlength="10"  required type="text" class="form-control" id="contact_number"
-                                                    placeholder="Enter driver's contact number">
-                                            </div>
+                                           
                                             <!-- Vehicle Status -->
                                             <div class="col-md-6 mb-3">
                                                 <label for="cost_per_km" class="form-label">Cost</label>
@@ -113,6 +131,7 @@
 
                                     <th class="align-middle">Vehicle Name</th>
                                     <th class="align-middle">Driver Name</th>
+                                    <th class="align-middle">Driver Email</th>
                                     <th class="align-middle">Vehicle Numver</th>
 
                                     <th class="align-middle">Capacity</th>
@@ -137,6 +156,7 @@
                                     <td>{{i.truck_name}} </td>
 
                                     <td>{{i.driver_name}}</td>
+                                    <td>{{i.driver_email}}</td>
                                     <td>{{i.truck_number}}</td>
 
 
@@ -202,18 +222,44 @@
                                                            
                                                             <!-- Capacity (Weight) -->
                                                             <div class="col-md-6 mb-3">
-                                                                <label for="driver_name" class="form-label">Driver Name</label>
-                                                                <input type="text" value="{{i.driver_name}}" required  name="driver_name" class="form-control" id="driver_name"
-                                                                    placeholder="Enter driver's name">
-                                                            </div>
-                                                        </div>
-                
-                                                        <div class="row">
-                                                            <div class="col-md-6 mb-3">
                                                                 <label for="truck_number" class="form-label">Vehicle Number</label>
                                                                 <input type="text" required maxlength="10" name="truck_number" value="{{i.truck_number}}" class="form-control" id="truck_number"
                                                                        placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
                                                             </div>
+                                                            
+
+
+
+
+                                                        </div>
+                
+                                                        <div class="row">
+
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="driver_name" class="form-label">Driver Name</label>
+                                                                <input type="text" value="{{i.driver_name}}" required  name="driver_name" class="form-control" id="driver_name"
+                                                                    placeholder="Enter driver's name">
+                                                            </div>
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="driver_email" class="form-label">Driver Email</label>
+                                                                <input type="text" value="{{i.driver_email}}" required  name="driver_email" class="form-control" id="driver_name"
+                                                                    placeholder="Enter driver's name">
+                                                            </div>
+
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="contact_number" class="form-label">Driver's Contact Number</label>
+                                                                <input value="{{i.contact_number}}" name="contact_number" maxlength="10"  required type="text" class="form-control" id="contact_number"
+                                                                    placeholder="Enter driver's contact number">
+                                                            </div>
+
+
+
+
+
+
+
+
+                                                           
                                                             
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="capacity_volume" class="form-label">Capacity (Volume)</label>
@@ -225,11 +271,7 @@
                 
                                                         <div class="row">
                                                             <!-- Contact Number -->
-                                                            <div class="col-md-6 mb-3">
-                                                                <label for="contact_number" class="form-label">Driver's Contact Number</label>
-                                                                <input value="{{i.contact_number}}" name="contact_number" maxlength="10"  required type="text" class="form-control" id="contact_number"
-                                                                    placeholder="Enter driver's contact number">
-                                                            </div>
+                                                          
                                                             <!-- Vehicle Status -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="cost_per_km" class="form-label">Cost</label>

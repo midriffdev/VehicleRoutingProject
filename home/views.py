@@ -44,6 +44,7 @@ def vehicles(request):
         print("vehicles ",request.POST)
         truck_name=request.POST.get('truck_name')
         driver_name=request.POST.get('driver_name')
+        driver_email=request.POST.get('driver_email')
         truck_number=request.POST.get('truck_number')
         capacity=request.POST.get('capacity_volume')
         cost_per_km=request.POST.get('cost_per_km')
@@ -56,6 +57,7 @@ def vehicles(request):
             truck = Truck.objects.create(
                 truck_name=truck_name,
                 driver_name=driver_name,
+                driver_email=driver_email,
                 truck_number=truck_number,
                 capacity=capacity,
                 cost_per_km=cost_per_km,
