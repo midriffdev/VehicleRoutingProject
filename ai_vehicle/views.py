@@ -98,7 +98,7 @@ def getroute(request):
 
     for i in avl_orders:
         temp = {}
-        temp['pickups'] = [{"arrival_location": {"latitude": float(hq.lat),"longitude": float(hq.long)}}]
+        # temp['pickups'] = [{"arrival_location": {"latitude": float(hq.lat),"longitude": float(hq.long)}}]
         temp['deliveries'] = [{
                 "arrival_location": {"latitude": i.lat,"longitude": i.long} if i.lat else get_lat_long(i.destination),
                 "time_windows": [{
