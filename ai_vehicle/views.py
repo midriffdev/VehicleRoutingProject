@@ -81,7 +81,8 @@ def getroute(request):
     # return HttpResponse(f'{a}, {b}')
     hq = HeadQuarter.objects.get(primary=True)
     avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
-    if not avl_trucks:
+    avl_orders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None)
+    if (not avl_trucks) or (not avl_orders) :
         messages.success(request, 'No available trucks at the moment.')
         return redirect('upload_orders')
     for i in avl_trucks:
@@ -95,7 +96,7 @@ def getroute(request):
         temp["cost_per_kilometer"] = int(i.cost_per_km)
         reqjson["vehicles"].append(temp)    
 
-    for i in Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None):
+    for i in avl_orders:
         temp = {}
         temp['pickups'] = [{"arrival_location": {"latitude": float(hq.lat),"longitude": float(hq.long)}}]
         temp['deliveries'] = [{
