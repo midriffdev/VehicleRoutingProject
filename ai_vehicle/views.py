@@ -87,8 +87,8 @@ def getroute(request):
         return redirect('upload_orders')
     for i in avl_trucks:
         temp = {}
-        # temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
-        temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300}
+        temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
+        # temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300}
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
         temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
         temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
