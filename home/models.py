@@ -15,6 +15,15 @@ class Truck(models.Model):
 
     def __str__(self): return f"{self.truck_name} ({self.truck_number}) | avl-{self.available} | onreoute-{bool(self.routedata)}"
 
+
+
+
+
+
+
+
+
+
 class Order(models.Model):
     PRODUCT_STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -60,6 +69,15 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}'
+
+
+
+class Report_order(models.Model):
+    truck             		        = models.ForeignKey(to=Order, on_delete=models.PROTECT, related_name='truck')
+    order             		        = models.ForeignKey(to=Order, on_delete=models.PROTECT, related_name='order')
+    issue                         = models.CharField(max_length=255)
+   
+    def __str__(self): return f"{self.truck.truck_name} ({self.order})"
 
 
 

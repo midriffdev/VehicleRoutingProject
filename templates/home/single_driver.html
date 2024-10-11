@@ -89,11 +89,13 @@
                 
             </div>
 
+           
+
             <div class="col-md-4">
                 <div class="card">
                     <div class=card-body>
                         <!-- Notification Section -->
-                         <img src="{{truck.truck_image.url}}">
+                         <img src="{{truck.truck_image.url}}" width="312px">
                 <div class="notification-section">
                     <h5 class="text-center py-3 border-bottom">Notifications</h5>
 
@@ -108,7 +110,7 @@
                 </div>
                     </div>
                 </div>
-                --REPORT OR EMERGENCY BUTTON HERE--
+               
             </div>
         </div>
         {%if truck.routedata%}
@@ -140,12 +142,12 @@
                             <tbody>
                                 {% for i in truck.routedata.orders.all %}
                                 <tr>
-                                    <td>#13A{{i.id}}</td>
-                                    <td>{{i.product_name}}</td>
-                                    <td>{{i.cname|title}}<br>({{i.email}})</td>
-                                    <td>{{i.quantity}}</td>
-                                    <td>{{i.destination}}</td>
-                                    <td >{{i.order_status}}</td>
+                                    <td>#13A{{ i.id }}</td>
+                                    <td>{{ i.product_name }}</td>
+                                    <td>{{ i.cname|title }}<br>({{ i.email }})</td>
+                                    <td>{{ i.quantity }}</td>
+                                    <td>{{ i.destination }}</td>
+                                    <td>{{ i.order_status }}</td>
                                     <td>
                                         <span class="badge badge-pill font-size-11 text-capitalize 
                                             {% if i.payment_status == 'pending' %}badge-soft-warning{% elif i.payment_status == 'due' %}badge-soft-info{% else %}badge-soft-success{% endif %}">
@@ -154,13 +156,41 @@
                                     </td>
                                     <td>
                                         <div class="d-flex">
-                                            <button type="button" class="btn btn-success btn-sm btn-rounded  mr-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal{{i.id}}">
+                                            <button type="button" class="btn btn-success btn-sm btn-rounded mr-1" data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal{{ i.id }}">
                                                 Mark as delivered
+                                            </button>
+                                            <button type="button" class="btn btn-warning btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target="#reportModal{{ i.id }}">
+                                                Add Report
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                {% endfor %}
+                            
+                                <!-- Modal for Adding Report -->
+                                <div class="modal fade" id="reportModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel{{ i.id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="reportModalLabel{{ i.id }}">Report Issue for Order #13A{{ i.id }}</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="POST" action="/submit-report/">  <!-- Update the form action URL as per your backend -->
+                                                    <input type="hidden" name="order_id" value="{{ i.id }}">
+                                                    <div class="form-group">
+                                                        <label for="issueText{{ i.id }}">Describe the Issue</label>
+                                                        <textarea class="form-control" id="issueText{{ i.id }}" name="issue_text" rows="4" required></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Send Report</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
                                
                               
                                
