@@ -94,3 +94,18 @@ class Notifications(models.Model):
 
     def __str__(self):
         return f"{self.id} || {self.content} || {self.receiver}"
+    
+
+# class Notifications(models.Model):
+#     STATUS=(('Active','Active'),('Inactive','Inactive'),)
+#     content                             = models.TextField()
+#     title 	                            = models.TextField()
+#     receiver             		        = models.ForeignKey(to=Order, on_delete=models.PROTECT, related_name='customer')     
+#     created_at                          = models.DateTimeField(auto_now_add=True)
+#     is_read                             = models.BooleanField(default=False)
+#     link                                = models.TextField(null=True, blank=True)
+#     count                               = models.PositiveIntegerField(default=0)
+#     status                              = models.CharField(choices=STATUS, max_length=10, default="Active")
+
+#     def __str__(self):
+#         return f"{self.id} || {self.content} || {self.receiver}"
