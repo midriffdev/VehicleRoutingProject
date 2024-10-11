@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from datetime import timedelta
 from django.utils import timezone
@@ -210,25 +210,14 @@ def drivers(request, pk=None):
         truck=Truck.objects.filter(id=pk)
         context={ 'truck':truck.first() }
         return render(request, 'home/single_driver.html',context)
-    
+
 @csrf_exempt
 def report_issue(request, pk=None):
     if request.method == 'POST':
-        print("welcome ji")
-        
-        order_id=request.POST.get('order_id')
-        email_id=request.POST.get('email_id')
-        issue_text=request.POST.get('issue_text')
-
-        order=Order.objects.get(id=order_id)
-        driver_email=Truck.objects.filter(driver_email=email_id)
-
-        report=Report_order.objects.create(order=order,issue=issue_text)
-
-        
-        return redirect(reverse('single_driver', kwargs={'pk': pk}))
+        report=Report_order.objects.create(order_id=request.POST.get('order_id'),issue=request.POST.get('issue_text'), truck_id=request.POST.get('truck_id'))
+        return redirect(reverse('driver_single', kwargs={'pk': request.POST.get('truck_id')}))
     else:
-        return redirect(reverse('single_driver', kwargs={'pk': pk})) 
+        return redirect(reverse('driver_single', kwargs={'pk': pk})) 
 
 @csrf_exempt
 def single_customer(request,pk):
@@ -369,7 +358,8 @@ def single_order(request,pk):
 
             Notifications.objects.create(content=f"Your order has been successfully delivered. Kindly complete your payment by <strong>{due_date_formatted}</strong>, or earlier.", title='Order delivered', receiver=order,count=1)
 
-            return redirect(reverse('single_order', kwargs={'pk': pk}))
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            # return redirect(reverse('single_order', kwargs={'pk': pk}))
     
     else:
         order=Order.objects.get(id=pk)

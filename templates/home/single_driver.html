@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Driver Dashboard</h4>
+                    <h4 class="mb-sm-0 font-size-18">Driver Details</h4>
                     {{truck}}
                 </div>
             </div>
@@ -144,7 +144,7 @@
                             </thead>
 
                             <tbody>
-                                {% for i in truck.routedata.orders.all %}
+                            {% for i in truck.routedata.orders.all %}
                                 <tr>
                                     <td>#13A{{ i.id }}</td>
                                     <td>{{ i.product_name }}</td>
@@ -160,9 +160,13 @@
                                     </td>
                                     <td>
                                         <div class="d-flex">
-                                            <button type="button" class="btn btn-success btn-sm btn-rounded mr-1" data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal{{ i.id }}">
-                                                Mark as delivered
-                                            </button>
+                                            {% if i.order_status == 'pending' %}
+                                            <form method="post" action="{% url 'single_order' i.id %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="order_status" value="delivered" />
+                                                <button type="submit" class="btn btn-success btn-sm">Mark as delivered</button>
+                                            </form>
+                                            {%endif%}
                                             <button type="button" class="btn btn-warning btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target="#reportModal{{ i.id }}">
                                                 Add Report
                                             </button>
@@ -183,6 +187,7 @@
                                             <div class="modal-body">    
                                                 <form method="POST" action="{% url 'report_issue' i.id %}">  <!-- Update the form action URL as per your backend -->
                                                     <input type="hidden" name="order_id" value="{{ i.id }}">
+                                                    <input type="hidden" name="truck_id" value="{{ truck.id }}">
                                                     <div class="form-group">
                                                         <label for="issueText{{ i.id }}">Describe the Issue</label>
                                                         <textarea class="form-control" id="issueText{{ i.id }}" name="issue_text" rows="4" required></textarea>

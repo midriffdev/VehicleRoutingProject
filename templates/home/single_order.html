@@ -56,7 +56,7 @@
                                 </tr>
                                 <tr>    
                                     <th>Assigned truck</th>
-                                    <td>{%if i.assigned_truck%}{{ order.assigned_truck.truck_name }} (#{{order.assigned_truck.id}}){%else%}Not assigned   yet{%endif%}</td>
+                                    <td>{%if order.assigned_truck%}{{ order.assigned_truck.truck_name }} (#{{order.assigned_truck.id}}){%else%}Not assigned   yet{%endif%}</td>
                                 </tr>
                                 <tr>
                                     <th>Destination</th>
