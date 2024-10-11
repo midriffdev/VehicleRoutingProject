@@ -176,8 +176,8 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <div class="modal-body">
-                                                <form method="POST" action="/submit-report/">  <!-- Update the form action URL as per your backend -->
+                                            <div class="modal-body">    
+                                                <form method="POST" action="{% url 'report_issue' i.id %}">  <!-- Update the form action URL as per your backend -->
                                                     <input type="hidden" name="order_id" value="{{ i.id }}">
                                                     <div class="form-group">
                                                         <label for="issueText{{ i.id }}">Describe the Issue</label>

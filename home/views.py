@@ -213,9 +213,17 @@ def drivers(request, pk=None):
 def report_issue(request, pk=None):
     if request.method == 'POST':
         print("welcome ji")
+        
+        order_id=request.POST.get('order_id')
         email_id=request.POST.get('email_id')
-        truck=Truck.objects.filter(driver_email=email_id)
-        context={ 'truck':truck.first() }
+        issue_text=request.POST.get('issue_text')
+
+        order=Order.objects.get(id=order_id)
+        driver_email=Truck.objects.filter(driver_email=email_id)
+
+        report=Report_order.objects.create(order=order,issue=issue_text)
+
+        
         return redirect(reverse('single_driver', kwargs={'pk': pk}))
     else:
         return redirect(reverse('single_driver', kwargs={'pk': pk})) 
