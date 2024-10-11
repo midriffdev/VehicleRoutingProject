@@ -85,6 +85,7 @@ def edit_vehicle(request,pk):
         print("vehicles ",request.POST)
         vv.truck_name=request.POST.get('truck_name')
         vv.driver_name=request.POST.get('driver_name')
+        vv.driver_email=request.POST.get('driver_email')
         vv.truck_number=request.POST.get('truck_number')
         vv.capacity=request.POST.get('capacity_volume')
         vv.cost_per_km=request.POST.get('cost_per_km')
