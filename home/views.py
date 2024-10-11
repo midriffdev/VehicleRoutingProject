@@ -207,6 +207,28 @@ def drivers(request, pk=None):
         truck=Truck.objects.filter(id=pk)
         context={ 'truck':truck.first() }
         return render(request, 'home/single_driver.html',context)
+    
+
+@csrf_exempt
+def report_issue(request, pk=None):
+    if request.method == 'POST':
+        print("welcome ji")
+        
+        order_id=request.POST.get('order_id')
+        email_id=request.POST.get('email_id')
+        issue_text=request.POST.get('issue_text')
+
+        order=Order.objects.get(id=order_id)
+        driver_email=Truck.objects.filter(driver_email=email_id)
+
+        report=Report_order.objects.create(order=order,issue=issue_text)
+
+        
+        return redirect(reverse('single_driver', kwargs={'pk': pk}))
+    else:
+        return redirect(reverse('single_driver', kwargs={'pk': pk})) 
+
+
 
 @csrf_exempt
 def single_customer(request,pk):
