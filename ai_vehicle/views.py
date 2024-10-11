@@ -7,6 +7,7 @@ from google.maps import routeoptimization_v1 as ro
 from geopy.geocoders import Nominatim, GoogleV3
 from google.protobuf.json_format import MessageToDict, MessageToJson
 from django.core.files.base import ContentFile
+from django.contrib import messages
 import datetime, requests, json, subprocess
 from home.models import Order, Truck
 from .models import GenRoutes, HeadQuarter, Truckdata, routedata
@@ -66,6 +67,7 @@ def assign_routes_to_trucks(request, route_id):
         i.truck.routedata = i.routedata
         i.truck.available = False
         i.truck.save()
+    messages.success(request, 'Trucks has been assinged with respective orders.')
     return redirect('vehicles')
 
 
@@ -77,6 +79,10 @@ def getroute(request):
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
     hq = HeadQuarter.objects.get(primary=True)
+    avl_trucks = Truck.objects.filter(available=True)
+    if not avl_trucks:
+        messages.success(request, 'No available trucks at the moment.')
+        return redirect('upload_orders')
     for i in Truck.objects.filter(available=True):
         temp = {}
         temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}

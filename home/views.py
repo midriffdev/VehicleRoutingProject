@@ -96,6 +96,12 @@ def delete_vehicle(request,pk):
         vv=Truck.objects.filter(id=vechcle).delete()
         return redirect('vehicles')
     
+ 
+@csrf_exempt
+def reset_assinged_trucks(request):
+    Truck.objects.filter().update(available=True, routedata=None)
+    return redirect('vehicles')
+    
 @csrf_exempt
 def analyseRoutesAI(request):
     if request.method == 'POST':
@@ -194,8 +200,9 @@ def drivers(request, pk=None):
         print("welcome ji")
         email_id=request.POST.get('email_id')
         truck=Truck.objects.filter(driver_email=email_id)
-        context={ 'truck':truck.first() }
-        return render(request, 'home/single_driver.html',context)
+        return redirect('driver_single', truck.first().id)
+        # context={ 'truck':truck.first() }
+        # return render(request, 'home/single_driver.html',context)
     else:
         truck=Truck.objects.filter(id=pk)
         context={ 'truck':truck.first() }
