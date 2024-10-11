@@ -12,7 +12,7 @@ class Truck(models.Model):
     cost_per_km                         = models.DecimalField(max_digits=10, decimal_places=2)
     available                           = models.BooleanField(default=True)
     routedata                           = models.ForeignKey('ai_vehicle.routedata', null=True, blank=True, on_delete=models.PROTECT)
-    warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT)
+    warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT, null=True, blank=True,default=1)
 
     def __str__(self): return f"{self.truck_name} ({self.truck_number}) | avl-{self.available} | onreoute-{bool(self.routedata)} | warehouse - {self.warehouse.name}"
 
@@ -65,7 +65,7 @@ class Order(models.Model):
     long                                = models.CharField(max_length=15, blank=True, null=True)
     late_payment_status                 = models.BooleanField(default=False)  # To indicate if the payment is late
     due_days                            = models.PositiveIntegerField(default=0)
-    warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT)
+    warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT, blank=True, null=True)
     assigned_truck                      = models.ForeignKey('Truck', blank=True, null=True, on_delete=models.PROTECT)
   
     def __str__(self):
