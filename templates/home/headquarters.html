@@ -6,11 +6,11 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">All Headquarters</h4>
+                <h4 class="mb-sm-0 font-size-18">All Warehouses</h4>
                 <div class="page-title-right">
                     <div class="button-items">
                         <button type="button" class="btn btn-primary btn-md waves-effect waves-light"
-                            data-bs-toggle="modal" data-bs-target=".add-vehicleModal">Add new headquarter
+                            data-bs-toggle="modal" data-bs-target=".add-vehicleModal">Add new warehouse
                         </button>
                         <div class="modal fade add-vehicleModal" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -18,7 +18,7 @@
                                     <form method="post" enctype="multipart/form-data" class="">
                                         {% csrf_token %}
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="add-vehicleModalLabel">Add new headquarter</h5>
+                                            <h5 class="modal-title" id="add-vehicleModalLabel">Add new warehouse</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <input type="hidden" name="action" value="add">
@@ -65,14 +65,14 @@
             <div class="card">
                 <div class="card-body">
                     <!-- <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <h4 class="card-title">All Vehicle</h4>
-                                            <button type="button"
-                                                                class="btn btn-primary btn-md  waves-effect waves-light"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target=".add-vehicleModal">
-                                                                Add Vehicle
-                                                            </button>
-                                        </div> -->
+                        <h4 class="card-title">All Vehicle</h4>
+                        <button type="button"
+                            class="btn btn-primary btn-md  waves-effect waves-light"
+                            data-bs-toggle="modal"
+                            data-bs-target=".add-vehicleModal">
+                            Add Vehicle
+                        </button>
+                    </div> -->
                     <div class="table-responsive">
                         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                             <thead class="table-light">
@@ -96,7 +96,7 @@
                                             </button>
                                             <a href="{% url 'delete_hq' i.id %}" class="mx-2 btn btn-danger btn-sm btn-rounded">Delete</a>
                                             {%if i.primary%}
-                                            <a href="#" class="btn btn-success btn-sm btn-rounded">HQ In use</a>
+                                            <a href="#" class="btn btn-success btn-sm btn-rounded">In use</a>
                                             {%else%}
                                             <a href="{% url 'set_hq' i.id %}" class="btn btn-warning btn-sm btn-rounded">Use it</a>
                                             {%endif%}
@@ -115,7 +115,7 @@
                                                 <input type="hidden" name="action" value="edit">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="add-vehicleModalLabel">Edit headquarter</h5>
+                                                    <h5 class="modal-title" id="add-vehicleModalLabel">Edit warehouse</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">

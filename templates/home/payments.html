@@ -55,14 +55,14 @@
                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead class="table-light">
                             <tr>
-                                <th>Order No.</th>
-                                <th>Customer</th>
+                                <th>Order ID</th>
                                 <th>Order Name</th>
-
-                                <th>Quantity</th>
+                                <th>Customer</th>
+                                <th>Qty</th>
+                                <th>Warehouse</th>
                                 <th>Destination</th>
-                                <th>Order Status</th>
-                                <th>Payment Status</th>
+                                <th>Status</th>
+                                <th>Payment</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -72,35 +72,19 @@
                             <tr>
                                 <td>#13A{{i.id}}</td>
                                 <td>{{i.cname|title}}<br>({{ i.email }})</td>
-
                                 <td>{{i.product_name}}</td>
-
                                 <td>{{i.quantity}}</td>
+                                <td>{{i.warehouse.name}}</td>
                                 <td>{{i.destination}}</td>
                                 <td class="text-primary fw-medium text-capitalize" >{{i.order_status}}</td>
-
-
-
                                 <td>
                                     <span
                                         class="badge badge-pill badge-soft-warning font-size-11 text-capitalize">{{i.payment_status}}</span>
                                 </td>
-
-
-
-
-
-
-
-                                
-
-
-
-
                                 <td>
                                     <a href="{% url 'single_customer' i.id %}"
                                         class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
-                                        View Details
+                                        View
                                     </a>
 
                                 </td>

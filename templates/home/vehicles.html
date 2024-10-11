@@ -137,10 +137,12 @@
                             <thead class="table-light">
                                 <tr>
 
+                                    <th class="align-middle">ID</th>
                                     <th class="align-middle">Vehicle Name</th>
                                     <th class="align-middle">Driver Name</th>
                                     <th class="align-middle">Driver Email</th>
-                                    <th class="align-middle">Vehicle Numver</th>
+                                    <th class="align-middle">Vehicle Number</th>
+                                    <th class="align-middle">Warehouse</th>
 
                                     <th class="align-middle">Capacity</th>
 
@@ -158,14 +160,12 @@
                             <tbody>
                                 {% for i in vehicles %}
                                 <tr>
-
-                                   
-
+                                    <td>{{i.id}} </td>
                                     <td>{{i.truck_name}} </td>
-
                                     <td>{{i.driver_name}}</td>
                                     <td>{{i.driver_email}}</td>
                                     <td>{{i.truck_number}}</td>
+                                    <td>{{i.warehouse.name}}</td>
 
 
                                     <td>{{i.capacity}}</td>

@@ -261,7 +261,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link arrow-none" href="{% url 'headquarter' %}" id="topnav-pages"
                                     role="button">
-                                    <i class="bx bx-building me-2"></i><span key="t-apps">Head Quarters</span>
+                                    <i class="bx bx-building me-2"></i><span key="t-apps">Warehouses</span>
                                 </a>
                             </li>
 
@@ -270,6 +270,13 @@
                                 <a class="nav-link arrow-none" href="{% url 'reports' %}" id="topnav-pages"
                                     role="button">
                                     <i class="bx bxs-report me-2"></i><span key="t-apps">Reports</span>
+                                </a>
+                            </li>
+                            
+                            <li class="nav-item dropdown">
+                                <a class="nav-link arrow-none fw-bold" href="{% url 'headquarter' %}" id="topnav-pages"
+                                    role="button">
+                                    Warehouse - <span class=" text-success" key="t-apps">{{main_warehouse.name}}</span>
                                 </a>
                             </li>
 
