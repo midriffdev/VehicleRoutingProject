@@ -12,6 +12,7 @@ from decouple import config
 from django.conf import settings
 import google.generativeai as genai
 from .models import *  # Ensure you import your Order model
+from ai_vehicle.models import HeadQuarter
 import requests, os, csv
 
 genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI")
@@ -61,6 +62,8 @@ def vehicles(request):
                 truck_number=truck_number,
                 capacity=capacity,
                 cost_per_km=cost_per_km,
+                warehouse=HeadQuarter.objects.get(primary=True)
+                
             )
         return redirect('vehicles')
 
@@ -97,10 +100,10 @@ def delete_vehicle(request,pk):
         vv=Truck.objects.filter(id=vechcle).delete()
         return redirect('vehicles')
     
- 
 @csrf_exempt
 def reset_assinged_trucks(request):
     Truck.objects.filter(warehouse__primary= True).update(available=True, routedata=None)
+    Order.objects.filter(warehouse__primary= True).update(assigned_truck=None)
     return redirect('vehicles')
     
 @csrf_exempt
@@ -208,7 +211,6 @@ def drivers(request, pk=None):
         context={ 'truck':truck.first() }
         return render(request, 'home/single_driver.html',context)
     
-
 @csrf_exempt
 def report_issue(request, pk=None):
     if request.method == 'POST':
@@ -227,8 +229,6 @@ def report_issue(request, pk=None):
         return redirect(reverse('single_driver', kwargs={'pk': pk}))
     else:
         return redirect(reverse('single_driver', kwargs={'pk': pk})) 
-
-
 
 @csrf_exempt
 def single_customer(request,pk):
@@ -410,12 +410,13 @@ def upload_orders(request):
                     order_status='pending',  
                     lat=lat,
                     long=long,
+                    warehouse=HeadQuarter.objects.get(primary=True)
                 )
                    
         return redirect('upload_orders') 
     
     else:
-        orders=Order.objects.all()
+        orders=Order.objects.filter(warehouse__primary=True)
         context={
             'orders':orders,
         }

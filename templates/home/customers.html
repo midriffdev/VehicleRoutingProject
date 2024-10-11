@@ -61,15 +61,16 @@
                         <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Order No.</th>
+                                    <th>Order ID</th>
                                     {% comment %} <th>Customer Name</th> {% endcomment %}
+                                    <th>Order</th>
                                     <th>Customer</th>
-                                    <th>Order Name</th>
                                  
-                                    <th>Quantity</th>
+                                    <th>Qty</th>
+                                    <th>Assigned Truck</th>
                                     <th>Destination</th>
-                                    <th>Order Status</th>
-                                    <th>Payment Status</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -79,11 +80,12 @@
                                 <tr>
                                     <td>#13A{{i.id}}</td>
                                     {% comment %} <td class="text-primary fw-medium"></td> {% endcomment %}
+                                    <td>{{i.product_name}}</td>
                                     <td class="text-primary fw-medium">{{ i.cname|title }}<br>({{ i.email }})</td>
 
-                                    <td>{{i.product_name}}</td>
                                   
                                     <td>{{i.quantity}}</td>
+                                    <td>{%if i.assigned_truck%}{{i.assigned_truck.truck_name}}{%else%}Not assigned   yet{%endif%}</td>
                                     <td>{{i.destination}}</td>
                                     <td>{{i.order_status}}</td>
                                     <td>
@@ -101,7 +103,7 @@
                                     </td>
                                     <td>
                                         <a href="{% url 'single_customer' i.id %}" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
-                                            View Details
+                                            View
                                         </a>
                                         
                                     </td>

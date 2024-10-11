@@ -61,16 +61,17 @@ def download_json(request, route_id):
 
 def assign_routes_to_trucks(request, route_id):
     """assign trucks and set availabilty"""
-    Truck.objects.filter().update(available=True, routedata=None) 
+    Truck.objects.filter(warehouse__primary= True).update(available=True, routedata=None) 
     genroute = GenRoutes.objects.get(id=route_id)
-    for i in genroute.truckdata.all():
-        i.truck.routedata = i.routedata
-        i.truck.available = False
-        i.truck.save()
+    for tdata in genroute.truckdata.all():
+        tdata.truck.routedata = tdata.routedata
+        tdata.truck.available = False
+        tdata.truck.save()
+        for ordr in tdata.routedata.orders.all():
+            ordr.assigned_truck = tdata.truck
+            ordr.save()
     messages.success(request, 'Trucks has been assinged with respective orders.')
     return redirect('vehicles')
-
-
 
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
@@ -79,11 +80,11 @@ def getroute(request):
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
     hq = HeadQuarter.objects.get(primary=True)
-    avl_trucks = Truck.objects.filter(available=True)
+    avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
     if not avl_trucks:
         messages.success(request, 'No available trucks at the moment.')
         return redirect('upload_orders')
-    for i in Truck.objects.filter(available=True):
+    for i in avl_trucks:
         temp = {}
         temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
@@ -93,7 +94,7 @@ def getroute(request):
         temp["cost_per_kilometer"] = int(i.cost_per_km)
         reqjson["vehicles"].append(temp)    
 
-    for i in Order.objects.filter(order_status='pending'):
+    for i in Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None):
         temp = {}
         temp['deliveries'] = [{
                 "arrival_location": {"latitude": i.lat,"longitude": i.long} if i.lat else get_lat_long(i.destination),
@@ -105,7 +106,6 @@ def getroute(request):
         temp["load_demands"] = {"weight": {"amount": i.quantity}}
         temp["label"] = f'{i.destination}_{i.id}'
         reqjson["shipments"].append(temp) 
-
 
     print("____punching for response json")
     project_id="gmprotrial"
@@ -135,7 +135,7 @@ def getroute(request):
             i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('_')[1])
             temp['fstop'], temp['lstop'] = hq.name, i.destination
         iroutes.append(temp)
-    pendingorders = Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)
+    pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
     pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
 
 
@@ -158,7 +158,7 @@ def getroute(request):
     json_file = ContentFile(json.dumps({"model": newreqjson, "populatePolylines": True}).encode('utf-8'), name='request.json')
 
 
-    gen_route = GenRoutes.objects.create(ijson=json_file)
+    gen_route = GenRoutes.objects.create(ijson=json_file, warehouse=hq)
     gen_route.pendorders.set(pendingorders)
     for i in iroutes:
         if i['order']:

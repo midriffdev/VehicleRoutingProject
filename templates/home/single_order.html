@@ -51,6 +51,14 @@
                                     <td>{{ order.quantity }}</td>
                                 </tr>
                                 <tr>
+                                    <th>Warehouse</th>
+                                    <td>{{ order.warehouse.name }}</td>
+                                </tr>
+                                <tr>    
+                                    <th>Assigned truck</th>
+                                    <td>{%if i.assigned_truck%}{{ order.assigned_truck.truck_name }} (#{{order.assigned_truck.id}}){%else%}Not assigned   yet{%endif%}</td>
+                                </tr>
+                                <tr>
                                     <th>Destination</th>
                                     <td>{{ order.destination }}</td>
                                 </tr>

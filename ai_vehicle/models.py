@@ -20,6 +20,7 @@ class GenRoutes(models.Model):
     created     = models.DateTimeField(auto_now_add=True)
     truckdata   = models.ManyToManyField(Truckdata, null=True, blank=True)
     pendorders  = models.ManyToManyField(Order, null=True, blank=True)
+    warehouse   = models.ForeignKey('HeadQuarter', on_delete=models.PROTECT)
 
 class HeadQuarter(models.Model):
     name    = models.CharField(max_length=30)

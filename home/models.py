@@ -14,7 +14,7 @@ class Truck(models.Model):
     routedata                           = models.ForeignKey('ai_vehicle.routedata', null=True, blank=True, on_delete=models.PROTECT)
     warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT)
 
-    def __str__(self): return f"{self.truck_name} ({self.truck_number}) | avl-{self.available} | onreoute-{bool(self.routedata)}"
+    def __str__(self): return f"{self.truck_name} ({self.truck_number}) | avl-{self.available} | onreoute-{bool(self.routedata)} | warehouse - {self.warehouse.name}"
 
 
 
@@ -66,16 +66,19 @@ class Order(models.Model):
     late_payment_status                 = models.BooleanField(default=False)  # To indicate if the payment is late
     due_days                            = models.PositiveIntegerField(default=0)
     warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT)
+    assigned_truck                      = models.ForeignKey('Truck', blank=True, null=True, on_delete=models.PROTECT)
   
     def __str__(self):
-        return f'{self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}'
+        return f'{self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}{" | assigned to " + self.assigned_truck.truck_name if self.assigned_truck else ""}'
 
 
 
 class Report_order(models.Model):
-    truck             		        = models.ForeignKey(to=Order, on_delete=models.PROTECT, related_name='truck')
-    order             		        = models.ForeignKey(to=Order, on_delete=models.PROTECT, related_name='order')
-    issue                         = models.CharField(max_length=255)
+    truck             		            = models.ForeignKey(to=Truck, on_delete=models.PROTECT, related_name='truck')
+    order             		            = models.ForeignKey(to=Order, on_delete=models.PROTECT, related_name='order')
+    issue                               = models.CharField(max_length=255)
+    created_at                          = models.DateTimeField(auto_now_add=True)
+    updated_at                          = models.DateTimeField(auto_now=True) 
    
     def __str__(self): return f"{self.truck.truck_name} ({self.order})"
 
