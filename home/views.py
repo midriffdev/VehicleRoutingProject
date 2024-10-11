@@ -31,7 +31,7 @@ def payments(request):
         print("welcome ji")
         return redirect('home')  # Redirect to home or any other page
     else:
-        orders=Order.objects.filter(order_status="delivered")
+        orders=Order.objects.filter(order_status="delivered", warehouse__primary= True)
         context={
             'orders':orders,
         }
@@ -65,7 +65,8 @@ def vehicles(request):
         return redirect('vehicles')
 
     else:
-        vehicles=Truck.objects.all()
+        # vehicles=Truck.objects.all()
+        vehicles=Truck.objects.filter(warehouse__primary= True)
 
         context={
             'vehicles':vehicles,
@@ -99,17 +100,17 @@ def delete_vehicle(request,pk):
  
 @csrf_exempt
 def reset_assinged_trucks(request):
-    Truck.objects.filter().update(available=True, routedata=None)
+    Truck.objects.filter(warehouse__primary= True).update(available=True, routedata=None)
     return redirect('vehicles')
     
 @csrf_exempt
-def analyseRoutesAI(request):
+def analyseRoutesAI(request): #NOT IN USE NOW
     if request.method == 'POST':
         print("welcome ji")
         return redirect('home')  # Redirect to home or any other page
     
     else:
-        orders=Order.objects.filter(order_status="delivered")
+        orders=Order.objects.filter(order_status="delivered", warehouse__primary= True)
         context={
             'orders':orders,
         }
@@ -135,9 +136,8 @@ def reports(request):
     if request.method == 'POST':
         print("welcome ji")
         return redirect('home')  # Redirect to home or any other page
-    
     else:
-           return render(request, 'home/reports.html')
+        return render(request, 'home/reports.html')
        
 @csrf_exempt
 def customer_single_order(request,pk):
@@ -401,8 +401,8 @@ def upload_orders(request):
 
 def delete_all_orders(request):
     if request.method == 'POST':
-        Notifications.objects.all().delete()
-        Order.objects.all().delete()  
+        Notifications.objects.filter(receiver__warehouse__primary= True).delete()
+        Order.objects.filter(warehouse__primary= True).delete()  
         messages.success(request, "All orders have been successfully deleted.")
         return redirect('upload_orders')
     else:
@@ -452,7 +452,7 @@ def search_customers(request):
 
 @csrf_exempt
 def get_delivered_orders():
-    delivered_orders = Order.objects.filter(order_status="delivered")
+    delivered_orders = Order.objects.filter(order_status="delivered", warehouse__primary= True)
     return delivered_orders
 
 @csrf_exempt
