@@ -13,7 +13,6 @@ urlpatterns = [
     path('payments', views.payments, name='payments'),
     path('vehicles', views.vehicles, name='vehicles'),
     path('reset_assinged_trucks', views.reset_assinged_trucks, name='reset_assinged_trucks'),
-    path('analyseRoutesAI', views.analyseRoutesAI, name='analyseRoutesAI'),
     path('escalationteam', views.escalationteam, name='escalationteam'),
     path('customer_single_order/<int:pk>', views.customer_single_order, name='customer_single_order'),
     path('switchAccounts', views.switchAccounts, name='switchAccounts'),
