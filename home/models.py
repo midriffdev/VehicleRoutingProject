@@ -74,8 +74,8 @@ class Order(models.Model):
 
 
 class Report_order(models.Model):
-    truck             		            = models.ForeignKey(to=Truck, on_delete=models.PROTECT, related_name='truck')
-    order             		            = models.ForeignKey(to=Order, on_delete=models.PROTECT, related_name='order')
+    truck             		            = models.ForeignKey(to=Truck, on_delete=models.CASCADE, related_name='truck')
+    order             		            = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name='order')
     issue                               = models.CharField(max_length=255)
     created_at                          = models.DateTimeField(auto_now_add=True)
     updated_at                          = models.DateTimeField(auto_now=True) 
