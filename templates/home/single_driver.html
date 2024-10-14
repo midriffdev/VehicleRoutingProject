@@ -1,25 +1,45 @@
 {% extends 'home/base-not-header.html' %}
 {% load static %}
 {% block content %}
-    <title>Order Details</title>
+<title>Order Details</title>
 </head>
+
+{% comment %} <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        alert("ok"); // Confirming the script runs on page load
+        const role = localStorage.getItem('role');
+        alert(role); // Shows an alert with the value of 'role'
+
+        if (role === "Admin") {
+            const navigationBar = document.getElementById("navigation_bar");
+            console.log("Navigation Bar display before:", getComputedStyle(navigationBar).display); 
+            navigationBar.style.display = "none";
+           
+        }
+
+
+
+    });
+</script> {% endcomment %}
+
 <body>
 
     <div class="container-fluid">
+        <!-- Page Title -->
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h4 class="mb-sm-0 font-size-18">Driver Details</h4>
-                   
                 </div>
             </div>
         </div>
 
+        <!-- Driver and Truck Information -->
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <table id="orderTable" class="table ">
+                        <table id="orderTable" class="table">
                             <thead class="table-light">
                                 <tr>
                                     <th>Field</th>
@@ -27,49 +47,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th>Truck Name</th>
-                                    <td>{{ truck.truck_name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Truck Number</th>
-                                    <td>{{ truck.truck_number }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Driver Name</th>
-                                    <td>{{ truck.driver_name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Driver Email</th>
-                                    <td>{{ truck.driver_email }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Driver Contact</th>
-                                    <td>{{ truck.contact_number }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Warehouse</th>
-                                    <td>{{ truck.warehouse.name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Truck Capacity</th>
-                                    <td>{{ truck.capacity }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Truck costs/km</th>
-                                    <td>{{ truck.cost_per_km }}</td>
-                                </tr>
+                                <tr><th>Truck Name</th><td>{{ truck.truck_name }}</td></tr>
+                                <tr><th>Truck Number</th><td>{{ truck.truck_number }}</td></tr>
+                                <tr><th>Driver Name</th><td>{{ truck.driver_name }}</td></tr>
+                                <tr><th>Driver Email</th><td>{{ truck.driver_email }}</td></tr>
+                                <tr><th>Driver Contact</th><td>{{ truck.contact_number }}</td></tr>
+                                <tr><th>Warehouse</th><td>{{ truck.warehouse.name }}</td></tr>
+                                <tr><th>Truck Capacity</th><td>{{ truck.capacity }}</td></tr>
+                                <tr><th>Truck Costs/Km</th><td>{{ truck.cost_per_km }}</td></tr>
                                 <tr>
                                     <th>Available</th>
-                                    <td>{%if truck.available%}Yes{%else%}No{%endif%}</td>
+                                    <td>{% if truck.available %}Yes{% else %}No{% endif %}</td>
                                 </tr>
                             </tbody>
                         </table>
-        
-                        <!-- Pay Now Button -->
+
+                        <!-- Payment Button Logic -->
                         <div class="text-center mt-4">
                             {% if order.payment_status == 'completed' %}
-                                <!-- Do nothing if payment is completed -->
+                                <!-- Payment Completed -->
                             {% else %}
                                 {% if order.order_status == 'delivered' %}
                                     <form method="post" action="{% url 'single_customer' order.id %}" id="pay_now_form">
@@ -82,39 +78,28 @@
                                 {% endif %}
                             {% endif %}
                         </div>
-        
-                        <!-- Back Button -->
-                        {% comment %} <div class="text-center mt-4">
-                            <a href="{% url 'customers' %}" class="btn btn-secondary">Back to Orders</a>
-                        </div> {% endcomment %}
                     </div>
                 </div>
-                <!-- Order Info Table with DataTable -->
-                
             </div>
 
-           
-
+            <!-- Notifications and Admin Contact Information -->
             <div class="col-md-4">
                 <div class="card">
-                    <div class=card-body>
-                        <!-- Notification Section -->
-                         <img src="{{truck.truck_image.url}}" width="312px">
-                <div class="notification-section">
-                    <h5 class="text-center py-3 border-bottom">Notifications</h5>
-
-                    {% for n in notifications %}
-                    <div class="alert alert-success">
-                        <strong>{{n.title}}</strong>
-                        <p class="mb-0">{{n.content}}</p>
-                    </div>
-                    {% endfor%}
-                   
-                    <!-- Add more notifications as needed -->
-                </div>
+                    <div class="card-body">
+                        <img src="{{ truck.truck_image.url }}" width="312px" alt="Truck Image">
+                        <div class="notification-section">
+                            <h5 class="text-center py-3 border-bottom">Notifications</h5>
+                            {% for n in notifications %}
+                            <div class="alert alert-success">
+                                <strong>{{ n.title }}</strong>
+                                <p class="mb-0">{{ n.content }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
 
+                <!-- Admin Information Card -->
                 <div class="card mt-4">
                     <div class="card-body">
                         <h5 class="text-center py-3 border-bottom">Platform Admin</h5>
@@ -124,19 +109,11 @@
                         <p class="text-danger">If you encounter any issues or emergencies, please reach out to us immediately. We're here to assist you.</p>
                     </div>
                 </div>
-               
             </div>
-
-
-           
-
-           
-
-
-
-
         </div>
-        {%if truck.routedata%}
+
+        <!-- Assigned Orders Section -->
+        {% if truck.routedata %}
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -144,6 +121,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -151,7 +129,7 @@
                         <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Order id</th>
+                                    <th>Order ID</th>
                                     <th>Order</th>
                                     <th>Customer</th>
                                     <th>Quantity</th>
@@ -161,9 +139,8 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-
                             <tbody>
-                            {% for i in truck.routedata.orders.all %}
+                                {% for i in truck.routedata.orders.all %}
                                 <tr>
                                     <td>#13A{{ i.id }}</td>
                                     <td>{{ i.product_name }}</td>
@@ -185,15 +162,15 @@
                                                 <input type="hidden" name="order_status" value="delivered" />
                                                 <button type="submit" class="btn btn-success btn-sm">Mark as delivered</button>
                                             </form>
-                                            {%endif%}
+                                            {% endif %}
                                             <button type="button" class="btn btn-warning btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target="#reportModal{{ i.id }}">
                                                 Add Report
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                            
-                                <!-- Modal for Adding Report -->
+
+                                <!-- Report Modal -->
                                 <div class="modal fade" id="reportModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel{{ i.id }}" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
@@ -203,8 +180,9 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <div class="modal-body">    
-                                                <form method="POST" action="{% url 'report_issue' i.id %}">  <!-- Update the form action URL as per your backend -->
+                                            <div class="modal-body">
+                                                <form method="POST" action="{% url 'report_issue' i.id %}">
+                                                    {% csrf_token %}
                                                     <input type="hidden" name="order_id" value="{{ i.id }}">
                                                     <input type="hidden" name="truck_id" value="{{ truck.id }}">
                                                     <div class="form-group">
@@ -217,23 +195,16 @@
                                         </div>
                                     </div>
                                 </div>
-                            {% endfor %}
-                            
-                               
-                              
-                               
-                             
+                                {% endfor %}
                             </tbody>
                         </table>
-
                     </div>
                 </div>
-            </div> <!-- end col -->
+            </div>
         </div>
-        {%endif%}
+        {% endif %}
     </div>
 
-    
 </body>
 
 {% endblock %}

@@ -149,3 +149,9 @@
     background: #ccc !important;
     border-radius: 50px;
 }
+
+.floatTruckstatus {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
