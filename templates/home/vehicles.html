@@ -298,14 +298,84 @@
                                     </td>
                                     <td>
                                         <div class="d-flex">
+
+
+
                                             <a href="{%url 'admin_single_vehicle' i.id%}" class="btn btn-secondary btn-sm btn-rounded mr-1">View</a>
                                             <button type="button" class="btn btn-secondary btn-sm btn-rounded  mr-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal{{i.id}}">Edit</button>
+
+                                            <button type="button" class="btn btn-primary btn-sm btn-rounded mr-1" data-bs-toggle="modal" data-bs-target="#addServiceModal{{i.id}}">
+                                                Add Service
+                                            </button>
+
                                             <form action="{% url 'delete_vehicle' i.id %}" method="post" enctype="multipart/form-data"
                                             class="d-flex align-items-end">
                                             {% csrf_token %}
                                             <input type="hidden" name="truck_id" value="{{i.id}}">
                                             <button  type="submit" class="btn btn-danger btn-sm btn-rounded" >Delete</button>
                                             </form>
+
+
+
+
+                                            <!-- Modal for Adding Service -->
+<div class="modal fade" id="addServiceModal{{i.id}}" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+
+            {% comment %} action="{% url 'add_service' i.id %}" {% endcomment %}
+
+
+            <form  method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addServiceModalLabel">Add Service for Truck</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="service_date" class="form-label">Service Date</label>
+                        <input type="date" name="service_date" class="form-control" id="service_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="service_description" class="form-label">Service Description</label>
+                        <textarea name="service_description" class="form-control" id="service_description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="parts_changed" class="form-label">Parts Changed</label>
+                        <select name="parts_changed" id="parts_changed" class="form-select" multiple>
+                            {% for part in parts %}
+                                <option value="{{ part.id }}">{{ part.part_name }} by {{ part.manufacturer }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cost" class="form-label">Total Service Cost (in USD)</label>
+                        <input type="number" step="0.01" name="cost" class="form-control" id="cost" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
                                         </div>
                                     </td>
                                     
@@ -453,7 +523,7 @@
                         <!-- Truck Image -->
                         <div class="col-md-6 mb-3">
                             <label for="truck_image" class="form-label">Truck Image</label>
-                            <input type="file" value="{{i.truck_image.url}}"  name="truck_image" class="form-control" id="truck_image">
+                            <input type="file" {% if i.truck_image %} value="{{i.truck_image.url}}" {% endif%} name="truck_image" class="form-control" id="truck_image">
                         </div>
 
                         <!-- Brand/Manufacturer -->
