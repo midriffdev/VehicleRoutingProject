@@ -260,8 +260,6 @@ def edit_vehicle(request, pk):
     }
     return render(request, 'home/edit_vehicle.html', context)
 
-
-
 @csrf_exempt
 def delete_vehicle(request,pk):
     print(request.POST,"defres")
@@ -272,22 +270,9 @@ def delete_vehicle(request,pk):
     
 @csrf_exempt
 def reset_assinged_trucks(request):
-    Truck.objects.filter(warehouse__primary= True).update(available=True, routedata=None)
+    Truck.objects.filter().update(available=True, routedata=None)
     Order.objects.filter(warehouse__primary= True).update(assigned_truck=None)
     return redirect('vehicles')
-    
-@csrf_exempt
-def analyseRoutesAI(request): #NOT IN USE NOW
-    if request.method == 'POST':
-        print("welcome ji")
-        return redirect('home')  # Redirect to home or any other page
-    
-    else:
-        orders=Order.objects.filter(order_status="delivered", warehouse__primary= True)
-        context={
-            'orders':orders,
-        }
-        return render(request, 'home/ai-routes.html',context)
     
 @csrf_exempt
 def escalationteam(request):
@@ -381,8 +366,6 @@ def drivers(request, pk=None):
         context={ 'truck':truck.first() }
         return render(request, 'home/single_driver.html',context)
     
-
-
 @csrf_exempt
 def admin_single_vehicle(request, pk=None):
     if request.method == 'POST':
@@ -596,6 +579,7 @@ def upload_orders(request):
         orders=Order.objects.filter(warehouse__primary=True)
         context={
             'orders':orders,
+            'warehouses':HeadQuarter.objects.all()
         }
         return render(request, 'home/orders.html',context) 
 
@@ -603,6 +587,7 @@ def delete_all_orders(request):
     if request.method == 'POST':
         Notifications.objects.filter(receiver__warehouse__primary= True).delete()
         Order.objects.filter(warehouse__primary= True).delete()  
+        Truck.objects.filter().update(available=True, routedata=None)
         messages.success(request, "All orders have been successfully deleted.")
         return redirect('upload_orders')
     else:

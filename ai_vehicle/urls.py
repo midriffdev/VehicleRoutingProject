@@ -11,5 +11,6 @@ urlpatterns = [
     path('assign_routes/<int:route_id>/', assign_routes_to_trucks, name='assign_routes_to_trucks'),
     path('delete_hq/<int:pk>/', delete_hq, name='delete_hq'),
     path('set_hq/<int:pk>/', set_hq, name='set_hq'),
+    path('fetchorders', fetchorders, name='fetchorders'),
  
 ]

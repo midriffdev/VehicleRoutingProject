@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, JsonResponse
 from huggingface_hub import login
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from google.maps import routeoptimization_v1 as ro
@@ -73,17 +73,30 @@ def assign_routes_to_trucks(request, route_id):
     messages.success(request, 'Trucks has been assinged with respective orders.')
     return redirect('vehicles')
 
+def fetchorders(request):
+    # print("request.POST___________", request.POST)
+    orders = []
+    for wh in request.POST.getlist('wids[]'):
+        temp = [{'text':f'{order.id} | {order.cname}', 'value':order.id} for order in Order.objects.filter(warehouse_id=wh)]
+        orders.append( [HeadQuarter.objects.get(id=wh).name, temp] )
+    return JsonResponse({'orders':orders, 'status':'SENT'}, status = 200)
+
+
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
+    if request.method == 'GET':
+        return redirect('upload_orders')
+
+    # REQUEST.POST
+    print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist') , request.POST.getlist('orderslist')[1])    
     reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"), "global_end_time": datetime.datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}
 
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
     hq = HeadQuarter.objects.get(primary=True)
-    hq2 = HeadQuarter.objects.filter(id=6).first()
     avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
     # avl_orders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None)
-    avl_orders = Order.objects.filter(order_status='pending', assigned_truck=None)
+    avl_orders = Order.objects.filter(order_status='pending', assigned_truck=None, id__in=request.POST.getlist('orderslist'))
     if (not avl_trucks) or (not avl_orders) :
         messages.success(request, 'No available trucks at the moment.')
         return redirect('upload_orders')
@@ -147,7 +160,7 @@ def getroute(request):
         if data.get('visits', []):
             # if data.get('visits', [])[-1]['shipmentLabel']:
             i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('__')[1])
-            temp['fstop'], temp['lstop'] = hq.name, i.destination
+            temp['fstop'], temp['lstop'] = int(len(data.get('visits', []))/2), i.destination
         iroutes.append(temp)
     pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
     pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])

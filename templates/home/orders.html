@@ -35,103 +35,69 @@
                                 <a href="{% url 'getroute' %}" class="btn btn-secondary btn-md waves-effect waves-light" onclick="document.querySelector('.loaderWrapper').classList.remove('d-none');">Analyse Route By AI</a>
 
 
-                                <a href="" class="btn btn-secondary btn-md waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#selectOrdersModal" >Analyse Route By AI</a>
+                                <a href="" class="btn btn-secondary btn-md waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#selectOrdersModal" >Analyse Route By AI demo</a>
                                 <div class="modal fade" id="selectOrdersModal" tabindex="-1" aria-labelledby="deleteAllOrdersModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="deleteAllOrdersModalLabel">Select Order</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Select Warehouse</label>
-                                                        <select class="form-select">
-                                                            <option>Select</option>
-                                                            <option>Warehouse 1</option>
-                                                            <option>Warehouse 2</option>
-                                                        </select>
+                                        <form action="{%url 'getroute' %}" method="POST">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteAllOrdersModalLabel">Select Order</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {%csrf_token%}
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Select Warehouse</label>
+                                                            <select class="form-select" id="warehouselist" name="warehouselist" multiple onchange="updateorderlist()" required>
+                                                                {%for i in warehouses%}
+                                                                <option value="{{i.id}}">{{i.name}}</option>
+                                                                {%endfor%}
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-12">
-                                                    <div class="mb-3">
-                                                        <label class="form-label d-block">Select Order</label>
-                                                        <select class="select2 form-control select2-multiple w-100 d-block"
-                                                            multiple="multiple" data-placeholder="Choose ...">
-                                                            <optgroup label="Alaskan/Hawaiian Time Zone">
-                                                                <option value="AK">Alaska</option>
-                                                                <option value="HI">Hawaii</option>
-                                                            </optgroup>
-                                                            <optgroup label="Pacific Time Zone">
-                                                                <option value="CA">California</option>
-                                                                <option value="NV">Nevada</option>
-                                                                <option value="OR">Oregon</option>
-                                                                <option value="WA">Washington</option>
-                                                            </optgroup>
-                                                            <optgroup label="Mountain Time Zone">
-                                                                <option value="AZ">Arizona</option>
-                                                                <option value="CO">Colorado</option>
-                                                                <option value="ID">Idaho</option>
-                                                                <option value="MT">Montana</option>
-                                                                <option value="NE">Nebraska</option>
-                                                                <option value="NM">New Mexico</option>
-                                                                <option value="ND">North Dakota</option>
-                                                                <option value="UT">Utah</option>
-                                                                <option value="WY">Wyoming</option>
-                                                            </optgroup>
-                                                            <optgroup label="Central Time Zone">
-                                                                <option value="AL">Alabama</option>
-                                                                <option value="AR">Arkansas</option>
-                                                                <option value="IL">Illinois</option>
-                                                                <option value="IA">Iowa</option>
-                                                                <option value="KS">Kansas</option>
-                                                                <option value="KY">Kentucky</option>
-                                                                <option value="LA">Louisiana</option>
-                                                                <option value="MN">Minnesota</option>
-                                                                <option value="MS">Mississippi</option>
-                                                                <option value="MO">Missouri</option>
-                                                                <option value="OK">Oklahoma</option>
-                                                                <option value="SD">South Dakota</option>
-                                                                <option value="TX">Texas</option>
-                                                                <option value="TN">Tennessee</option>
-                                                                <option value="WI">Wisconsin</option>
-                                                            </optgroup>
-                                                            <optgroup label="Eastern Time Zone">
-                                                                <option value="CT">Connecticut</option>
-                                                                <option value="DE">Delaware</option>
-                                                                <option value="FL">Florida</option>
-                                                                <option value="GA">Georgia</option>
-                                                                <option value="IN">Indiana</option>
-                                                                <option value="ME">Maine</option>
-                                                                <option value="MD">Maryland</option>
-                                                                <option value="MA">Massachusetts</option>
-                                                                <option value="MI">Michigan</option>
-                                                                <option value="NH">New Hampshire</option>
-                                                                <option value="NJ">New Jersey</option>
-                                                                <option value="NY">New York</option>
-                                                                <option value="NC">North Carolina</option>
-                                                                <option value="OH">Ohio</option>
-                                                                <option value="PA">Pennsylvania</option>
-                                                                <option value="RI">Rhode Island</option>
-                                                                <option value="SC">South Carolina</option>
-                                                                <option value="VT">Vermont</option>
-                                                                <option value="VA">Virginia</option>
-                                                                <option value="WV">West Virginia</option>
-                                                            </optgroup>
-                                                        </select>
+                                                    <div class="col-lg-12">
+                                                        <div class="mb-3">
+                                                            <label class="form-label d-block">Select Order</label>
+                                                            <select multiple="multiple" id="orderslist" name="orderslist" onchange="showorders()" required>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-danger">Delete All Orders</button>
-                                        </div>
+                                            <span class="fw-bold text-success" id="showorders"></span>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger">Select orders</button>
+                                            </div>
+                                        </form>
                                     </div>
                                     </div>
                                   </div>
+                                  <script>
+                                    function updateorderlist(){
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "{%url 'fetchorders' %}",
+                                            data: { csrfmiddlewaretoken: '{{csrf_token}}', wids: $('#warehouselist').val() },
+                                            success: function (response) {
+                                                $('#orderslist').empty()
+                                                orders = []
+                                                response.orders.forEach(function(option) {
+                                                    var optgroup = $('<optgroup>', { label: option[0] });
+                                                    option[1].forEach(function(option) { optgroup.append(new Option(option.text, option.value)); });
+                                                    $('#orderslist').append(optgroup);
+                                                });
+                                            },
+                                        });
+                                    }
+
+                                    function showorders(){
+                                        if ($('#orderslist').val().length) {$('#showorders').html( `Selected Orders: ${String($('#orderslist').val())}` )}
+                                        else {$('#showorders').html( '' )}
+                                    }
+                                </script>
                                 
 
 
