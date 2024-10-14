@@ -298,7 +298,11 @@ def reports(request):
         print("welcome ji")
         return redirect('home')  # Redirect to home or any other page
     else:
-        return render(request, 'home/reports.html')
+        warehouse=HeadQuarter.objects.all()
+        context={
+            'warehouses':warehouse,
+        }
+        return render(request, 'home/reports.html',context)
        
 @csrf_exempt
 def customer_single_order(request,pk):

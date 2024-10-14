@@ -29,11 +29,15 @@
                                     <div class="card ">
                                         <div class="card-body py-4">
                                             <label class="form-label">Warehouse</label>
+
+                                            
                                             <select class="form-control select2">
-                                                <option>Warehouse 1</option>
-                                                <option>Warehouse 2</option>
-                                                <option>Warehouse 3</option>
+                                                {% for w in warehouses%}
+                                                <option selected>All Warehouse</option>
+                                                <option>{{w.name}}</option>
+                                                {% endfor %}
                                             </select>
+
                                         </div>
                                     </div>
                                 </div>
