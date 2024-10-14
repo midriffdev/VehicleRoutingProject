@@ -77,6 +77,7 @@
                         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                             <thead class="table-light">
                                 <tr>
+                                    <th class="align-middle">ID</th>
                                     <th class="align-middle">Location Name</th>
                                     <th class="align-middle">Latitude</th>
                                     <th class="align-middle">Longitude</th>
@@ -86,6 +87,7 @@
                             <tbody>
                                 {% for i in hq %}
                                 <tr>
+                                    <td>{{i.id}} </td>
                                     <td>{{i.name}} </td>
                                     <td>{{i.lat}}</td>
                                     <td>{{i.long}}</td>

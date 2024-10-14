@@ -80,15 +80,17 @@ def getroute(request):
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
     hq = HeadQuarter.objects.get(primary=True)
+    hq2 = HeadQuarter.objects.filter(id=6).first()
     avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
-    avl_orders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None)
+    # avl_orders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None)
+    avl_orders = Order.objects.filter(order_status='pending', assigned_truck=None)
     if (not avl_trucks) or (not avl_orders) :
         messages.success(request, 'No available trucks at the moment.')
         return redirect('upload_orders')
     for i in avl_trucks:
         temp = {}
-        temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
-        # temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300}
+        # temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
+        temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300}
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
         temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
         temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
@@ -98,7 +100,7 @@ def getroute(request):
 
     for i in avl_orders:
         temp = {}
-        # temp['pickups'] = [{"arrival_location": {"latitude": float(hq.lat),"longitude": float(hq.long)}}]
+        temp['pickups'] = [{"arrival_location": {"latitude": float(i.warehouse.lat),"longitude": float(i.warehouse.long)}}]
         temp['deliveries'] = [{
                 "arrival_location": {"latitude": i.lat,"longitude": i.long} if i.lat else get_lat_long(i.destination),
                 "time_windows": [{
@@ -107,10 +109,10 @@ def getroute(request):
                 }]
             }]
         temp["load_demands"] = {"weight": {"amount": i.quantity}}
-        temp["label"] = f'{i.destination}_{i.id}'
+        temp["label"] = f'DELIVERY_{i.destination}__{i.id}'
         reqjson["shipments"].append(temp) 
 
-    print("____punching for response json")
+    print("\n\n____punching for response json")
     project_id="gmprotrial"
     client = ro.RouteOptimizationClient()
     grequest = ro.OptimizeToursRequest(
@@ -122,28 +124,36 @@ def getroute(request):
     # json_output = MessageToJson(response._pb) ## RESPONSE JSON
     dict_output = MessageToDict(response._pb)
 
-    print("response____", dict_output['routes'])
+    print("\n\nresponse or routes____", dict_output['routes'])
 
     iroutes = []
     obtained_orders = []
     for data in dict_output['routes']:
         temp = {
         'truck'     : Truck.objects.get(truck_number=data['vehicleLabel'].split('--')[1]),
-        'order'     : [ Order.objects.get(id=i['shipmentLabel'].split('_')[1]) for i in data.get('visits', [])],
         'fstop'     : None,
         'lstop'     : None,
-        'stime'     : data.get('vehicleStartTime', None) 
+        'stime'     : data.get('vehicleStartTime', None),
+        'type'      : 'delivery',
+        'order'     : []
         }
+        for i in data.get('visits', []):
+            if 'isPickup' in i:
+                # temp['order'].append(0)
+                temp['type']  = 'pickup'
+            else: temp['order'].append(Order.objects.get(id=i['shipmentLabel'].split('__')[1]))
+            
         obtained_orders.extend([i.id for i in temp['order']])
-        if data.get('visits', []): 
-            i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('_')[1])
+        if data.get('visits', []):
+            # if data.get('visits', [])[-1]['shipmentLabel']:
+            i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('__')[1])
             temp['fstop'], temp['lstop'] = hq.name, i.destination
         iroutes.append(temp)
     pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
     pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
 
 
-    print("____making json downloadable")
+    print("\n\n____making json downloadable__request.jdon>> ", reqjson)
     newreqjson = reqjson
     # newreqjson['global_start_time'] = newreqjson['global_start_time'].isoformat()
     # newreqjson['global_end_tim'] = newreqjson['global_end_time'].isoformat()
@@ -157,8 +167,14 @@ def getroute(request):
     for i in newreqjson['shipments']:
         # del i['start_time_windows']
         # del i['end_time_windows']  
-        del i['deliveries'][0]['time_windows'][0]['start_time']
-        del i['deliveries'][0]['time_windows'][0]['end_time']
+        if 'deliveries' in i:
+            if 'start_time' in i['deliveries'][0]['time_windows'][0]:
+                del i['deliveries'][0]['time_windows'][0]['start_time']
+            # if 'deliveries' in i:
+            del i['deliveries'][0]['time_windows'][0]['end_time']
+        # else:
+        #     del i['pickups'][0]['time_windows'][0]['end_time']
+        #     del i['pickups'][0]['time_windows'][0]['end_time']
     json_file = ContentFile(json.dumps({"model": newreqjson, "populatePolylines": True}).encode('utf-8'), name='request.json')
 
 
@@ -171,7 +187,7 @@ def getroute(request):
             a = gen_route.truckdata.create(truck=i['truck'], routedata = b)
     gen_route.save()
 
-    print("iroute______________s", iroutes, obtained_orders, pendingorders)
+    print("\n\niroute______________s", iroutes, obtained_orders, pendingorders)
     # return HttpResponse(json_output['routes'])
     context={'iroutes':iroutes, 'gen_route_id':gen_route.id, 'pendingorders':pendingorders}
     return render(request, 'home/ai-routes.html',context)
