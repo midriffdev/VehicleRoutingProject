@@ -137,11 +137,7 @@
                                                     <td>{{d.service_date}}</td>
                                                     <td>{{d.service_description}}</td>
                                                     <td>
-                                                        {% for p in d.parts_changed.all %}
-                                                            <p>{{ p.part_name }} - {{ p.warranty_period }}</p>
-                                                        {% empty %}
-                                                            <p>No parts changed.</p>
-                                                        {% endfor %}
+                                                        {{d.parts_changed}}
                                                     </td>
                                                     <td>{{d.cost}}</td>
                                                 </tr>
