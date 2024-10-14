@@ -29,14 +29,54 @@
                                     <div class="card ">
                                         <div class="card-body py-4">
                                             <label class="form-label">Warehouse</label>
-                                            <select class="form-control select2">
-                                                <option>Warehouse 1</option>
-                                                <option>Warehouse 2</option>
-                                                <option>Warehouse 3</option>
+
+
+                                            <select class="form-control select2" id="warehouseSelect" onchange="alertSelectedValue()">
+                                                <option selected>All Warehouse</option>
+                                                {% for w in warehouses %}
+                                                    <option value="{{ w.id }}">{{ w.name }}</option>
+                                                {% endfor %}
                                             </select>
+
                                         </div>
                                     </div>
                                 </div>
+
+                               
+                                <script>
+                                    function alertSelectedValue() {
+                                        var selectElement = document.getElementById("warehouseSelect");
+                                        var selectedValue = selectElement.value;
+
+                                        alert("jdfrhv")
+
+
+
+                                        fetch('/reports', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') }, body: JSON.stringify({ selected_value: selectedValue }) }).then(res => res.json()).then(data => { alert(data.status === 'Done' ? 'OK' : 'Error'); document.querySelectorAll(".loaderDiv").forEach(d => d.classList.remove("loaderOn")); });
+
+
+
+
+                                
+                                       
+                                        var loaderDivs = document.querySelectorAll(".loaderDiv");
+                                        loaderDivs.forEach(function(loaderDiv) {
+                                            loaderDiv.classList.add("loaderOn");
+                                        });
+                                
+                                        setTimeout(function() {
+                                            loaderDivs.forEach(function(loaderDiv) {
+                                                loaderDiv.classList.remove("loaderOn");
+                                            });
+                                        }, 2000); // 1000 milliseconds = 1 second
+                                    }
+                                </script>
+                                
+
+
+
+
+
                                 <div class="col-md-6">
                                     <div class="card ">
                                         <div class="card-body py-4">

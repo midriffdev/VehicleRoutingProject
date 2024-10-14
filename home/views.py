@@ -280,11 +280,24 @@ def escalationteam(request):
 @csrf_exempt
 def reports(request):
     if request.method == 'POST':
-        print("welcome ji")
+        print("post methos  ji.........................................")
         return redirect('home')  # Redirect to home or any other page
     else:
-        return render(request, 'home/reports.html')
+        warehouse=HeadQuarter.objects.all()
+        context={
+            'warehouses':warehouse,
+        }
+        return render(request, 'home/reports.html',context)
        
+
+
+
+
+
+
+
+
+
 @csrf_exempt
 def customer_single_order(request,pk):
     if request.method == 'POST':
