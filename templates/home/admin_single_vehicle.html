@@ -1,0 +1,277 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block content %}
+<title>Order Details</title>
+</head>
+
+{% comment %} <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        alert("ok"); // Confirming the script runs on page load
+        const role = localStorage.getItem('role');
+        alert(role); // Shows an alert with the value of 'role'
+
+        if (role === "Admin") {
+            const navigationBar = document.getElementById("navigation_bar");
+            console.log("Navigation Bar display before:", getComputedStyle(navigationBar).display); 
+            navigationBar.style.display = "none";
+           
+        }
+
+
+
+    });
+</script> {% endcomment %}
+
+<body>
+
+    <div class="container-fluid">
+        <!-- Page Title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Driver Details</h4>
+                </div>
+            </div>
+        </div>
+
+
+        <div Class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card bg-primary bg-soft">
+                                            <div class="card-body">
+                                                <h4 class="card-title mb-4">Truck Details</h4>
+                                                <p class="fw-medium">
+                                                    <strong>Truck Name :  </strong>{{ truck.truck_name }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Truck Number :  </strong>{{ truck.truck_number }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Truck Capacity :  </strong>{{ truck.capacity }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Model Name :  </strong>{{ truck.model }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Brand/Manufacturer :  </strong>{{ truck.make }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Year of Manufacture :  </strong>{{ truck.year }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Mileage (in km) :  </strong>{{ truck.mileage }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Required License Type :  </strong>{{ truck.get_license_type_display }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Purchase Date :  </strong>{{ truck.purchase_date|date:'Y-m-d' }}
+                                                </p>
+
+                                                
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card bg-primary bg-soft ">
+                                            <div class="card-body">
+                                                <h4 class="card-title mb-4"> Driver Details</h4>
+                                                <p class="fw-medium">
+                                                    <strong>Driver Name :  </strong>{{ truck.driver_name }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Driver Email  :  </strong>{{ truck.driver_email }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Driver Contact :  </strong> {{ truck.contact_number }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Total Orders : </strong>{{ truck.driver_order }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Orders Delivered On Time: </strong>{{ truck.on_time_deliveries }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Orders Delivered Late: </strong>{{ truck.late_deliveries }}
+                                                </p>
+                                                <p class="fw-medium">
+                                                    <strong>Driver Ratings :  </strong> (4.00 )
+                                                    <i class="bx bxs-star"></i>
+                                                    <i class="bx bxs-star"></i>
+                                                    <i class="bx bxs-star"></i>
+                                                    <i class="bx bxs-star"></i>
+                                                    <i class="bx bx-star"></i>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mt-3">
+                                        <h4 class="card-title mb-4">Vehicle Service</h4>
+                                        <table id="orderTable" class="table">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Service Date</th>
+                                                    <th>Service Description</th>
+                                                    <th>Changed Parts</th>
+                                                    <th>Cost</th>
+                                                    <!-- <th>Warranty Period</th> -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if services %}
+                                               {% for d in services %}
+                                                <tr>
+                                                    <td>{{d.service_date}}</td>
+                                                    <td>{{d.service_description}}</td>
+                                                    <td>
+                                                        {% for p in d.parts_changed.all %}
+                                                            <p>{{ p.part_name }} - {{ p.warranty_period }}</p>
+                                                        {% empty %}
+                                                            <p>No parts changed.</p>
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td>{{d.cost}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                                {% else %}
+                                                <td>  <p class="text-center ">No services yet.</p></td>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body p-2">
+                        <span class="badge rounded-pill bg-success p-2 floatTruckstatus">Available</span>
+                        <!-- <span class="badge rounded-pill bg-danger p-2 floatTruckstatus">Unavailable</span> -->
+                        <img src="{{ truck.truck_image.url }}" class="w-100" alt="Truck Image">
+                    </div>
+                </div>
+                <!-- Admin Information Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="text-center py-2 border-bottom">Platform Admin</h5>
+                        <div class="mt-4">
+                            <p><strong>Contact No:</strong> +1234567890</p>
+                            <p><strong>Email ID:</strong> admin@example.com</p>
+                            <p><strong>Secondary Contact No:</strong> +0987654321</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assigned Orders Section -->
+        {% if truck.routedata %}
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Assigned Orders</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Order</th>
+                                    <th>Customer</th>
+                                    <th>Quantity</th>
+                                    <th>Destination</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in truck.routedata.orders.all %}
+                                <tr>
+                                    <td>#13A{{ i.id }}</td>
+                                    <td>{{ i.product_name }}</td>
+                                    <td>{{ i.cname|title }}<br>({{ i.email }})</td>
+                                    <td>{{ i.quantity }}</td>
+                                    <td>{{ i.destination }}</td>
+                                    <td>{{ i.order_status }}</td>
+                                    <td>
+                                        <span class="badge badge-pill font-size-11 text-capitalize 
+                                            {% if i.payment_status == 'pending' %}badge-soft-warning{% elif i.payment_status == 'due' %}badge-soft-info{% else %}badge-soft-success{% endif %}">
+                                            {{ i.payment_status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex">
+                                            {% if i.order_status == 'pending' %}
+                                            <form method="post" action="{% url 'single_order' i.id %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="order_status" value="delivered" />
+                                                <button type="submit" class="btn btn-success btn-sm">Mark as delivered</button>
+                                            </form>
+                                            {% else%}
+                                            {{i.order_status}}
+                                            {% endif %}
+
+
+
+                                            {% comment %} <button type="button" class="btn btn-warning btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target="#reportModal{{ i.id }}">
+                                                Add Report
+                                            </button> {% endcomment %}
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Report Modal -->
+                                <div class="modal fade" id="reportModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel{{ i.id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="reportModalLabel{{ i.id }}">Report Issue for Order #13A{{ i.id }}</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="POST" action="{% url 'report_issue' i.id %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="order_id" value="{{ i.id }}">
+                                                    <input type="hidden" name="truck_id" value="{{ truck.id }}">
+                                                    <div class="form-group">
+                                                        <label for="issueText{{ i.id }}">Describe the Issue</label>
+                                                        <textarea class="form-control" id="issueText{{ i.id }}" name="issue_text" rows="4" required></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Send Report</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+
+{% endblock %}

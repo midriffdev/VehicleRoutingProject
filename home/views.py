@@ -43,6 +43,7 @@ def vehicles(request):
     if request.method == 'POST':
 
         print("vehicles ",request.POST)
+        print("vehicles Files ", request.FILES)
         truck_name=request.POST.get('truck_name')
         driver_name=request.POST.get('driver_name')
         driver_email=request.POST.get('driver_email')
@@ -51,6 +52,15 @@ def vehicles(request):
         cost_per_km=request.POST.get('cost_per_km')
         contact_number=request.POST.get('contact_number')
 
+        truck_type=request.POST.get('truck_type')
+        truck_image = request.FILES.get('truck_image')
+        make=request.POST.get('make')
+        model=request.POST.get('model')
+        year=request.POST.get('year')
+        mileage=request.POST.get('mileage')
+        license_type=request.POST.get('license_type')
+        purchase_date=request.POST.get('purchase_date')
+        
         try:
             truck=Truck.objects.get(truck_number=truck_number)
         except:
@@ -62,6 +72,16 @@ def vehicles(request):
                 truck_number=truck_number,
                 capacity=capacity,
                 cost_per_km=cost_per_km,
+                contact_number=contact_number,
+
+                truck_type=truck_type,
+                truck_image=truck_image,
+                make=make,
+                model=model,
+                year=year,
+                mileage=mileage,
+                license_type=license_type,
+                purchase_date=purchase_date,
                 warehouse=HeadQuarter.objects.get(primary=True)
                 
             )
@@ -77,22 +97,171 @@ def vehicles(request):
         return render(request, 'home/vehicles.html',context)
 
 @csrf_exempt
-def edit_vehicle(request,pk):
-    if request.method == 'POST':
-        vechcle=request.POST.get('truck_id')
-        vv=Truck.objects.get(id=vechcle)
-
-        print("vehicles ",request.POST)
-        vv.truck_name=request.POST.get('truck_name')
-        vv.driver_name=request.POST.get('driver_name')
-        vv.driver_email=request.POST.get('driver_email')
-        vv.truck_number=request.POST.get('truck_number')
-        vv.capacity=request.POST.get('capacity_volume')
-        vv.cost_per_km=request.POST.get('cost_per_km')
-        vv.contact_number=request.POST.get('contact_number')
-        vv.save()
+def edit_vehicle(request, pk):
+    try:
+        vehicle = Truck.objects.get(id=pk)
+    except Truck.DoesNotExist:
         return redirect('vehicles')
- 
+
+    if request.method == 'POST':
+
+        print(request.POST,"POSTTTTTTTTT")
+
+        if request.method == 'POST':
+            error_messages = []  # List to hold any error messages
+
+            
+            vehicle.truck_name = request.POST.get('truck_name')
+            if not vehicle.truck_name:error_messages.append('Truck name is required.')
+
+            
+            vehicle.driver_name = request.POST.get('driver_name')
+            if not vehicle.driver_name:error_messages.append('Driver name is required.')
+
+            
+            vehicle.driver_email = request.POST.get('driver_email')
+            if not vehicle.driver_email:
+                error_messages.append('Driver email is required.')
+            elif '@' not in vehicle.driver_email:  # Basic email validation
+                error_messages.append('Invalid email format.')
+
+
+            vehicle.make = request.POST.get('make')
+            if not vehicle.make:error_messages.append('Truck number is required.')
+            
+            vehicle.truck_number = request.POST.get('truck_number')
+            if not vehicle.truck_number:error_messages.append('Truck number is required.')
+
+            vehicle.model = request.POST.get('model')
+            if not vehicle.model:error_messages.append('Truck number is required.')
+
+           
+            vehicle.capacity = request.POST.get('capacity_volume')
+            if not vehicle.capacity:error_messages.append('Capacity is required.')
+            else:
+                try:
+                    vehicle.capacity = float(vehicle.capacity)  # Assuming capacity is a float
+                except ValueError:
+                    error_messages.append('Capacity must be a valid number.')
+
+            
+            vehicle.cost_per_km = request.POST.get('cost_per_km')
+            if not vehicle.cost_per_km:error_messages.append('Cost per km is required.')
+            else:
+                try:
+                    vehicle.cost_per_km = float(vehicle.cost_per_km)
+                except ValueError:
+                    error_messages.append('Cost per km must be a valid number.')
+
+            
+            vehicle.contact_number = request.POST.get('contact_number')
+            if not vehicle.contact_number:error_messages.append('Contact number is required.')
+
+            
+            vehicle.truck_type = request.POST.get('truck_type')
+            if not vehicle.truck_type:error_messages.append('Truck type is required.')
+
+            
+
+            vehicle.license_type = request.POST.get('license_type')
+            if not vehicle.license_type:error_messages.append('license_type type is required.')
+
+            
+            year_str = request.POST.get('year')
+            if year_str:
+                try:
+                    vehicle.year = int(year_str)  # Convert to integer
+                except ValueError:
+                    return render(request, 'home/edit_vehicle.html', {
+                        'vehicle': vehicle,
+                        'error': 'Year must be a valid number.'
+                    })
+            else: vehicle.year = None 
+
+
+            vehicle.status = request.POST.get('status')
+            if not vehicle.status:
+                error_messages.append('Vehicle status is required.')
+
+            mileage_str = request.POST.get('mileage')
+            if mileage_str:
+                try:
+                    vehicle.mileage = float(mileage_str)  # Convert to float
+                except ValueError:
+                    error_messages.append('Mileage must be a valid number.')
+            else:
+                error_messages.append('Truck mileage is required.')
+
+        
+            purchase_date_str = request.POST.get('purchase_date')
+            if purchase_date_str:
+                try:
+                    purchase_date = timezone.datetime.strptime(purchase_date_str, '%Y-%m-%d').date()
+                except ValueError:
+                    pass
+                vehicle.purchase_date = purchase_date  
+            else:
+                vehicle.purchase_date = None
+
+                
+            vehicle.save()
+
+            return redirect('vehicles')
+
+
+
+
+
+        # vehicle.truck_name = request.POST.get('truck_name')
+        # vehicle.driver_name = request.POST.get('driver_name')
+        # vehicle.driver_email = request.POST.get('driver_email')  # Added email field
+        # vehicle.truck_number = request.POST.get('truck_number')
+        # vehicle.capacity = request.POST.get('capacity_volume')
+        # vehicle.cost_per_km = request.POST.get('cost_per_km')
+        # vehicle.contact_number = request.POST.get('contact_number')
+        # vehicle.truck_type = request.POST.get('truck_type')  # Added truck type field
+        # vehicle.truck_image = request.FILES.get('truck_image')  # For updating the image
+        # vehicle.make = request.POST.get('make')  # Added make field
+        # vehicle.model = request.POST.get('model')  # Added model field
+
+
+        # year_str = request.POST.get('year')
+        # if year_str:
+        #     try:
+        #         vehicle.year = int(year_str)  # Convert to integer
+        #     except ValueError:
+        #         return render(request, 'home/edit_vehicle.html', {
+        #             'vehicle': vehicle,
+        #             'error': 'Year must be a valid number.'
+        #         })
+        # else: vehicle.year = None 
+
+
+        # vehicle.mileage = request.POST.get('mileage')  # Added mileage field
+        # vehicle.license_type = request.POST.get('license_type')  # Added license type field
+        
+
+        # purchase_date_str = request.POST.get('purchase_date')
+        # if purchase_date_str:
+        #     try:
+        #         purchase_date = timezone.datetime.strptime(purchase_date_str, '%Y-%m-%d').date()
+        #     except ValueError:
+        #         return render(request, 'home/edit_vehicle.html', {'vehicle': vehicle, 'error': 'Invalid date format. Please use YYYY-MM-DD.'})
+        #     vehicle.purchase_date = purchase_date  
+        # else:
+        #     vehicle.purchase_date = None  
+
+        # vehicle.save()
+        # return redirect('vehicles')
+
+    # If the request method is not POST, render the form for editing
+    context = {
+        'vehicle': vehicle,
+    }
+    return render(request, 'home/edit_vehicle.html', context)
+
+
+
 @csrf_exempt
 def delete_vehicle(request,pk):
     print(request.POST,"defres")
@@ -211,6 +380,23 @@ def drivers(request, pk=None):
         truck=Truck.objects.filter(id=pk)
         context={ 'truck':truck.first() }
         return render(request, 'home/single_driver.html',context)
+    
+
+
+@csrf_exempt
+def admin_single_vehicle(request, pk=None):
+    if request.method == 'POST':
+        print("welcome ji")
+        email_id=request.POST.get('email_id')
+        truck=Truck.objects.filter(driver_email=email_id)
+        return redirect('driver_single', truck.first().id)
+        
+    else:
+        truck=Truck.objects.filter(id=pk)
+        services=ServiceRecord.objects.filter(truck=truck.first().id).order_by('-id')
+
+        context={ 'truck':truck.first() ,'services':services}
+        return render(request, 'home/admin_single_vehicle.html',context)
 
 @csrf_exempt
 def report_issue(request, pk=None):
