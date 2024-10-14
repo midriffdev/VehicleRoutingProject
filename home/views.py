@@ -530,6 +530,10 @@ def single_order(request,pk):
 def upload_orders(request):
     if request.method == 'POST':
         
+        if not HeadQuarter.objects.filter(primary=True):
+            messages.success(request, 'Please setup a primary warehouse.')
+            return redirect('upload_orders')
+
         csv_file = request.FILES.get('file')
         if csv_file:
             csv_reader = csv.reader(csv_file.read().decode('utf-8').splitlines())
