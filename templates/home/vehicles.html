@@ -319,60 +319,58 @@
 
 
                                             <!-- Modal for Adding Service -->
-<div class="modal fade" id="addServiceModal{{i.id}}" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+                                            <div class="modal fade" id="addServiceModal{{i.id}}" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
 
 
-            {% comment %} action="{% url 'add_service' i.id %}" {% endcomment %}
+                                                        {% comment %} action="{% url 'add_service' i.id %}" {% endcomment %}
 
 
-            <form  method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addServiceModalLabel">Add Service for Truck</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="service_date" class="form-label">Service Date</label>
-                        <input type="date" name="service_date" class="form-control" id="service_date" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="service_description" class="form-label">Service Description</label>
-                        <textarea name="service_description" class="form-control" id="service_description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="parts_changed" class="form-label">Parts Changed</label>
-                        <select name="parts_changed" id="parts_changed" class="form-select" multiple>
-                            {% for part in parts %}
-                                <option value="{{ part.id }}">{{ part.part_name }} by {{ part.manufacturer }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cost" class="form-label">Total Service Cost (in USD)</label>
-                        <input type="number" step="0.01" name="cost" class="form-control" id="cost" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Service</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+                                                        <form  method="post" enctype="multipart/form-data">
+                                                            {% csrf_token %}
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="addServiceModalLabel">Add Service for Truck</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label for="service_date" class="form-label">Service Date</label>
+                                                                    <input type="date" name="service_date" class="form-control" id="service_date" required>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="service_description" class="form-label">Service Description</label>
+                                                                    <textarea name="service_description" class="form-control" id="service_description" rows="3" required></textarea>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="parts_changed" class="form-label">Parts Changed</label>
+                                                                    <select name="parts_changed" id="parts_changed" class="form-select" multiple>
+                                                                        {% for part in parts %}
+                                                                            <option value="{{ part.id }}">{{ part.part_name }} by {{ part.manufacturer }}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="warranty_period{{i.id}}" class="form-label"> Warranty </label>
+                                                                    <input type="text"  name="warranty_period" class="form-control" id="warranty_period{{i.id}}" required>
+                                                                </div>
 
 
 
-
-
-
-
-
-
-
+                                                                <div class="mb-3">
+                                                                    <label for="cost" class="form-label">Total Service Cost (in USD)</label>
+                                                                    <input type="number" step="0.01" name="cost" class="form-control" id="cost" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save Service</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
 
 
 
@@ -382,15 +380,14 @@
                                 </tr>
 
 
-                                {% comment %} <div class="modal fade add-EditvehicleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel"
-                                aria-hidden="true">
-                
-                                        <form action="{% url 'edit_vehicle' i.id %}" method="post" enctype="multipart/form-data"
-                                            class="d-flex align-items-end">
-                                            {% csrf_token %}
+                            
+                                <div class="modal fade add-EditvehicleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel"
+                                        aria-hidden="true">
 
+                                        <form action="{% url 'edit_vehicle' i.id %}" method="post" enctype="multipart/form-data" class="d-flex align-items-end">
+                                            {% csrf_token %}
                                             <input type="hidden" name="truck_id" value="{{i.id}}">
-                
+
                                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -399,72 +396,119 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="row">
-                                                            <!-- Vehicle Type -->
+                                                            <!-- Vehicle Name -->
                                                             <div class="col-md-6 mb-3">
-                                                                
                                                                 <label for="truck_name" class="form-label">Vehicle Name</label>
                                                                 <input type="text" required class="form-control" name="truck_name" value="{{i.truck_name}}" id="truck_name" placeholder="Enter vehicle's name" pattern="[A-Za-z0-9\s]+" title="Please use alphanumeric characters only">
                                                             </div>
-                                                            
-                                                           
-                                                            <!-- Capacity (Weight) -->
+
+                                                            <!-- Vehicle Number -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="truck_number" class="form-label">Vehicle Number</label>
-                                                                <input type="text" required maxlength="10" name="truck_number" value="{{i.truck_number}}" class="form-control" id="truck_number"
-                                                                       placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
+                                                                <input type="text" required maxlength="10" name="truck_number" value="{{i.truck_number}}" class="form-control" id="truck_number" placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
                                                             </div>
-                                                            
 
+                                                            <!-- Truck Type -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="truck_type{{i.id}}" class="form-label">Truck Type</label>
+                                                                <select class="form-select" name="truck_type" id="truck_type{{i.id}}">
+                                                                    <option value="Flatbed" {% if i.truck_type == "Flatbed" %}selected{% endif %}>Flatbed</option>
+                                                                    <option value="Box" {% if i.truck_type == "Box" %}selected{% endif %}>Box</option>
+                                                                    <option value="Tanker" {% if i.truck_type == "Tanker" %}selected{% endif %}>Tanker</option>
+                                                                    <option value="Refrigerated" {% if i.truck_type == "Refrigerated" %}selected{% endif %}>Refrigerated</option>
+                                                                    <option value="Car Carrier" {% if i.truck_type == "Car Carrier" %}selected{% endif %}>Car Carrier</option>
+                                                                </select>
+                                                            </div>
 
+                                                            <!-- Truck Image -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="truck_image" class="form-label">Truck Image</label>
+                                                                <input type="file" {% if i.truck_image %} value="{{i.truck_image.url}}" {% endif%} name="truck_image" class="form-control" id="truck_image">
+                                                            </div>
 
+                                                            <!-- Brand/Manufacturer -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="make" class="form-label">Brand/Manufacturer</label>
+                                                                <input type="text" name="make" class="form-control" value="{{i.make}}" id="make" placeholder="Enter make (e.g., Toyota)">
+                                                            </div>
 
+                                                            <!-- Model Name -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="model" class="form-label">Model Name</label>
+                                                                <input type="text" name="model" class="form-control" value="{{i.model}}" id="model" placeholder="Enter model (e.g., Hilux)">
+                                                            </div>
+
+                                                            <!-- Year of Manufacture -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="year" class="form-label">Year of Manufacture</label>
+                                                                <input type="number" name="year" class="form-control" value="{{i.year}}" id="year" placeholder="Enter year" min="1900" max="2100">
+                                                            </div>
+
+                                                            <!-- Mileage -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="mileage" class="form-label">Mileage (in km)</label>
+                                                                <input type="number" name="mileage" class="form-control" value="{{i.mileage}}" id="mileage" placeholder="Enter mileage (in km)" min="0">
+                                                            </div>
+
+                                                            <!-- Required License Type -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="license_type{{i.id}}" class="form-label">Required License Type</label>
+                                                                <select class="form-select" name="license_type" id="license_type{{i.id}}">
+                                                                    <option value="C" {% if i.license_type == "C" %}selected{% endif %}>Class C - Light Truck</option>
+                                                                    <option value="B" {% if i.license_type == "B" %}selected{% endif %}>Class B - Medium Truck</option>
+                                                                    <option value="A" {% if i.license_type == "A" %}selected{% endif %}>Class A - Heavy Truck</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <!-- Purchase Date -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="purchase_date" class="form-label">Purchase Date</label>
+                                                                <input type="date" name="purchase_date" class="form-control" value="{{ i.purchase_date|date:'Y-m-d' }}" id="purchase_date">
+                                                            </div>
                                                         </div>
-                
-                                                        <div class="row">
 
+                                                        <div class="row">
+                                                            <!-- Driver Name -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="driver_name" class="form-label">Driver Name</label>
-                                                                <input type="text" value="{{i.driver_name}}" required  name="driver_name" class="form-control" id="driver_name"
-                                                                    placeholder="Enter driver's name">
+                                                                <input type="text" value="{{i.driver_name}}" required name="driver_name" class="form-control" id="driver_name" placeholder="Enter driver's name">
                                                             </div>
+
+                                                            <!-- Driver Email -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="driver_email" class="form-label">Driver Email</label>
-                                                                <input type="text" value="{{i.driver_email}}" required  name="driver_email" class="form-control" id="driver_name"
-                                                                    placeholder="Enter driver's name">
+                                                                <input type="email" value="{{i.driver_email}}" required name="driver_email" class="form-control" id="driver_email" placeholder="Enter driver's email">
                                                             </div>
 
+                                                            <!-- Driver's Contact Number -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="contact_number" class="form-label">Driver's Contact Number</label>
-                                                                <input value="{{i.contact_number}}" name="contact_number" maxlength="10"  required type="text" class="form-control" id="contact_number"
-                                                                    placeholder="Enter driver's contact number">
+                                                                <input value="{{i.contact_number}}" name="contact_number" maxlength="10" required type="text" class="form-control" id="contact_number" placeholder="Enter driver's contact number">
                                                             </div>
 
-
-
-
-
-
-
-
-                                                           
-                                                            
+                                                            <!-- Capacity (Volume) -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="capacity_volume" class="form-label">Capacity (Volume)</label>
-                                                                <input type="number" value="{{i.capacity}}" required name="capacity_volume" class="form-control" id="capacity_volume"
-                                                                       placeholder="Enter volume in cubic meters or feet" min="0" max="9999" maxlength="4" title="Please enter a valid number">
+                                                                <input type="number" value="{{i.capacity}}" required name="capacity_volume" class="form-control" id="capacity_volume" placeholder="Enter volume in cubic meters or feet" min="0" max="9999">
                                                             </div>
-                                                            
-                                                        </div>
-                
-                                                        <div class="row">
-                                                            <!-- Contact Number -->
-                                                          
-                                                            <!-- Vehicle Status -->
+
+                                                            <!-- Cost -->
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="cost_per_km" class="form-label">Cost</label>
-                                                                <input value="{{i.cost_per_km}}" name="cost_per_km" maxlength="6"  required type="text" class="form-control" name="cost_per_km" id="cost_per_km"
-                                                                    placeholder="Enter cost">
+                                                                <input value="{{i.cost_per_km}}" name="cost_per_km" maxlength="6" required type="text" class="form-control" id="cost_per_km" placeholder="Enter cost">
                                                             </div>
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="status{{i.id}}" class="form-label">Vehicle Status</label>
+
+                                                                <select class="form-select" name="status" id="status{{i.id}}">
+                                                                    <option value="available" {% if i.status == "available" %}selected{% endif %}>Available</option>
+
+                                                                    <option value="not_available" {% if i.status == "not_available" %}selected{% endif %}>Not Available</option>
+                                                                    <option value="in_service" {% if i.status == "in_service" %}selected{% endif %}>In Service</option>
+                                                                    <option value="maintenance" {% if i.status == "maintenance" %}selected{% endif %}>Under Maintenance</option>
+                                                                </select>
+                                                            </div>
+                                                            
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -473,155 +517,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                
+
                                         </form>
-                
-                
-                
-                                </div> {% endcomment %}
-
-
-                                <div class="modal fade add-EditvehicleModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="add-vehicleModalLabel"
-     aria-hidden="true">
-
-    <form action="{% url 'edit_vehicle' i.id %}" method="post" enctype="multipart/form-data" class="d-flex align-items-end">
-        {% csrf_token %}
-        <input type="hidden" name="truck_id" value="{{i.id}}">
-
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="add-vehicleModalLabel">Edit Vehicle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <!-- Vehicle Name -->
-                        <div class="col-md-6 mb-3">
-                            <label for="truck_name" class="form-label">Vehicle Name</label>
-                            <input type="text" required class="form-control" name="truck_name" value="{{i.truck_name}}" id="truck_name" placeholder="Enter vehicle's name" pattern="[A-Za-z0-9\s]+" title="Please use alphanumeric characters only">
-                        </div>
-
-                        <!-- Vehicle Number -->
-                        <div class="col-md-6 mb-3">
-                            <label for="truck_number" class="form-label">Vehicle Number</label>
-                            <input type="text" required maxlength="10" name="truck_number" value="{{i.truck_number}}" class="form-control" id="truck_number" placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
-                        </div>
-
-                        <!-- Truck Type -->
-                        <div class="col-md-6 mb-3">
-                            <label for="truck_type{{i.id}}" class="form-label">Truck Type</label>
-                            <select class="form-select" name="truck_type" id="truck_type{{i.id}}">
-                                <option value="Flatbed" {% if i.truck_type == "Flatbed" %}selected{% endif %}>Flatbed</option>
-                                <option value="Box" {% if i.truck_type == "Box" %}selected{% endif %}>Box</option>
-                                <option value="Tanker" {% if i.truck_type == "Tanker" %}selected{% endif %}>Tanker</option>
-                                <option value="Refrigerated" {% if i.truck_type == "Refrigerated" %}selected{% endif %}>Refrigerated</option>
-                                <option value="Car Carrier" {% if i.truck_type == "Car Carrier" %}selected{% endif %}>Car Carrier</option>
-                            </select>
-                        </div>
-
-                        <!-- Truck Image -->
-                        <div class="col-md-6 mb-3">
-                            <label for="truck_image" class="form-label">Truck Image</label>
-                            <input type="file" {% if i.truck_image %} value="{{i.truck_image.url}}" {% endif%} name="truck_image" class="form-control" id="truck_image">
-                        </div>
-
-                        <!-- Brand/Manufacturer -->
-                        <div class="col-md-6 mb-3">
-                            <label for="make" class="form-label">Brand/Manufacturer</label>
-                            <input type="text" name="make" class="form-control" value="{{i.make}}" id="make" placeholder="Enter make (e.g., Toyota)">
-                        </div>
-
-                        <!-- Model Name -->
-                        <div class="col-md-6 mb-3">
-                            <label for="model" class="form-label">Model Name</label>
-                            <input type="text" name="model" class="form-control" value="{{i.model}}" id="model" placeholder="Enter model (e.g., Hilux)">
-                        </div>
-
-                        <!-- Year of Manufacture -->
-                        <div class="col-md-6 mb-3">
-                            <label for="year" class="form-label">Year of Manufacture</label>
-                            <input type="number" name="year" class="form-control" value="{{i.year}}" id="year" placeholder="Enter year" min="1900" max="2100">
-                        </div>
-
-                        <!-- Mileage -->
-                        <div class="col-md-6 mb-3">
-                            <label for="mileage" class="form-label">Mileage (in km)</label>
-                            <input type="number" name="mileage" class="form-control" value="{{i.mileage}}" id="mileage" placeholder="Enter mileage (in km)" min="0">
-                        </div>
-
-                        <!-- Required License Type -->
-                        <div class="col-md-6 mb-3">
-                            <label for="license_type{{i.id}}" class="form-label">Required License Type</label>
-                            <select class="form-select" name="license_type" id="license_type{{i.id}}">
-                                <option value="C" {% if i.license_type == "C" %}selected{% endif %}>Class C - Light Truck</option>
-                                <option value="B" {% if i.license_type == "B" %}selected{% endif %}>Class B - Medium Truck</option>
-                                <option value="A" {% if i.license_type == "A" %}selected{% endif %}>Class A - Heavy Truck</option>
-                            </select>
-                        </div>
-
-                        <!-- Purchase Date -->
-                        <div class="col-md-6 mb-3">
-                            <label for="purchase_date" class="form-label">Purchase Date</label>
-                            <input type="date" name="purchase_date" class="form-control" value="{{ i.purchase_date|date:'Y-m-d' }}" id="purchase_date">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- Driver Name -->
-                        <div class="col-md-6 mb-3">
-                            <label for="driver_name" class="form-label">Driver Name</label>
-                            <input type="text" value="{{i.driver_name}}" required name="driver_name" class="form-control" id="driver_name" placeholder="Enter driver's name">
-                        </div>
-
-                        <!-- Driver Email -->
-                        <div class="col-md-6 mb-3">
-                            <label for="driver_email" class="form-label">Driver Email</label>
-                            <input type="email" value="{{i.driver_email}}" required name="driver_email" class="form-control" id="driver_email" placeholder="Enter driver's email">
-                        </div>
-
-                        <!-- Driver's Contact Number -->
-                        <div class="col-md-6 mb-3">
-                            <label for="contact_number" class="form-label">Driver's Contact Number</label>
-                            <input value="{{i.contact_number}}" name="contact_number" maxlength="10" required type="text" class="form-control" id="contact_number" placeholder="Enter driver's contact number">
-                        </div>
-
-                        <!-- Capacity (Volume) -->
-                        <div class="col-md-6 mb-3">
-                            <label for="capacity_volume" class="form-label">Capacity (Volume)</label>
-                            <input type="number" value="{{i.capacity}}" required name="capacity_volume" class="form-control" id="capacity_volume" placeholder="Enter volume in cubic meters or feet" min="0" max="9999">
-                        </div>
-
-                        <!-- Cost -->
-                        <div class="col-md-6 mb-3">
-                            <label for="cost_per_km" class="form-label">Cost</label>
-                            <input value="{{i.cost_per_km}}" name="cost_per_km" maxlength="6" required type="text" class="form-control" id="cost_per_km" placeholder="Enter cost">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="status{{i.id}}" class="form-label">Vehicle Status</label>
-
-                            <select class="form-select" name="status" id="status{{i.id}}">
-                                <option value="available" {% if i.status == "available" %}selected{% endif %}>Available</option>
-
-                                <option value="not_available" {% if i.status == "not_available" %}selected{% endif %}>Not Available</option>
-                                <option value="in_service" {% if i.status == "in_service" %}selected{% endif %}>In Service</option>
-                                <option value="maintenance" {% if i.status == "maintenance" %}selected{% endif %}>Under Maintenance</option>
-                            </select>
-                        </div>
-                        
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Vehicle</button>
-                </div>
-            </div>
-        </div>
-
-    </form>
-</div>
-
-                               
+                                    </div>
                                 {% endfor %}
 
                                 
