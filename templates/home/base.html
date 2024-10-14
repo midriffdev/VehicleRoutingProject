@@ -10,7 +10,9 @@
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
 
-
+    <link href="{% static 'libs/select2/css/select2.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}" rel="stylesheet" type="text/css">
+    <link  href="{% static 'libs/@chenfengyuan/datepicker/datepicker.min.css' %}" rel="stylesheet">
 
     {% comment %} a {% endcomment %}
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -346,8 +348,18 @@
     <script src="{% static 'libs/dropzone/min/dropzone.min.js' %}"></script>
 
 
+    <script src="{% static 'libs/select2/js/select2.min.js' %}"></script>
+    <script src="{% static 'libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'libs/@chenfengyuan/datepicker/datepicker.min.js' %}"></script>
+    <script src="{% static 'js/pages/form-advanced.init.js' %}"></script>
     <!-- apexcharts -->
-    <script src="{% static '/libs/apexcharts/apexcharts.min.js' %}"></script>
+    
+
+    <!-- echarts js -->
+    <script src="{% static 'libs/echarts/echarts.min.js' %}"></script>
+    <!-- <script src="{% static 'js/pages/echarts.init.js"></script> -->
+    <!-- Chart JS -->
+    <script src="{% static 'libs/apexcharts/apexcharts.min.js' %}"></script>
         
     <!-- Saas dashboard init -->
     <!-- <script src="{% static '/js/pages/saas-dashboard.init.js' %}"></script> -->
@@ -355,197 +367,235 @@
     <script src="{% static 'js/app.js' %}"></script>
 
     <script>
-            // Donut Chart here 
-                    var options = {
-                        series: [56, 38, 26],
-                        chart: {
-                            type: "donut",
-                            height: 262
-                        },
-                        labels: ["Cancel Order", "Pending Order", "Completed Order"],
-                        colors: ["#f46a6a", "#f1b44c", "#34c38f"],
-                        legend: {
-                            show: !1
-                        },
-                        plotOptions: {
-                            pie: {
-                                donut: {
-                                    size: "70%"
-                                }
-                            }
-                        }
-                    };
 
-                    var chart = new ApexCharts(document.querySelector("#donut-chart"), options);
-                    chart.render();
-
-
-            // Line chart Here
-            // Line Chart
-            var options = {
-                series: [{
-                    name: "series1",
-                    data: [31, 40, 36, 51, 49, 72, 69, 56, 68, 82, 68, 76]
-                }],
-                chart: {
-                    height: 320,
-                    type: "line",
-                    toolbar: "false",
-                    dropShadow: {
-                        enabled: !0,
-                        color: "#000",
-                        top: 18,
-                        left: 7,
-                        blur: 8,
-                        opacity: .2
-                    }
-                },
-                dataLabels: {
-                    enabled: !1
-                },
-                colors: ["#556ee6"],
-                stroke: {
-                    curve: "smooth",
-                    width: 3
+        var options = {
+            chart: {
+                height: 350,
+                type: "bar",
+                toolbar: { show: false }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,  // Horizontal bars
+                    barHeight: '60px',  // Customize the height of the bars (adjust percentage or pixel value as needed)
                 }
-            };
-
-            var chart = new ApexCharts(document.querySelector("#line-chart"), options);
-            chart.render(); 
-
-
-
-            // Radial Chart 1
-var radialoptions1 = {
-    series: [37],
-    chart: {
-        type: "radialBar",
-        width: 60,
-        height: 60,
-        sparkline: {
-            enabled: !0
-        }
-    },
-    dataLabels: {
-        enabled: !1
-    },
-    colors: ["#556ee6"],
-    plotOptions: {
-        radialBar: {
-            hollow: {
-                margin: 0,
-                size: "60%"
             },
-            track: {
-                margin: 0
-            },
-            dataLabels: {
-                show: !1
-            }
-        }
-    }
-};
-var radialchart1 = new ApexCharts(document.querySelector("#radialchart-1"), radialoptions1);
-radialchart1.render();
-
-// Radial Chart 2
-var radialoptions2 = {
-    series: [72],
-    chart: {
-        type: "radialBar",
-        width: 60,
-        height: 60,
-        sparkline: {
-            enabled: !0
-        }
-    },
-    dataLabels: {
-        enabled: !1
-    },
-    colors: ["#34c38f"],
-    plotOptions: {
-        radialBar: {
-            hollow: {
-                margin: 0,
-                size: "60%"
-            },
-            track: {
-                margin: 0
-            },
-            dataLabels: {
-                show: !1
-            }
-        }
-    }
-};
-var radialchart2 = new ApexCharts(document.querySelector("#radialchart-2"), radialoptions2);
-radialchart2.render();
-
-// Radial Chart 3
-var radialoptions3 = {
-    series: [54],
-    chart: {
-        type: "radialBar",
-        width: 60,
-        height: 60,
-        sparkline: {
-            enabled: !0
-        }
-    },
-    dataLabels: {
-        enabled: !1
-    },
-    colors: ["#f46a6a"],
-    plotOptions: {
-        radialBar: {
-            hollow: {
-                margin: 0,
-                size: "60%"
-            },
-            track: {
-                margin: 0
-            },
-            dataLabels: {
-                show: !1
-            }
-        }
-    }
-};
-var radialchart3 = new ApexCharts(document.querySelector("#radialchart-3"), radialoptions3);
-radialchart3.render();
-
-
-        window.onload = function() {
-            const role = localStorage.getItem('role');
-           
-            if (role) {
-                console.log("Your role is: " + role); // Debugging log
-
-
-                const roleChange = document.getElementById("role_change");
-                 roleChange.textContent = role; // Set the text of the span to the role
-               
-
-                if (role === "Customer" || role === "Escalation_team") {
-                    const navigationBar = document.getElementById("navigation_bar");
-                    console.log("Navigation Bar display before:", getComputedStyle(navigationBar).display); 
-                    navigationBar.style.display = "none";
-                   
-                }
+            dataLabels: { enabled: false },
+            series: [{
+                data: [100, 430, 450, 275, 550, 204,550, 204]  // Example data for each truck
+            }],
+            colors: ["#18603e"],  // Bar color
+            grid: { borderColor: "#18603e" },
+            xaxis: {
+                categories: [
+                    "Truck 1", "Truck 2", "Truck 3", 
+                    "Truck 4", "Truck 5", "Truck 6", 
+                    "Truck 7", "Truck 8",
+                ],  // Customized truck names on x-axis
                 
-                const payNowButton = document.getElementById("pay_now_button");
-                if (payNowButton) {
-                    const payNowForm = payNowButton.closest('form');
-                    if (role !== "Customer") {
-                        payNowButton.style.display = 'none'; 
-                        console.log("Pay Now button hidden for role:", role);
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val + " orders";  // Custom tooltip text
                     }
                 }
-
-            } else {
-                console.log("No role found in localStorage."); // Debugging log
             }
         };
+
+        var chart = new ApexCharts(document.querySelector("#bar_chart"), options);
+        chart.render();
+
+
+
+
+        
+
+
+        var options = {
+            chart: {
+                height: 350,
+                type: "bar",
+                toolbar: { show: false }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: "45%",
+                    endingShape: "rounded"
+                }
+            },
+            dataLabels: { enabled: false },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ["transparent"]
+            },
+            series: [
+                { name: "Kilometre", data: [100, 120, 130, 110, 150, 140, 160] },  // Kilometre values
+                { name: "Milega p/km", data: [5, 4.5, 6, 5.5, 4.8, 5.2, 4.9] }    // Milega p/km values
+            ],
+            colors: ["#1d4f6a", "#f46a6a"], // Colors for the two series
+            xaxis: { 
+                categories: ["Truck 1", "Truck 2", "Truck 3", "Truck 4", "Truck 5", "Truck 6", "Truck 7"] 
+            },
+            yaxis: { 
+                title: { text: "Value", style: { fontWeight: "500" } } // General title
+            },
+            grid: { borderColor: "#f1f1f1" },
+            fill: { opacity: 1 },
+            tooltip: {
+                shared: true, // Show shared tooltip for both bars
+                intersect: false,
+                formatter: function (series) {
+                    return series.map((s) => `${s.seriesName}: ${s.data} ${s.seriesName === 'Milega p/km' ? 'units' : 'km'}`).join('<br>');
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#column_chart"), options);
+        chart.render();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       // Function to create a gauge chart
+       function createGaugeChart(elementId, title, value) {
+        var dom = document.getElementById(elementId);
+        dom.style.height = '190px'; // Set height of the chart
+
+        var myChart = echarts.init(dom);
+        var option = {
+            tooltip: {
+                formatter: "{a} <br/>{b} : {c}%"
+            },
+            toolbox: {
+                feature: false,
+            },
+            series: [{
+                name: title,
+                type: "gauge",
+                detail: {
+                    formatter: "{value}%",
+                    offsetCenter: [0, '90%'], // Move detail text down
+                    textStyle: {
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        color: '#000'
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        // Green for 0-90%, Yellow for 90-95%, Red for 95-100%
+                        color: [[0.9, "#34c38f"], [0.95, "#f8c471"], [1, "#f46a6a"]],
+                        width: 20
+                    }
+                },
+                splitLine: {
+                    show: true,
+                    length: 15,
+                    lineStyle: {
+                        color: '#000',
+                        width: 2
+                    }
+                },
+                axisTick: {
+                    show: true,
+                    splitNumber: 5,
+                    length: 8,
+                    lineStyle: {
+                        color: '#000'
+                    }
+                },
+                axisLabel: {
+                    show: true,
+                    formatter: function (value) {
+                        if (value % 20 === 0) {
+                            return value;
+                        }
+                        return '';
+                    },
+                    textStyle: {
+                        color: '#000',
+                        fontSize: 12
+                    }
+                },
+                pointer: {
+                    itemStyle: {
+                        color: "#556ee6"
+                    }
+                },
+                title: {
+                    show: true,
+                    offsetCenter: [0, '60%'], 
+                    textStyle: {
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                        color: '#000'
+                    }
+                },
+                data: [{ value: value, name: "" }]
+            }]
+        };
+
+        // Update the chart periodically
+        setInterval(function () {
+            myChart.setOption(option, true);
+        }, 2000);
+
+        myChart.setOption(option, true);
+    }
+
+    // Create different gauge charts with unique values
+    createGaugeChart("gauge-chart", "Perfect Order Rate", 97.94);
+    createGaugeChart("gauge-chart1", "Order Accuracy Rate", 89.50); // Example value
+    createGaugeChart("gauge-chart2", "Fill Rate", 92.30); // Example value
+
+
+
+
+
+
+
+
+
+
+
+        var options = {
+            series: [85, 15], // Data for the donut chart
+            chart: {
+                type: "donut", // Chart type
+                height: 230 // Height of the chart
+            },
+            labels: ["Within Time", "Out Of Time"], // Labels for each section of the donut chart
+            colors: ["#34c38f", "#f46a6a"], // Colors for each section of the chart
+            legend: {
+                show: false // Hides the legend
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: "50%" // Size of the donut hole
+                    }
+                }
+            }
+        };
+
+        // Creating and rendering the donut chart
+        var chart = new ApexCharts(document.querySelector("#donut-chart"), options);
+        chart.render();
+
     </script>
 
 

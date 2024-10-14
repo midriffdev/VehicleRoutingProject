@@ -81,12 +81,14 @@ def getroute(request):
     # return HttpResponse(f'{a}, {b}')
     hq = HeadQuarter.objects.get(primary=True)
     avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
-    if not avl_trucks:
+    avl_orders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None)
+    if (not avl_trucks) or (not avl_orders) :
         messages.success(request, 'No available trucks at the moment.')
         return redirect('upload_orders')
     for i in avl_trucks:
         temp = {}
         temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
+        # temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300}
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
         temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
         temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
@@ -94,8 +96,9 @@ def getroute(request):
         temp["cost_per_kilometer"] = int(i.cost_per_km)
         reqjson["vehicles"].append(temp)    
 
-    for i in Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None):
+    for i in avl_orders:
         temp = {}
+        # temp['pickups'] = [{"arrival_location": {"latitude": float(hq.lat),"longitude": float(hq.long)}}]
         temp['deliveries'] = [{
                 "arrival_location": {"latitude": i.lat,"longitude": i.long} if i.lat else get_lat_long(i.destination),
                 "time_windows": [{
@@ -119,6 +122,7 @@ def getroute(request):
     # json_output = MessageToJson(response._pb) ## RESPONSE JSON
     dict_output = MessageToDict(response._pb)
 
+    print("response____", dict_output['routes'])
 
     iroutes = []
     obtained_orders = []

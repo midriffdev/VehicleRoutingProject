@@ -85,17 +85,24 @@
             <!-- Notifications and Admin Contact Information -->
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-body">
-                        <img src="{{ truck.truck_image.url }}" width="312px" alt="Truck Image">
-                        <div class="notification-section">
-                            <h5 class="text-center py-3 border-bottom">Notifications</h5>
-                            {% for n in notifications %}
-                            <div class="alert alert-success">
-                                <strong>{{ n.title }}</strong>
-                                <p class="mb-0">{{ n.content }}</p>
-                            </div>
-                            {% endfor %}
-                        </div>
+                    <div class=card-body>
+                        <!-- Notification Section -->
+                         {%if truck.truck_image%}
+                         <img src="{{truck.truck_image.url}}" width="312px">
+                         {%else%}
+                         <img src="{% static 'images/dummy_truck.png'%}" width="312px">
+                        {%endif%}
+                <div class="notification-section">
+
+                    {% for n in notifications %}
+                    <div class="alert alert-success">
+                        <strong>{{n.title}}</strong>
+                        <p class="mb-0">{{n.content}}</p>
+                    </div>
+                    {% endfor%}
+                   
+                    <!-- Add more notifications as needed -->
+                </div>
                     </div>
                 </div>
 
