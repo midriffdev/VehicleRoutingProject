@@ -203,62 +203,50 @@ def edit_vehicle(request, pk):
             else:
                 vehicle.purchase_date = None
 
-                
             vehicle.save()
-
             return redirect('vehicles')
 
-
-
-
-
-        # vehicle.truck_name = request.POST.get('truck_name')
-        # vehicle.driver_name = request.POST.get('driver_name')
-        # vehicle.driver_email = request.POST.get('driver_email')  # Added email field
-        # vehicle.truck_number = request.POST.get('truck_number')
-        # vehicle.capacity = request.POST.get('capacity_volume')
-        # vehicle.cost_per_km = request.POST.get('cost_per_km')
-        # vehicle.contact_number = request.POST.get('contact_number')
-        # vehicle.truck_type = request.POST.get('truck_type')  # Added truck type field
-        # vehicle.truck_image = request.FILES.get('truck_image')  # For updating the image
-        # vehicle.make = request.POST.get('make')  # Added make field
-        # vehicle.model = request.POST.get('model')  # Added model field
-
-
-        # year_str = request.POST.get('year')
-        # if year_str:
-        #     try:
-        #         vehicle.year = int(year_str)  # Convert to integer
-        #     except ValueError:
-        #         return render(request, 'home/edit_vehicle.html', {
-        #             'vehicle': vehicle,
-        #             'error': 'Year must be a valid number.'
-        #         })
-        # else: vehicle.year = None 
-
-
-        # vehicle.mileage = request.POST.get('mileage')  # Added mileage field
-        # vehicle.license_type = request.POST.get('license_type')  # Added license type field
-        
-
-        # purchase_date_str = request.POST.get('purchase_date')
-        # if purchase_date_str:
-        #     try:
-        #         purchase_date = timezone.datetime.strptime(purchase_date_str, '%Y-%m-%d').date()
-        #     except ValueError:
-        #         return render(request, 'home/edit_vehicle.html', {'vehicle': vehicle, 'error': 'Invalid date format. Please use YYYY-MM-DD.'})
-        #     vehicle.purchase_date = purchase_date  
-        # else:
-        #     vehicle.purchase_date = None  
-
-        # vehicle.save()
-        # return redirect('vehicles')
-
-    # If the request method is not POST, render the form for editing
     context = {
         'vehicle': vehicle,
     }
     return render(request, 'home/edit_vehicle.html', context)
+
+
+
+@csrf_exempt
+def add_service(request,pk):
+    if request.method == 'POST':
+        service_date=request.POST.get('service_date')
+        service_description=request.POST.get('service_description')
+        parts_changed=request.POST.get('parts_changed')
+        warranty_period=request.POST.get('warranty_period')
+        cost=request.POST.get('cost')
+
+        truck=Truck.objects.get(id=pk)
+
+        # parts_changed
+
+        service=ServiceRecord.objects.create(truck=truck,
+                                             service_date=service_date,
+                                             service_description=service_description,
+                                             cost=cost,
+                                             parts_changed=parts_changed
+                                             )
+
+        return redirect('vehicles')
+    
+    else:
+        order=Order.objects.get(id=pk)
+
+        order.delivered_payment_date = order.due_payment_date - timedelta(days=2)
+        order.order_due_payment = order.due_payment_date
+        order.past_due_payment = order.due_payment_date + timedelta(days=1)
+        order.final_due_payment = order.due_payment_date + timedelta(days=5)
+
+        context={
+            'order':order,
+        }
+        return render(request, 'home/single-order-team.html',context)
 
 
 

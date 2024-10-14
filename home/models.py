@@ -68,30 +68,16 @@ class Truck(models.Model):
         return license_mapping.get(self.license_type, 'Unknown License Type')
 
 
-
-class Part(models.Model):
-    part_name = models.CharField(max_length=100)
-    manufacturer = models.CharField(max_length=100)
-    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Cost (in USD)")
-    purchased_date = models.DateField()
-    warranty_period = models.IntegerField(verbose_name="Warranty Period (in months)", null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.part_name} by {self.manufacturer}"
-
 class ServiceRecord(models.Model):
     truck = models.ForeignKey(Truck, on_delete=models.CASCADE, related_name='services')
     service_date = models.DateField()
-    service_description = models.TextField()
-    parts_changed = models.ManyToManyField(Part, blank=True)
-    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total Service Cost (in USD)")
+    service_description = models.TextField(default="Completed regular oil change, including filter replacement. Inspected and rotated tires, replaced two worn-out front tires.")
+    parts_changed = models.TextField(null=True, blank=True,default="Oil Filter,Front Tires,Headlight Bulbs")
+    # parts_changed = models.ManyToManyField(Part, blank=True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total Service Cost (in USD)",default=300)
     
     def __str__(self):
         return f"Service for {self.truck} on {self.service_date}"
-
-
-
-
 
 
 
