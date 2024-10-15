@@ -72,26 +72,23 @@
 
 
 
-/* width */
+
 .scroll-style::-webkit-scrollbar {
     width: 5px;
     height: 14px;
     border-radius: 50px;
 }
 
-/* Track */
 .scroll-style::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 50px;
 }
 
-/* Handle */
 .scroll-style::-webkit-scrollbar-thumb {
     background: #f1b44c!important;
     border-radius: 50px;
 }
 
-/* Handle on hover */
 .scroll-style::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
@@ -122,11 +119,10 @@
     border-top: 8px solid #3498db;
     width: 70px;
     height: 70px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
+    -webkit-animation: spin 2s linear infinite; 
     animation: spin 2s linear infinite;
   }
   
-  /* Safari */
   @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }
     100% { -webkit-transform: rotate(360deg); }
@@ -149,10 +145,10 @@
     background: #ccc !important;
     border-radius: 50px;
 }
-.reportTable thead, tr {
+.reportTable thead, .reportTable  tr {
     display: table;
     width: 100%;
-    table-layout: fixed; /* Ensures columns align properly */
+    table-layout: fixed; 
 }
 .reportTable tbody{
     display: block;
