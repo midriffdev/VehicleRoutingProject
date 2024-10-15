@@ -963,7 +963,7 @@ def upload_orders(request):
     
     else:
         orders=Order.objects.filter(warehouse__primary=True)
-        report_orders=Order.objects.filter(warehouse__primary=True,report_status=True)
+        report_orders=Order.objects.filter(report_status=True)
         context={
             'orders':orders,
             'report_orders':report_orders,
