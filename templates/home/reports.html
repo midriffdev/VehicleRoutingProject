@@ -198,87 +198,17 @@
                                     <div class="table-responsive reportTable">
                                         <table class="table mb-0">
     
-                                            <thead class="table-light">
+                                            <thead  class="table-light">
                                                 <tr>
-                                                    <th>Product</th>
-                                                    <th class="ps-2">Date</th>
-                                                    <th class="ps-2">Units In Hand</th>
-                                                    <th class="ps-2">Units On Order</th>
+                                                    <th class="ps-2">Sr.no</th>
+                                                    <th>Warehouse</th>
+                                                    <th class="ps-2">Total Stock</th>
+                                                    <th class="ps-2">Stock In Hand</th>
+                                                    <th class="ps-2">Stock On Order</th>
                                                 </tr>
                                             </thead>
-                                            <tbody >
-                                                <tr>
-                                                    <th scope="row">1</th>
-                                                    <td>Mark</td>
-                                                    <td>Otto</td>
-                                                    <td>@mdo</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Jacob</td>
-                                                    <td>Thornton</td>
-                                                    <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">3</th>
-                                                    <td>Larry</td>
-                                                    <td>the Bird</td>
-                                                    <td>@twitter</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">1</th>
-                                                    <td>Mark</td>
-                                                    <td>Otto</td>
-                                                    <td>@mdo</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Jacob</td>
-                                                    <td>Thornton</td>
-                                                    <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">3</th>
-                                                    <td>Larry</td>
-                                                    <td>the Bird</td>
-                                                    <td>@twitter</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">1</th>
-                                                    <td>Mark</td>
-                                                    <td>Otto</td>
-                                                    <td>@mdo</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Jacob</td>
-                                                    <td>Thornton</td>
-                                                    <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">3</th>
-                                                    <td>Larry</td>
-                                                    <td>the Bird</td>
-                                                    <td>@twitter</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">1</th>
-                                                    <td>Mark</td>
-                                                    <td>Otto</td>
-                                                    <td>@mdo</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Jacob</td>
-                                                    <td>Thornton</td>
-                                                    <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">3</th>
-                                                    <td>Larry</td>
-                                                    <td>the Bird</td>
-                                                    <td>@twitter</td>
-                                                </tr>
+                                            <tbody id="warehouseTableBody" >
+                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -293,12 +223,11 @@
                             <div class="card ">
                                 <div class="card-body py-4">
                                     <label class="form-label">Order Status</label>
-                                    <select class="form-control select2">
-                                        <option>BackOrdered</option>
-                                        <option>Deley</option>
-                                        <option>Delivered</option>
-                                        <option>On Hold</option>
-                                        <option>Shipped</option>
+                                    <select onchange="alertSelectedValue()" id="order_status"  class="form-control select2">
+                                        <option selected>All</option>
+                                        <option value="delivered">Delivered</option>
+                                        <option value="pending" >Pending</option>
+                                        <option value="canceled" >Cancel</option>
                                     </select>
                                 </div>
                             </div>
@@ -307,8 +236,8 @@
                                     <label>Order Date</label>
 
                                     <div class="input-daterange input-group" id="datepicker6" data-date-format="dd M, yyyy" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
-                                        <input type="text" class="form-control" name="start" placeholder="Start Date" />
-                                        <input type="text" class="form-control" name="end" placeholder="End Date" />
+                                        <input onchange="alertSelectedValue()" id="order_startdate" type="text" class="form-control" name="order_startdate" placeholder="Start Date" />
+                                        <input  onchange="alertSelectedValue()" id="order_enddate" type="text" class="form-control" name="order_enddate" placeholder="End Date" />
                                     </div>
                                 </div>
                             </div>
@@ -342,6 +271,45 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
+                                <div class="card-body loaderDiv  ">
+                                    <div class="d-flex flex-wrap">
+                                        <h4 class="card-title mb-4">Orders</h4>
+    
+                                        <div class="ms-auto">
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive reportTable">
+                                        <table class="table mb-0">
+    
+                                            <thead  class="table-light">
+                                                <tr>
+                                                    <th class="ps-2">Sr.no</th>
+                                                    <th>Product Name</th>
+                                                    <th class="ps-2">Customer</th>
+                                                    <th class="ps-2">Qty</th>
+                                                    <th class="ps-2">Destination</th>
+                                                    <th class="ps-2">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="order_list" >
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
                                 <div class="card-body loaderDiv ">
                                     <div class="d-flex flex-wrap">
                                         <h4 class="card-title mb-4">Feedback Details—Delivered Orders</h4>
@@ -360,55 +328,9 @@
                                                     <th class="ps-2">Order Defect Description</th>
                                                 </tr>
                                             </thead>
-                                            <tbody >
-                                                <tr>
-                                                    <th scope="row">ORD-001</th>
-                                                    <td>Gustavo Achong</td>
-                                                    <td><span class="badge badge-pill font-size-11 text-capitalize badge-soft-success">Very Good</span></td>
-                                                    <td>None</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">ORD-001</th>
-                                                    <td>Gustavo Achong</td>
-                                                    <td><span class="badge badge-pill font-size-11 text-capitalize badge-soft-success">Good</span></td>
-                                                    <td>None</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">ORD-002</th>
-                                                    <td>Gustavo Achong</td>
-                                                    <td><span class="badge badge-pill font-size-11 text-capitalize badge-soft-warning">Fair</span></td>
-                                                    <td>Damaged Goods</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">ORD-002</th>
-                                                    <td>Gustavo Achong</td>
-                                                    <td><span class="badge badge-pill font-size-11 text-capitalize badge-soft-danger">Poor</span></td>
-                                                    <td>Incorrect Quantity</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">ORD-001</th>
-                                                    <td>Gustavo Achong</td>
-                                                    <td><span class="badge badge-pill font-size-11 text-capitalize badge-soft-success">Very Good</span></td>
-                                                    <td>None</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">ORD-001</th>
-                                                    <td>Gustavo Achong</td>
-                                                    <td><span class="badge badge-pill font-size-11 text-capitalize badge-soft-success">Good</span></td>
-                                                    <td>None</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">ORD-002</th>
-                                                    <td>Gustavo Achong</td>
-                                                    <td><span class="badge badge-pill font-size-11 text-capitalize badge-soft-warning">Fair</span></td>
-                                                    <td>Damaged Goods</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">ORD-002</th>
-                                                    <td>Gustavo Achong</td>
-                                                    <td><span class="badge badge-pill font-size-11 text-capitalize badge-soft-danger">Poor</span></td>
-                                                    <td>Incorrect Quantity</td>
-                                                </tr>
+                                            <tbody id="feedback-body"  >
+                                                
+                                               
                                             </tbody>
                                         </table>
                                     </div>
@@ -697,7 +619,15 @@
 
             var selectstart = document.getElementById("start").value;
             var selectend = document.getElementById("end").value;
-           
+
+            var selectorderstart = document.getElementById("order_startdate").value;
+            var selectorderend = document.getElementById("order_enddate").value;
+
+            var selectorder = document.getElementById("order_status");
+            var selectedValueo = selectorder.value;
+
+            
+            
         
             $.ajax({
                 type: "POST",
@@ -707,29 +637,123 @@
                     wids: selectedValue ,
                     strat_date:selectstart,
                     end_date:selectend,
+                    selectedValueo:selectedValueo,
+                    selectorderstart:selectorderstart,
+                    selectorderend:selectorderend,
                 },
                 success: function(response) {
                     console.log(response,"1");
 
-
-
-
-
                     if (response.status === 'SENT') {
                         console.log(response.trucks, "truckstruckstrucks");
+                        document.getElementById("warehouse_total_order").textContent = response.warehouse_total_order;
+                        document.getElementById("warehouse_pending_order").textContent = response.warehouse_pending_order;
+                        document.getElementById("warehouse_complete_order").textContent = response.warehouse_complete_order;
+                        document.getElementById("within_time").textContent = response.within_time; 
+                        document.getElementById("out_of_time").textContent = response.out_of_time; 
+                        chart.updateSeries([response.within_time, response.out_of_time]);
 
 
-
-
-                        if (response.warehouse_total_order) {
-                            document.getElementById("warehouse_total_order").textContent = response.warehouse_total_order;
-                            document.getElementById("warehouse_pending_order").textContent = response.warehouse_pending_order;
-                            document.getElementById("warehouse_complete_order").textContent = response.warehouse_complete_order;
-                            document.getElementById("within_time").textContent = response.within_time; 
-                            document.getElementById("out_of_time").textContent = response.out_of_time; 
-                            chart.updateSeries([response.within_time, response.out_of_time]);
+                        const warehouseTableBody = document.getElementById('warehouseTableBody');
+                        warehouseTableBody.innerHTML = '';
+                        if (response.warehouse_list) {
+                                response.warehouse_list.forEach((warehouse, index) => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <th scope="row">${index + 1}</th>
+                                        <td>${warehouse.name}</td>
+                                        <td>${warehouse.total_stock}</td>
+                                        <td>${warehouse.available_stock}</td>
+                                        <td>${warehouse.left_stock}</td>
+                                    `;
+                                    warehouseTableBody.appendChild(row);
+                                });
+                                console.log(response.warehouse_list, "warehouse");
 
                         }
+
+                        
+                        const feedbackBody = document.getElementById('feedback-body');
+                        feedbackBody.innerHTML = ''; // Clear any existing content
+
+                        if (response.feedback_list) {
+                            console.log(response.feedback_list,"response.feedback_listresponse.feedback_list")
+                        
+                                response.feedback_list.forEach(feedback => {
+                                    const row = document.createElement('tr');
+                            
+                                    const orderCell = document.createElement('th');
+                                    orderCell.setAttribute('scope', 'row');
+                                    orderCell.textContent = feedback.id;
+                            
+                                    const nameCell = document.createElement('td');
+                                    nameCell.textContent = feedback.order__cname;
+                            
+                                    const ratingCell = document.createElement('td');
+                                    const badge = document.createElement('span');
+                                    badge.className = 'badge badge-pill font-size-11 text-capitalize badge-soft-success';
+                                    badge.textContent = feedback.rating_text;
+                                    ratingCell.appendChild(badge);
+                            
+                                    const descriptionCell = document.createElement('td');
+                                    descriptionCell.textContent = feedback.description;
+                            
+                                    row.appendChild(orderCell);
+                                    row.appendChild(nameCell);
+                                    row.appendChild(ratingCell);
+                                    row.appendChild(descriptionCell);
+                            
+                                    feedbackBody.appendChild(row);
+                                });
+                        }
+
+                        const orderBody = document.getElementById('order_list');
+                        orderBody.innerHTML = '';
+
+                        if (response.order_list) {
+                            response.order_list.forEach((order, index) => {
+                                // Create a new row
+                                const row = document.createElement('tr');
+                        
+                                // Create and populate cells
+                                const srNoCell = document.createElement('td');
+                                srNoCell.textContent = index + 1; // Serial number
+                        
+                                const productNameCell = document.createElement('td');
+                                productNameCell.textContent = order.product_name;
+                        
+                                const customerCell = document.createElement('td');
+                                customerCell.textContent = order.cname;
+                        
+                                const qtyCell = document.createElement('td');
+                                qtyCell.textContent = order.quantity;
+                        
+                                const destinationCell = document.createElement('td');
+                                destinationCell.textContent = order.destination;
+
+                                const statusCell = document.createElement('td');
+                                statusCell.textContent = order.order_status;
+                        
+                                
+                                // Append cells to the row
+                                row.appendChild(srNoCell);
+                                row.appendChild(productNameCell);
+                                row.appendChild(customerCell);
+                                row.appendChild(qtyCell);
+                                row.appendChild(destinationCell);
+                                row.appendChild(statusCell);
+                        
+                                // Append the row to the order body
+                                orderBody.appendChild(row);
+                            });
+                        }
+
+
+                        
+                       
+                        
+
+                        
                     } else {
                         console.error("Unexpected status:", response.status);
                     }
@@ -739,6 +763,10 @@
                 }
             });
         }
+
+
+    
+
         window.onload = function() {
             alertSelectedValue();
         };

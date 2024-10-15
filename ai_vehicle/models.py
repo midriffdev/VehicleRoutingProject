@@ -27,4 +27,10 @@ class HeadQuarter(models.Model):
     primary = models.BooleanField(default=False)
     lat     = models.CharField(max_length=15)
     long    = models.CharField(max_length=15)
+
+    total_stock=models.PositiveIntegerField(null=True, blank=True,default=0)
+    available_stock=models.PositiveIntegerField(null=True, blank=True,default=0)
+    left_stock=models.PositiveIntegerField(null=True, blank=True,default=0)
+
+
     def __str__(self): return f'{self.id} || {self.name}{" || MAIN" if self.primary else ""}'
