@@ -447,6 +447,19 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body loaderDiv">
+                                    <div class="d-flex flex-wrap">
+                                        <h4 class="card-title mb-4">Truck Efficiency </h4>
+    
+                                        <div class="ms-auto">
+                                        </div>
+                                    </div>
+                                    <div id="" class="apex-charts" dir="ltr"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     
@@ -458,7 +471,7 @@
 
                 <script src="{% static 'libs/echarts/echarts.min.js' %}"></script>
 
-    <script src="{% static 'libs/apexcharts/apexcharts.min.js' %}"></script>
+                <script src="{% static 'libs/apexcharts/apexcharts.min.js' %}"></script>
                 <script>
 
         var options = {
@@ -526,9 +539,10 @@
             },
             series: [
                 { name: "Kilometre", data: [100, 120, 130, 110, 150, 140, 160] },  // Kilometre values
-                { name: "Milega p/km", data: [5, 4.5, 6, 5.5, 4.8, 5.2, 4.9] }    // Milega p/km values
+                { name: "Fuel Consumption(liter)", data: [200, 255, 265, 155,300, 280, 233] },    // Fuel Consumption(liter) values
+                { name: "Delivered Load(Kg)", data: [600, 455, 665, 555,700, 680, 710] }    // Fuel Consumption(liter) values
             ],
-            colors: ["#1d4f6a", "#f46a6a"], // Colors for the two series
+            colors: ["#1d4f6a", "#f46a6a", "#f8c471"], // Colors for the two series
             xaxis: { 
                 categories: ["Truck 1", "Truck 2", "Truck 3", "Truck 4", "Truck 5", "Truck 6", "Truck 7"] 
             },
@@ -541,7 +555,7 @@
                 shared: true, // Show shared tooltip for both bars
                 intersect: false,
                 formatter: function (series) {
-                    return series.map((s) => `${s.seriesName}: ${s.data} ${s.seriesName === 'Milega p/km' ? 'units' : 'km'}`).join('<br>');
+                    return series.map((s) => `${s.seriesName}: ${s.data} ${s.seriesName === 'Fuel Consumption(liter)' ? 'units' : 'km'}`).join('<br>');
                 }
             }
         };
