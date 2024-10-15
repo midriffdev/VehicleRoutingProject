@@ -345,7 +345,7 @@
                             <div class="card ">
                                 <div class="card-body loaderDiv ">
                                     <div class="d-flex flex-wrap">
-                                        <h4 class="card-title mb-4">Perfect Order By Truck</h4>
+                                        <h4 class="card-title mb-4">Orders </h4>
     
                                         <div class="ms-auto">
 
@@ -360,7 +360,7 @@
                             <div class="card ">
                                 <div class="card-body loaderDiv ">
                                     <div class="d-flex flex-wrap">
-                                        <h4 class="card-title mb-4">Truck Distance</h4>
+                                        <h4 class="card-title mb-4">Route Optimization Metrics</h4>
     
                                         <div class="ms-auto">
                                         </div>
@@ -394,7 +394,9 @@
                 <script src="{% static 'libs/echarts/echarts.min.js' %}"></script>
 
                 <script src="{% static 'libs/apexcharts/apexcharts.min.js' %}"></script>
-                <script>
+
+
+<script>
 
                 var options = {
                     chart: {
@@ -442,11 +444,6 @@
                 chart.render();
 
 
-
-
-        
-
-
         var options = {
             chart: {
                 height: 350,
@@ -491,19 +488,6 @@
 
         var chart = new ApexCharts(document.querySelector("#column_chart"), options);
         chart.render();
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
        // Function to create a gauge chart
@@ -599,15 +583,6 @@
     createGaugeChart("gauge-chart2", "Fill Rate", 92.30); // Example value
 
 
-
-
-
-
-
-
-
-
-
         var options = {
             series: [85, 15], // Data for the donut chart
             chart: {
@@ -631,6 +606,69 @@
         // Creating and rendering the donut chart
         var chart = new ApexCharts(document.querySelector("#donut-chart"), options);
         chart.render();
+
+
+
+
+
+
+
+        var barChart; // Declare bar chart variable globally
+
+    // Function to initialize the bar chart
+    function initializeBarChart(truckData) {
+        var options = {
+            chart: {
+                height: 350,
+                type: "bar",
+                toolbar: { show: false }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    barHeight: '60px',
+                }
+            },
+            dataLabels: { enabled: false },
+            series: [{
+                data: truckData // Dynamically set data for each truck
+            }],
+            colors: ["#18603e"],
+            grid: { borderColor: "#18603e" },
+            xaxis: {
+                categories: [
+                    "Truck 1", "Truck 2", "Truck 3", 
+                    "Truck 4", "Truck 5", "Truck 6", 
+                    "Truck 7", "Truck 8",
+                ],  // Default truck names
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val + " orders";
+                    }
+                }
+            }
+        };
+
+        barChart = new ApexCharts(document.querySelector("#bar_chart"), options);
+        barChart.render();
+    }
+
+    // Function to update the bar chart data
+    function updateBarChart(truckData) {
+        if (barChart) {
+            barChart.updateSeries([{
+                data: truckData // Update data based on AJAX response
+            }]);
+        }
+    }
+
+
+
+
+
+
 
 
         function alertSelectedValue() {
@@ -730,7 +768,6 @@
 
                         const orderBody = document.getElementById('order_list');
                         orderBody.innerHTML = '';
-
                         if (response.order_list) {
                             response.order_list.forEach((order, index) => {
                                 // Create a new row
@@ -770,9 +807,10 @@
                         }
 
 
-                        
-                       
-                        
+                        if (response.trucks) {
+                            const truckData = response.trucks.map(truck => truck.order_count);
+                            updateBarChart(truckData); // Update bar chart with new truck data
+                        }
 
                         
                     } else {
@@ -785,24 +823,13 @@
             });
         }
 
-
-    
-
         window.onload = function() {
             alertSelectedValue();
         };
-
-
-
-
-
-
-
-
-
-
-
     </script>
 
                 
-{% endblock %}
+
+
+
+    {% endblock %}

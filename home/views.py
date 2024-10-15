@@ -443,8 +443,6 @@ def reports(request):
                     'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
                     ))
 
-
-
                 else:
                     orders=Order.objects.filter(order_status=orderstatus,warehouse=warehouse).order_by('-id')
                     order_list = list(orders.values(
