@@ -77,7 +77,11 @@
                                     </div>
                                   </div>
                                   <script>
+                                    $(document).ready(function() {
+                                        $('#showorders').hide(); // Hide the span by default
+                                    });
                                     function updateorderlist(){
+                                        
                                         $.ajax({
                                             type: "POST",
                                             url: "{%url 'fetchorders' %}",
@@ -94,10 +98,13 @@
                                         });
                                     }
 
-                                    function showorders(){
-                                        if ($('#orderslist').val().length) {$('#showorders').html( `Selected Orders: ${String($('#orderslist').val())}` )}
-                                        else {$('#showorders').html( '' )}
+                                    function showorders() {
+                                    if ($('#orderslist').val().length) {
+                                        $('#showorders').html(`Selected Orders: ${String($('#orderslist').val())}`).show(); // Show the span when there are orders
+                                    } else {
+                                        $('#showorders').html('').hide(); // Hide the span again if no orders are selected
                                     }
+                                }
                                 </script>
                                 
 
