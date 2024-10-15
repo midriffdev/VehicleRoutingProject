@@ -650,3 +650,7 @@ def generate_email_content(order):
     else:
         # Handle error
         return "Error generating content"
+
+
+
+
