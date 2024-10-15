@@ -77,7 +77,7 @@ def fetchorders(request):
     # print("request.POST___________", request.POST)
     orders = []
     for wh in request.POST.getlist('wids[]'):
-        temp = [{'text':f'{order.id} | {order.cname}', 'value':order.id} for order in Order.objects.filter(warehouse_id=wh)]
+        temp = [{'text':f'{order.id} | {order.cname}', 'value':order.id} for order in Order.objects.filter(warehouse_id=wh, order_status='pending')]
         orders.append( [HeadQuarter.objects.get(id=wh).name, temp] )
     return JsonResponse({'orders':orders, 'status':'SENT'}, status = 200)
 
