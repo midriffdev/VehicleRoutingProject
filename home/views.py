@@ -441,8 +441,6 @@ def reports(request):
                     'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
                     ))
 
-
-
                 else:
                     orders=Order.objects.filter(order_status=orderstatus,warehouse=warehouse).order_by('-id')
                     order_list = list(orders.values(
@@ -623,8 +621,45 @@ def reports(request):
             return JsonResponse({'status': 'NOT FOUND'}, status=404)
     else:
         warehouse = HeadQuarter.objects.all()
+        trucks = Truck.objects.all().order_by('-id')
+
+        orders=Order.objects.all()
+
+        all_co2_emission_reduction = 0  # Use 0 instead of an empty string
+        for truck in orders:
+            if truck.co2_emission_reduction:
+                truck.co2_emission_reduction=truck.co2_emission_reduction
+            else:
+                truck.co2_emission_reduction = 0
+
+            all_co2_emission_reduction += truck.co2_emission_reduction
+
+        all_fuel_consumption = 0  # Use 0 instead of an empty string
+        for truck in orders:
+            if truck.fuel_consumption:
+                truck.fuel_consumption=truck.fuel_consumption
+            else:
+                truck.fuel_consumption = 0
+
+            all_fuel_consumption += truck.fuel_consumption
+
+        all_fuel_savings = 0  # Use 0 instead of an empty string
+        for truck in orders:
+            if truck.fuel_savings:
+                truck.fuel_savings=truck.fuel_savings
+            else:
+                truck.fuel_savings = 0
+
+            all_fuel_savings += truck.fuel_savings
+
+
+
         context = {
             'warehouses': warehouse,
+            'all_co2_emission_reduction':all_co2_emission_reduction,
+            'all_fuel_savings':all_fuel_savings,
+            'all_fuel_consumption':all_fuel_consumption,
+            'trucks':trucks,
         }
         return render(request, 'home/reports.html', context)
 
@@ -715,7 +750,19 @@ def admin_single_vehicle(request, pk=None):
 @csrf_exempt
 def report_issue(request, pk=None):
     if request.method == 'POST':
+
+        try:
+            order=Order.objects.get(id=request.POST.get('order_id'))
+            order.report_status=True
+            order.save()
+        except:
+            pass
+
+
         report=Report_order.objects.create(order_id=request.POST.get('order_id'),issue=request.POST.get('issue_text'), truck_id=request.POST.get('truck_id'))
+
+
+
         return redirect(reverse('driver_single', kwargs={'pk': request.POST.get('truck_id')}))
     else:
         return redirect(reverse('driver_single', kwargs={'pk': pk})) 
@@ -965,8 +1012,10 @@ def upload_orders(request):
     
     else:
         orders=Order.objects.filter(warehouse__primary=True)
+        report_orders=Order.objects.filter(report_status=True)
         context={
             'orders':orders,
+            'report_orders':report_orders,
             'warehouses':HeadQuarter.objects.all()
         }
         return render(request, 'home/orders.html',context) 
