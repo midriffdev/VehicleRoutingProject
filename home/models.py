@@ -80,7 +80,6 @@ class ServiceRecord(models.Model):
         return f"Service for {self.truck} on {self.service_date}"
 
 
-
 class Order(models.Model):
     PRODUCT_STATUS_CHOICES = [
         ('pending', 'Pending'),
