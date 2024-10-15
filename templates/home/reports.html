@@ -236,8 +236,8 @@
                                     <label>Order Date</label>
 
                                     <div class="input-daterange input-group" id="datepicker6" data-date-format="dd M, yyyy" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
-                                        <input type="text" class="form-control" name="start" placeholder="Start Date" />
-                                        <input type="text" class="form-control" name="end" placeholder="End Date" />
+                                        <input onchange="alertSelectedValue()" id="order_startdate" type="text" class="form-control" name="order_startdate" placeholder="Start Date" />
+                                        <input  onchange="alertSelectedValue()" id="order_enddate" type="text" class="form-control" name="order_enddate" placeholder="End Date" />
                                     </div>
                                 </div>
                             </div>
@@ -620,11 +620,14 @@
             var selectstart = document.getElementById("start").value;
             var selectend = document.getElementById("end").value;
 
+            var selectorderstart = document.getElementById("order_startdate").value;
+            var selectorderend = document.getElementById("order_enddate").value;
+
             var selectorder = document.getElementById("order_status");
             var selectedValueo = selectorder.value;
 
             
-           
+            
         
             $.ajax({
                 type: "POST",
@@ -635,6 +638,8 @@
                     strat_date:selectstart,
                     end_date:selectend,
                     selectedValueo:selectedValueo,
+                    selectorderstart:selectorderstart,
+                    selectorderend:selectorderend,
                 },
                 success: function(response) {
                     console.log(response,"1");

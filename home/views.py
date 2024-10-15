@@ -290,6 +290,9 @@ def reports(request):
         strat_date = request.POST.get('strat_date')
         end_date = request.POST.get('end_date')
 
+        orderstrat_date = request.POST.get('selectorderstart')
+        orderend_date = request.POST.get('selectorderend')
+
         orderstatus = request.POST.get('selectedValueo')
 
         
@@ -427,19 +430,26 @@ def reports(request):
 
                 print(warehouse,"warehouse,,,,,,,,,,,,")
 
+                if orderstrat_date and orderend_date:
+                    orderstrat_date = datetime.strptime(strat_date, "%d %b, %Y").date()
+                    orderend_date = datetime.strptime(end_date, "%d %b, %Y").date()
 
+                   
 
                 if orderstatus == 'All':
                     orders=Order.objects.filter(warehouse=warehouse).order_by('-id')
+
                     order_list = list(orders.values(
                     'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
                     ))
+
+
+
                 else:
                     orders=Order.objects.filter(order_status=orderstatus,warehouse=warehouse).order_by('-id')
                     order_list = list(orders.values(
                     'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
                     ))
-
 
 
                 feedback=Feedback.objects.filter(order__warehouse=warehouse).order_by('-id')
