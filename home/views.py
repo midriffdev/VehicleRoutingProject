@@ -276,24 +276,105 @@ def escalationteam(request):
             'all_orders':all_orders,
         }
         return render(request, 'home/escalation-team.html',context)
-    
+
+from django.http import HttpResponse, FileResponse, JsonResponse  
+
 @csrf_exempt
 def reports(request):
     if request.method == 'POST':
-        print("post methos  ji.........................................")
-        return redirect('home')  # Redirect to home or any other page
+        wids = request.POST.get('wids')
+        strat_date = request.POST.get('strat_date')
+        end_date = request.POST.get('end_date')
+
+        try:
+
+            trucks_list=[]
+            if wids == 'All Warehouse':
+                print("all")
+                trucks = Truck.objects.all().order_by('-id')
+                trucks_list = list(trucks.values(
+                'id', 'truck_name', 'truck_type', 'truck_image', 'truck_number',
+                'capacity', 'make', 'model', 'year', 'mileage', 'license_type',
+                'truck_order', 'cost_per_km', 'status', 'purchase_date', 
+                'last_service_date', 'driver_name', 'driver_email', 'contact_number',
+                'driver_order', 'on_time_deliveries', 'late_deliveries', 'driver_travel',
+                'languages', 'available', 
+                'warehouse__name',  # Include warehouse name
+                ))
+
+                
+
+                within_time = sum(truck['on_time_deliveries'] for truck in trucks_list)
+                out_of_time = sum(truck['late_deliveries'] for truck in trucks_list)
+                warehouse_total_order = Order.objects.all().count()
+                warehouse_pending_order = Order.objects.filter(order_status='escalation_pending').count()
+                warehouse_complete_order = Order.objects.filter(order_status='completed').count()
+
+                return JsonResponse({
+                                'trucks': trucks_list,
+                                'warehouse_total_order': warehouse_total_order,
+                                'warehouse_pending_order': warehouse_pending_order,
+                                'warehouse_complete_order': warehouse_complete_order,
+                                'within_time': within_time,
+                                'out_of_time': out_of_time,
+
+                                
+                                'status': 'SENT'
+                                }, 
+                                status=200)
+
+            else:
+                
+                warehouse = HeadQuarter.objects.get(id=wids)
+                trucks = Truck.objects.filter(warehouse=warehouse).order_by('-id')
+                trucks_list = list(trucks.values(
+                    'id', 'truck_name', 'truck_type', 'truck_image', 'truck_number',
+                    'capacity', 'make', 'model', 'year', 'mileage', 'license_type',
+                    'truck_order', 'cost_per_km', 'status', 'purchase_date', 
+                    'last_service_date', 'driver_name', 'driver_email', 'contact_number',
+                    'driver_order', 'on_time_deliveries', 'late_deliveries', 'driver_travel',
+                    'languages', 'available', 
+                    'warehouse__name',               
+                ))
+
+
+
+
+
+
+
+
+
+                warehouse_total_order=Order.objects.filter(warehouse=warehouse).count()
+                warehouse_pending_order=Order.objects.filter(warehouse=warehouse,order_status='escalation_pending').count()
+                warehouse_complete_order=Order.objects.filter(warehouse=warehouse,order_status='completed').count()
+
+                within_time = sum(truck['on_time_deliveries'] for truck in trucks_list)
+                out_of_time = sum(truck['late_deliveries'] for truck in trucks_list)
+
+                return JsonResponse({
+                                'trucks': trucks_list,
+                                'warehouse_total_order': warehouse_total_order,
+                                'warehouse_pending_order': warehouse_pending_order,
+                                'warehouse_complete_order': warehouse_complete_order,
+                                'within_time': within_time,
+                                'out_of_time': out_of_time,
+
+
+
+                                'status': 'SENT'
+                                }, 
+                                status=200)
+        
+        except HeadQuarter.DoesNotExist:
+            return JsonResponse({'status': 'NOT FOUND'}, status=404)
     else:
-        warehouse=HeadQuarter.objects.all()
-        context={
-            'warehouses':warehouse,
+        warehouse = HeadQuarter.objects.all()
+        context = {
+            'warehouses': warehouse,
         }
-        return render(request, 'home/reports.html',context)
+        return render(request, 'home/reports.html', context)
        
-
-
-
-
-
 
 
 
