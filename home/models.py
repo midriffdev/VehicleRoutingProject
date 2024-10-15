@@ -122,9 +122,45 @@ class Order(models.Model):
     due_days                            = models.PositiveIntegerField(default=0)
     warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT, blank=True, null=True)
     assigned_truck                      = models.ForeignKey('Truck', blank=True, null=True, on_delete=models.PROTECT)
-  
+
+
+    route_distance                      = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2, help_text="Distance in kilometers")
+    delivery_time                       = models.DurationField(null=True, blank=True, help_text="Time taken for the delivery")
+    fuel_consumption                    = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2, help_text="Fuel consumed in liters")
+    on_time_delivery                    = models.BooleanField(null=True, blank=True, default=True, help_text="Was the delivery on time?")
+
+    fuel_savings                        = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2, help_text="Fuel savings in dollars")
+    vehicle_maintenance_savings         = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2, help_text="Savings in vehicle maintenance")
+
+    hours_worked                        = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2, help_text="Hours worked by the driver")
+    idle_time                           = models.DurationField(null=True, blank=True, help_text="Idle time during the delivery route")
+    route_adherence                     = models.BooleanField(null=True, blank=True, default=True, help_text="Did the driver adhere to the planned route?")
+
+    time_saved                          = models.DurationField(null=True, blank=True, help_text="Time saved due to route optimization")
+    estimated_delivery_time             = models.DurationField(null=True, blank=True, help_text="Initial estimated time for delivery")
+
+    co2_emission_reduction              = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2, help_text="CO2 emission reductions in kilograms")
+    green_route                         = models.BooleanField(null=True, blank=True, default=False, help_text="Was a green (eco-friendly) route chosen?")
+
+    adjusted_stops                      = models.IntegerField(null=True, blank=True, help_text="Number of stops adjusted in real-time")
+    rerouted                            = models.BooleanField(null=True, blank=True, default=False, help_text="Was the route dynamically adjusted due to traffic or accidents?")
+
     def __str__(self):
         return f'#{self.id} {self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}{" | assigned to " + self.assigned_truck.truck_name if self.assigned_truck else ""}'
+
+
+
+class Feedback(models.Model):
+    truck             		            = models.ForeignKey(to=Truck, on_delete=models.CASCADE, related_name='ftruck')
+    order             		            = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name='forder')
+    rating_text                               = models.CharField(max_length=255)
+    description                               = models.CharField(max_length=255)
+
+    created_at                          = models.DateTimeField(auto_now_add=True)
+    updated_at                          = models.DateTimeField(auto_now=True) 
+   
+    def __str__(self): return f"{self.truck.truck_name} ({self.order})"
+
 
 
 
