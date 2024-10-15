@@ -280,7 +280,7 @@ def escalationteam(request):
 @csrf_exempt
 def reports(request):
     if request.method == 'POST':
-        print("welcome ji")
+        print("post methos  ji.........................................")
         return redirect('home')  # Redirect to home or any other page
     else:
         warehouse=HeadQuarter.objects.all()
@@ -289,6 +289,15 @@ def reports(request):
         }
         return render(request, 'home/reports.html',context)
        
+
+
+
+
+
+
+
+
+
 @csrf_exempt
 def customer_single_order(request,pk):
     if request.method == 'POST':
@@ -534,6 +543,10 @@ def single_order(request,pk):
 def upload_orders(request):
     if request.method == 'POST':
         
+        if not HeadQuarter.objects.filter(primary=True):
+            messages.success(request, 'Please setup a primary warehouse.')
+            return redirect('upload_orders')
+
         csv_file = request.FILES.get('file')
         if csv_file:
             csv_reader = csv.reader(csv_file.read().decode('utf-8').splitlines())

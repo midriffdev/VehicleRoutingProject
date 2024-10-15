@@ -31,11 +31,7 @@
 
                                
                                 {%if orders%}
-
-                                <a href="{% url 'getroute' %}" class="btn btn-secondary btn-md waves-effect waves-light" onclick="document.querySelector('.loaderWrapper').classList.remove('d-none');">Analyse Route By AI</a>
-
-
-                                <a href="" class="btn btn-secondary btn-md waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#selectOrdersModal" >Analyse Route By AI demo</a>
+                                <a href="" class="btn btn-secondary btn-md waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#selectOrdersModal" >Analyse Route By AI</a>
                                 <div class="modal fade" id="selectOrdersModal" tabindex="-1" aria-labelledby="deleteAllOrdersModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
@@ -71,7 +67,7 @@
                                             <span class="fw-bold text-success" id="showorders"></span>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-danger">Select orders</button>
+                                                <button type="submit" class="btn btn-danger" onclick="document.querySelector('.loaderWrapper').classList.remove('d-none');">Select orders</button>
                                             </div>
                                         </form>
                                     </div>
