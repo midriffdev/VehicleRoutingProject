@@ -290,19 +290,37 @@ def reports(request):
         strat_date = request.POST.get('strat_date')
         end_date = request.POST.get('end_date')
 
-        try:
+        orderstatus = request.POST.get('selectedValueo')
 
+        
+
+        try:
             trucks_list=[]
             if wids == 'All Warehouse':
                 print("all")
+
+                if orderstatus == 'All':
+                    print("all")
+                    orders=Order.objects.all().order_by('-id')
+                    order_list = list(orders.values(
+                    'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
+                    ))
+                else:
+                    orders=Order.objects.filter(order_status=orderstatus).order_by('-id')
+                    order_list = list(orders.values(
+                    'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
+                    ))
+
+
+                feedback=Feedback.objects.all().order_by('-id')
+                feedback_list = list(feedback.values(
+                'id', 'order__product_name', 'rating_text', 'description', 'order__cname',
+                ))
 
                 warehouses=HeadQuarter.objects.all().order_by('-id')
                 warehouse_list = list(warehouses.values(
                 'id', 'name', 'total_stock', 'available_stock', 'left_stock',
                 ))
-
-
-
 
                 trucks = Truck.objects.all().order_by('-id')
                 trucks_list = list(trucks.values(
@@ -383,8 +401,6 @@ def reports(request):
                     }, status=200)
                     
 
-
-                
                 within_time = sum(truck['on_time_deliveries'] for truck in trucks_list)
                 out_of_time = sum(truck['late_deliveries'] for truck in trucks_list)
                 warehouse_total_order = Order.objects.all().count()
@@ -398,9 +414,9 @@ def reports(request):
                                 'warehouse_complete_order': warehouse_complete_order,
                                 'within_time': within_time,
                                 'out_of_time': out_of_time,
-
+                                'order_list':order_list,
                                 'warehouse_list':warehouse_list,
-
+                                'feedback_list':feedback_list,
                                 'status': 'SENT'
                                 }, 
                                 status=200)
@@ -410,6 +426,26 @@ def reports(request):
                 warehouse = HeadQuarter.objects.get(id=wids)
 
                 print(warehouse,"warehouse,,,,,,,,,,,,")
+
+
+
+                if orderstatus == 'All':
+                    orders=Order.objects.filter(warehouse=warehouse).order_by('-id')
+                    order_list = list(orders.values(
+                    'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
+                    ))
+                else:
+                    orders=Order.objects.filter(order_status=orderstatus,warehouse=warehouse).order_by('-id')
+                    order_list = list(orders.values(
+                    'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
+                    ))
+
+
+
+                feedback=Feedback.objects.filter(order__warehouse=warehouse).order_by('-id')
+                feedback_list = list(feedback.values(
+                'id', 'order__product_name', 'rating_text', 'description', 'order__cname',
+                ))
 
                 warehouse_list = [
                     {
@@ -539,14 +575,25 @@ def reports(request):
                         'status': 'SENT'
                     }, status=200)
                     
+                warehouse_pending_order = Order.objects.filter(
+                    warehouse=warehouse, 
+                    order_status='pending'
+                ).count()
 
-                    
-                warehouse_total_order=Order.objects.filter(warehouse=warehouse).count()
-                warehouse_pending_order=Order.objects.filter(warehouse=warehouse,order_status='pending').count()
-                warehouse_complete_order=Order.objects.filter(warehouse=warehouse,order_status='delivered').count()
+                # Count delivered or completed orders for the specific warehouse
+                warehouse_complete_order = Order.objects.filter(
+                    warehouse=warehouse, 
+                    order_status__in=['delivered', 'completed']
+                ).count()
+
+                # Calculate the total orders
+                warehouse_total_order = warehouse_pending_order + warehouse_complete_order
 
                 within_time = sum(truck['on_time_deliveries'] for truck in trucks_list)
                 out_of_time = sum(truck['late_deliveries'] for truck in trucks_list)
+
+
+                print(feedback_list,"feedback_listfeedback_list")
 
                 return JsonResponse({
                                 'trucks': trucks_list,
@@ -556,6 +603,8 @@ def reports(request):
                                 'within_time': within_time,
                                 'out_of_time': out_of_time,
                                 'warehouse_list':warehouse_list,
+                                'feedback_list':feedback_list,
+                                'order_list':order_list,
 
 
                                 'status': 'SENT'
@@ -570,8 +619,6 @@ def reports(request):
             'warehouses': warehouse,
         }
         return render(request, 'home/reports.html', context)
-       
-
 
 
 

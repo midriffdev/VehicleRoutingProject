@@ -128,6 +128,20 @@ class Order(models.Model):
 
 
 
+class Feedback(models.Model):
+    truck             		            = models.ForeignKey(to=Truck, on_delete=models.CASCADE, related_name='ftruck')
+    order             		            = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name='forder')
+    rating_text                               = models.CharField(max_length=255)
+    description                               = models.CharField(max_length=255)
+
+    created_at                          = models.DateTimeField(auto_now_add=True)
+    updated_at                          = models.DateTimeField(auto_now=True) 
+   
+    def __str__(self): return f"{self.truck.truck_name} ({self.order})"
+
+
+
+
 class Report_order(models.Model):
     truck             		            = models.ForeignKey(to=Truck, on_delete=models.CASCADE, related_name='truck')
     order             		            = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name='order')
