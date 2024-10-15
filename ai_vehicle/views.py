@@ -88,7 +88,7 @@ def getroute(request):
         return redirect('upload_orders')
 
     # REQUEST.POST
-    print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist') , request.POST.getlist('orderslist')[1])    
+    print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist'))    
     reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"), "global_end_time": datetime.datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}
 
     # a, b = get_lat_long('una, hp')
