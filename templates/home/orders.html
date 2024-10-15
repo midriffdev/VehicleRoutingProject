@@ -46,7 +46,8 @@
                                                     <div class="col-lg-12">
                                                         <div class="mb-3">
                                                             <label class="form-label">Select Warehouse</label>
-                                                            <select class="form-select" id="warehouselist" name="warehouselist" multiple onchange="updateorderlist()" required>
+                                                            <select class="select2 form-control select2-multiple"
+                                                            multiple="multiple"  id="warehouselist" name="warehouselist" onchange="updateorderlist()" required>
                                                                 {%for i in warehouses%}
                                                                 <option value="{{i.id}}">{{i.name}}</option>
                                                                 {%endfor%}
@@ -56,13 +57,17 @@
                                                     <div class="col-lg-12">
                                                         <div class="mb-3">
                                                             <label class="form-label d-block">Select Order</label>
-                                                            <select multiple="multiple" id="orderslist" name="orderslist" onchange="showorders()" required>
+                                                            <select class="select2 form-control select2-multiple"
+                                                            multiple="multiple" id="orderslist" name="orderslist" onchange="showorders()" required>
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    <div class="col-lg-12 mt-2">
+                                                        <span class="alert alert-success" id="showorders"></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <span class="fw-bold text-success" id="showorders"></span>
+
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                 <button type="submit" class="btn btn-danger" onclick="document.querySelector('.loaderWrapper').classList.remove('d-none');">Select orders</button>
@@ -179,7 +184,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                            <table id="datatable" class=" table table-bordered dt-responsive nowrap w-100">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Order id</th>
@@ -236,6 +241,9 @@
 
     </div> <!-- container-fluid -->
     <script>
+
+        
+
 
 Dropzone.options.myDropzone = {
   maxFiles: 1, // Allow only one file to be uploaded

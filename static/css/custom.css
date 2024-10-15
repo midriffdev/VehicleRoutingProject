@@ -228,3 +228,8 @@
       transform: translate(-50%, -50%) rotate(360deg);
     }
   }
+
+
+  .select2-container{
+    width: 100% !important;
+  }
