@@ -45,6 +45,8 @@ class Truck(models.Model):
     late_deliveries = models.PositiveIntegerField(null=True, blank=True,default=0)
 
     driver_travel = models.PositiveIntegerField(null=True, blank=True,default=0)
+    fuel = models.PositiveIntegerField(null=True, blank=True,default=0)
+    deleverd_load = models.PositiveIntegerField(null=True, blank=True,default=0)
     languages = models.CharField(max_length=100,null=True, blank=True,default='English')
 
     
@@ -144,6 +146,9 @@ class Order(models.Model):
 
     adjusted_stops                      = models.IntegerField(null=True, blank=True, help_text="Number of stops adjusted in real-time")
     rerouted                            = models.BooleanField(null=True, blank=True, default=False, help_text="Was the route dynamically adjusted due to traffic or accidents?")
+
+
+    report_status                 = models.BooleanField(default=False)
 
     def __str__(self):
         return f'#{self.id} {self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}{" | assigned to " + self.assigned_truck.truck_name if self.assigned_truck else ""}'
