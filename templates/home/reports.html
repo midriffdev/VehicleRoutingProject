@@ -577,8 +577,8 @@
 
     // Create different gauge charts with unique values
     createGaugeChart("gauge-chart", "CO2 emission reductions in kilograms", {{all_co2_emission_reduction}});
-    createGaugeChart("gauge-chart1", "Fuel Saving",{{all_fuel_consumption}} ); // Example value
-    createGaugeChart("gauge-chart2", "Fill Rate", {{all_fuel_savings}}); // Example value
+    createGaugeChart("gauge-chart1", "Fuel Consumption(liter)",{{all_fuel_consumption}} ); // Example value
+    createGaugeChart("gauge-chart2", "Fuel Savings(liter)", {{all_fuel_savings}}); // Example value
 
 
         var options = {
@@ -636,8 +636,6 @@
             var selectorder = document.getElementById("order_status");
             var selectedValueo = selectorder.value;
 
-            
-            
         
             $.ajax({
                 type: "POST",
