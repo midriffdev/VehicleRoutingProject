@@ -673,16 +673,13 @@ def reports(request):
 
 
 
-
-
 @csrf_exempt
 def post_reports(request):
     if request.method == 'POST':
         print(request.POST,"dataaaaaaaaaaaaaaaaaaaaaa")
 
 
-
-        wids = request.POST.get('wids')
+        wids = request.POST.get('warehouse')
         strat_date = request.POST.get('strat_date')
         end_date = request.POST.get('end_date')
 
@@ -690,53 +687,35 @@ def post_reports(request):
         orderend_date = request.POST.get('selectorderend')
         orderstatus = request.POST.get('selectedValueo')
 
-        
+
+    
 
         try:
             trucks_list=[]
             if wids == 'All Warehouse':
-                print("all")
+                print("all ware house")
+
+
+                trucks_list = Truck.objects.all().order_by('-id')
 
                 if orderstatus == 'All':
-                    print("all")
-                    orders=Order.objects.all().order_by('-id')
-                    order_list = list(orders.values(
-                    'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
-                    ))
+                    order_list=Order.objects.all()
                 else:
-                    orders=Order.objects.filter(order_status=orderstatus).order_by('-id')
-                    order_list = list(orders.values(
-                    'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
-                    ))
+                    order_list=Order.objects.filter(order_status=orderstatus).order_by('-id')
+
+                within_time = order_list.filter(
+                    Q(on_time_delivery=True) & (Q(order_status='delivered') | Q(order_status='completed'))
+                ).count()
+
+                out_of_time = order_list.filter(
+                    Q(on_time_delivery=False) & (Q(order_status='delivered') | Q(order_status='completed'))
+                ).count()
 
 
-                feedback=Feedback.objects.all().order_by('-id')
-                feedback_list = list(feedback.values(
-                'id', 'order__product_name', 'rating_text', 'description', 'order__cname',
-                ))
+                print(within_time,"within_timewithin_timewithin_time")
 
-                warehouses=HeadQuarter.objects.all().order_by('-id')
-                warehouse_list = list(warehouses.values(
-                'id', 'name', 'total_stock', 'available_stock', 'left_stock',
-                ))
+                
 
-                trucks = Truck.objects.all().order_by('-id')
-                trucks_list = list(trucks.values(
-                'id', 'truck_name', 'truck_type', 'truck_image', 'truck_number',
-                'capacity', 'make', 'model', 'year', 'mileage', 'license_type',
-                'truck_order', 'cost_per_km', 'status', 'purchase_date', 
-                'last_service_date', 'driver_name', 'driver_email', 'contact_number',
-                'driver_order', 'on_time_deliveries', 'late_deliveries', 'driver_travel',
-                'languages', 'available', 
-                'warehouse__name',  # Include warehouse name
-                ))
-
-
-                 # Parse dates to ensure proper format
-
-                warehouse_total_order = Order.objects.all().count()
-                warehouse_pending_order = 0
-                warehouse_complete_order = 0
 
                 if strat_date or end_date:
 
@@ -799,37 +778,34 @@ def post_reports(request):
                     }, status=200)
                     
 
-                within_time = sum(truck['on_time_deliveries'] for truck in trucks_list)
-                out_of_time = sum(truck['late_deliveries'] for truck in trucks_list)
-                warehouse_total_order = Order.objects.all().count()
-                warehouse_pending_order = Order.objects.filter(order_status='pending').count()
-                warehouse_complete_order = Order.objects.filter(order_status='delivered').count()
-
+               
 
                 # new data ................................
 
-                warehouse = HeadQuarter.objects.all()
+                warehouses = HeadQuarter.objects.all()
                 trucks = Truck.objects.all().order_by('-id')
                 orders=Order.objects.all()
+
+                warehouse_total_order = Order.objects.all().count()
+                warehouse_cancel_order = Order.objects.filter(order_status='canceled').count()
+                warehouse_complete_order = Order.objects.filter(Q(order_status='delivered') or Q(order_status='completed')).count()
 
 
 
                 context={
                     'warehouses':warehouses,
-
-
-
-
-
+                    'warehouse_list':warehouses,
+                    'warehouse_total_order': warehouse_total_order,
+                    'warehouse_cancel_order': warehouse_cancel_order,
+                    'warehouse_complete_order': warehouse_complete_order,
+                    'within_time': within_time,
+                    'out_of_time': out_of_time,
 
 
 
                      'trucks': trucks_list,
-                                'warehouse_total_order': warehouse_total_order,
-                                'warehouse_pending_order': warehouse_pending_order,
-                                'warehouse_complete_order': warehouse_complete_order,
-                                'within_time': within_time,
-                                'out_of_time': out_of_time,
+                                
+                                
                                 'order_list':order_list,
                                 'warehouse_list':warehouse_list,
                                 'feedback_list':feedback_list,
@@ -1032,13 +1008,27 @@ def post_reports(request):
         except HeadQuarter.DoesNotExist:
             return JsonResponse({'status': 'NOT FOUND'}, status=404)
     else:
+
         warehouse = HeadQuarter.objects.all()
         trucks = Truck.objects.all().order_by('-id')
+        order_list=Order.objects.all()
 
-        orders=Order.objects.all()
+        warehouse_total_order = Order.objects.all().count()
+        warehouse_cancel_order = Order.objects.filter(order_status='canceled').count()
+        warehouse_complete_order = Order.objects.filter(Q(order_status='delivered') or Q(order_status='completed')).count()
 
-        all_co2_emission_reduction = 0  # Use 0 instead of an empty string
-        for truck in orders:
+        within_time = order_list.filter(
+            Q(on_time_delivery=True) & (Q(order_status='delivered') | Q(order_status='completed'))
+        ).count()
+
+        out_of_time = order_list.filter(
+            Q(on_time_delivery=False) & (Q(order_status='delivered') | Q(order_status='completed'))
+        ).count()
+
+
+
+        all_co2_emission_reduction = 0  
+        for truck in order_list:
             if truck.co2_emission_reduction:
                 truck.co2_emission_reduction=truck.co2_emission_reduction
             else:
@@ -1047,7 +1037,7 @@ def post_reports(request):
             all_co2_emission_reduction += truck.co2_emission_reduction
 
         all_fuel_consumption = 0  # Use 0 instead of an empty string
-        for truck in orders:
+        for truck in order_list:
             if truck.fuel_consumption:
                 truck.fuel_consumption=truck.fuel_consumption
             else:
@@ -1056,7 +1046,7 @@ def post_reports(request):
             all_fuel_consumption += truck.fuel_consumption
 
         all_fuel_savings = 0  # Use 0 instead of an empty string
-        for truck in orders:
+        for truck in order_list:
             if truck.fuel_savings:
                 truck.fuel_savings=truck.fuel_savings
             else:
@@ -1068,12 +1058,25 @@ def post_reports(request):
 
         context = {
             'warehouses': warehouse,
+            'warehouse_total_order': warehouse_total_order,
+            'warehouse_cancel_order': warehouse_cancel_order,
+            'warehouse_complete_order': warehouse_complete_order,
+            "within_time":within_time,
+            'out_of_time':out_of_time,
+
+
+
+
+
+
+
+
             'all_co2_emission_reduction':all_co2_emission_reduction,
             'all_fuel_savings':all_fuel_savings,
             'all_fuel_consumption':all_fuel_consumption,
             'trucks':trucks,
         }
-        return render(request, 'home/reports.html', context)
+        return render(request, 'home/post_reports.html', context)
 
 
 

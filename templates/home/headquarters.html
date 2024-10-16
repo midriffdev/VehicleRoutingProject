@@ -23,11 +23,24 @@
                                         </div>
                                         <input type="hidden" name="action" value="add">
                                         <div class="modal-body">
+
+
+
+
+
                                             <div class="row">
                                                 <!-- Vehicle Type -->
                                                 <div class="col-md-12 mb-3">
-                                                    <label for="hname" class="form-label">Name</label>
+                                                    <label for="hname" class="form-label">Warehouse Name</label>
                                                     <input type="text" required class="form-control" name="hname" id="hname" placeholder="Enter location name" title="Please use alphanumeric characters only">
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <!-- Vehicle Type -->
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="product_name" class="form-label">Product Name</label>
+                                                    <input type="text" required class="form-control" name="product_name" id="product_name" placeholder="Enter product name" title="Please use alphanumeric characters only">
                                                 </div>
                                             </div>
 
@@ -79,6 +92,7 @@
                                 <tr>
                                     <th class="align-middle">ID</th>
                                     <th class="align-middle">Location Name</th>
+                                    <th class="align-middle">Product Name</th>
                                     <th class="align-middle">Latitude</th>
                                     <th class="align-middle">Longitude</th>
                                     <th class="align-middle">Actions</th>
@@ -89,6 +103,7 @@
                                 <tr>
                                     <td>{{i.id}} </td>
                                     <td>{{i.name}} </td>
+                                    <td>{{i.product_name}} </td>
                                     <td>{{i.lat}}</td>
                                     <td>{{i.long}}</td>
                                     <td>
@@ -124,8 +139,15 @@
                                                     <div class="row">
                                                         <!-- Vehicle Type -->
                                                         <div class="col-md-12 mb-3">
-                                                            <label for="hname" class="form-label">Name</label>
+                                                            <label for="hname" class="form-label">Warehouse Name</label>
                                                             <input type="text" required class="form-control" name="hname" id="hname" placeholder="Enter location name" title="Please use alphanumeric characters only" value="{{i.name}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <!-- Vehicle Type -->
+                                                        <div class="col-md-12 mb-3">
+                                                            <label for="product_name{{i.id}}" class="form-label">Product Name</label>
+                                                            <input type="text" required class="form-control" name="product_name" id="product_name{{i.id}}" placeholder="Enter location name" title="Please use alphanumeric characters only" value="{{i.product_name}}">
                                                         </div>
                                                     </div>
             
