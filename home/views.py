@@ -1377,6 +1377,9 @@ def upload_orders(request):
             csv_reader = csv.reader(csv_file.read().decode('utf-8').splitlines())
             next(csv_reader) 
 
+
+            truckids = [i.id for i in Truck.objects.all()]
+            headqids = [i.id for i in HeadQuarter.objects.all()]
             for row in csv_reader:
                 print(row, "row....................")  
                 cname = row[0]  
@@ -1406,37 +1409,39 @@ def upload_orders(request):
                     # order_status='pending',  
                     lat=lat,
                     long=long,
-                    warehouse=HeadQuarter.objects.get(primary=True),
-                    created_at                      =   datetime.now(),
-                    updated_at                      =   datetime.now(),
-                    # warehouse                       =   HeadQuarter.objects.get(id=int(row[12])),
-                    # assigned_truck                  =   Truck.objects.get(id=random.randint(3, 10)),
+                    # warehouse=HeadQuarter.objects.get(primary=True),
+                    # created_at                      =   datetime.now(),
+                    # updated_at                      =   datetime.now(),
+                    warehouse                       =   HeadQuarter.objects.get(id=random.choice(headqids)),
+                    assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=random.choice(truckids)),
+                    # warehouse                       =   HeadQuarter.objects.get(id=int(row[12])+3),
+                    # assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=4),
 
-                    # created_at                      =   datetime.fromisoformat(row[8]),
-                    # updated_at                      =   datetime.fromisoformat(row[8]),
-                    # delivered_date                  =   datetime.fromisoformat(row[9]),
-                    # payment_date                    =   datetime.fromisoformat(row[10]),
-                    # # delivery_time                   =   datetime.fromisoformat(row[17]),
-                    # # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
+                    created_at                      =   datetime.fromisoformat(row[8]),
+                    updated_at                      =   datetime.fromisoformat(row[8]),
+                    delivered_date                  =   datetime.fromisoformat(row[9]),
+                    payment_date                    =   datetime.fromisoformat(row[10]),
+                    # delivery_time                   =   datetime.fromisoformat(row[17]),
+                    # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
 
-                    # # hours_worked                    =   row[22],
-                    # idle_time                       =   changedurations(row[23]),
-                    # time_saved                      =   changedurations(row[25]),
+                    # hours_worked                    =   row[22],
+                    idle_time                       =   changedurations(row[23]),
+                    time_saved                      =   changedurations(row[25]),
 
-                    # route_adherence                 =   bool(int(row[24])),
-                    # late_payment_status             =   bool(int(row[11])),
-                    # on_time_delivery                =   bool(int(row[19])),
-                    # rerouted                        =   bool(int(row[30])),
+                    route_adherence                 =   bool(int(row[24])),
+                    late_payment_status             =   bool(int(row[11])),
+                    on_time_delivery                =   bool(int(row[19])),
+                    rerouted                        =   bool(int(row[30])),
 
-                    # payment_status                  =   row[13],
-                    # order_status                    =   row[14],
-                    # route_distance                  =   row[16],
-                    # fuel_consumption                =   row[18],
-                    # fuel_savings                    =   row[20],
-                    # vehicle_maintenance_savings     =   row[21],
-                    # co2_emission_reduction          =   row[27],
-                    # green_route                     =   row[28],
-                    # adjusted_stops                  =   row[29],
+                    payment_status                  =   row[13],
+                    order_status                    =   row[14],
+                    route_distance                  =   row[16],
+                    fuel_consumption                =   row[18],
+                    fuel_savings                    =   row[20],
+                    vehicle_maintenance_savings     =   row[21],
+                    co2_emission_reduction          =   row[27],
+                    green_route                     =   row[28],
+                    adjusted_stops                  =   row[29],
                     
                 )
                    

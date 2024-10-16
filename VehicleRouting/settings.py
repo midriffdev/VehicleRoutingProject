@@ -115,3 +115,5 @@ CRONJOBS = [
 ]
 if int(env("IS_SERVER")): 
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/home/root/.config/gcloud/application_default_credentials.json" # for linux
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 15000
