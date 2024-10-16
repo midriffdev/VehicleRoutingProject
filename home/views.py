@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, FileResponse, JsonResponse
 from django.urls import reverse
 from datetime import timedelta
 from django.utils import timezone
@@ -13,7 +13,10 @@ from django.conf import settings
 import google.generativeai as genai
 from .models import *  # Ensure you import your Order model
 from ai_vehicle.models import HeadQuarter
-import requests, os, csv
+import requests, os, csv, random
+from django.utils.dateparse import parse_date
+from django.db.models import Q
+from datetime import datetime
 
 genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI")
 GEMINI_API_KEY="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI"
@@ -276,11 +279,6 @@ def escalationteam(request):
             'all_orders':all_orders,
         }
         return render(request, 'home/escalation-team.html',context)
-
-from django.http import HttpResponse, FileResponse, JsonResponse  
-from django.utils.dateparse import parse_date
-from django.db.models import Q
-from datetime import datetime
 
 @csrf_exempt
 def reports(request):
@@ -623,12 +621,47 @@ def reports(request):
             return JsonResponse({'status': 'NOT FOUND'}, status=404)
     else:
         warehouse = HeadQuarter.objects.all()
+        trucks = Truck.objects.all().order_by('-id')
+
+        orders=Order.objects.all()
+
+        all_co2_emission_reduction = 0  # Use 0 instead of an empty string
+        for truck in orders:
+            if truck.co2_emission_reduction:
+                truck.co2_emission_reduction=truck.co2_emission_reduction
+            else:
+                truck.co2_emission_reduction = 0
+
+            all_co2_emission_reduction += truck.co2_emission_reduction
+
+        all_fuel_consumption = 0  # Use 0 instead of an empty string
+        for truck in orders:
+            if truck.fuel_consumption:
+                truck.fuel_consumption=truck.fuel_consumption
+            else:
+                truck.fuel_consumption = 0
+
+            all_fuel_consumption += truck.fuel_consumption
+
+        all_fuel_savings = 0  # Use 0 instead of an empty string
+        for truck in orders:
+            if truck.fuel_savings:
+                truck.fuel_savings=truck.fuel_savings
+            else:
+                truck.fuel_savings = 0
+
+            all_fuel_savings += truck.fuel_savings
+
+
+
         context = {
             'warehouses': warehouse,
+            'all_co2_emission_reduction':all_co2_emission_reduction,
+            'all_fuel_savings':all_fuel_savings,
+            'all_fuel_consumption':all_fuel_consumption,
+            'trucks':trucks,
         }
         return render(request, 'home/reports.html', context)
-
-
 
 @csrf_exempt
 def customer_single_order(request,pk):
@@ -717,7 +750,19 @@ def admin_single_vehicle(request, pk=None):
 @csrf_exempt
 def report_issue(request, pk=None):
     if request.method == 'POST':
+
+        try:
+            order=Order.objects.get(id=request.POST.get('order_id'))
+            order.report_status=True
+            order.save()
+        except:
+            pass
+
+
         report=Report_order.objects.create(order_id=request.POST.get('order_id'),issue=request.POST.get('issue_text'), truck_id=request.POST.get('truck_id'))
+
+
+
         return redirect(reverse('driver_single', kwargs={'pk': request.POST.get('truck_id')}))
     else:
         return redirect(reverse('driver_single', kwargs={'pk': pk})) 
@@ -871,6 +916,24 @@ def single_order(request,pk):
         }
         return render(request, 'home/single_order.html',context)
 
+def changedurations(duration_str):
+    a = duration_str.split(' days ')
+    print("a___", a)
+    time_part = a[1]
+    hours, minutes, seconds = map(float, time_part.split(':'))
+
+    # Create a timedelta object
+    return timedelta(days=int(a[0]), hours=int(hours), minutes=int(minutes), seconds=seconds)
+    # if len(a) == 2:
+    #     time_part = a[1]
+    #     hours, minutes, seconds = map(float, time_part.split(':'))
+
+    #     # Create a timedelta object
+    #     return timedelta(days=int(a[0]), hours=int(hours), minutes=int(minutes), seconds=seconds)
+    # else:
+    #     # Create a timedelta object
+    #     return timedelta(days=int(1), hours=int(0), minutes=int(0), seconds=0)
+
 @csrf_exempt
 def upload_orders(request):
     if request.method == 'POST':
@@ -896,6 +959,12 @@ def upload_orders(request):
                 lat = row[6] if row[6] else None
                 long = row[7] if row[7] else None
 
+
+
+                # name	email	product_name	quantity	destination	payment_amount	lat	long	
+
+
+
                 order = Order.objects.create(
                     product_name=product_name,
                     quantity=quantity,
@@ -904,18 +973,51 @@ def upload_orders(request):
                     email=email,
                     cname=cname,
                     payment_amount=payment_amount,
-                    order_status='pending',  
+                    # order_status='pending',  
                     lat=lat,
                     long=long,
-                    warehouse=HeadQuarter.objects.get(primary=True)
+                    warehouse=HeadQuarter.objects.get(primary=True),
+                    created_at                      =   datetime.now(),
+                    updated_at                      =   datetime.now(),
+                    # warehouse                       =   HeadQuarter.objects.get(id=int(row[12])),
+                    # assigned_truck                  =   Truck.objects.get(id=random.randint(3, 10)),
+
+                    # created_at                      =   datetime.fromisoformat(row[8]),
+                    # updated_at                      =   datetime.fromisoformat(row[8]),
+                    # delivered_date                  =   datetime.fromisoformat(row[9]),
+                    # payment_date                    =   datetime.fromisoformat(row[10]),
+                    # # delivery_time                   =   datetime.fromisoformat(row[17]),
+                    # # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
+
+                    # # hours_worked                    =   row[22],
+                    # idle_time                       =   changedurations(row[23]),
+                    # time_saved                      =   changedurations(row[25]),
+
+                    # route_adherence                 =   bool(int(row[24])),
+                    # late_payment_status             =   bool(int(row[11])),
+                    # on_time_delivery                =   bool(int(row[19])),
+                    # rerouted                        =   bool(int(row[30])),
+
+                    # payment_status                  =   row[13],
+                    # order_status                    =   row[14],
+                    # route_distance                  =   row[16],
+                    # fuel_consumption                =   row[18],
+                    # fuel_savings                    =   row[20],
+                    # vehicle_maintenance_savings     =   row[21],
+                    # co2_emission_reduction          =   row[27],
+                    # green_route                     =   row[28],
+                    # adjusted_stops                  =   row[29],
+                    
                 )
                    
         return redirect('upload_orders') 
     
     else:
         orders=Order.objects.filter(warehouse__primary=True)
+        report_orders=Order.objects.filter(report_status=True)
         context={
             'orders':orders,
+            'report_orders':report_orders,
             'warehouses':HeadQuarter.objects.all()
         }
         return render(request, 'home/orders.html',context) 

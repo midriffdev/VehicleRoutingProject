@@ -245,7 +245,7 @@
                         <div class="col-md-3">
                             <div class="card ">
                                 <div class="card-body py-4 loaderDiv  ">
-                                    <label class="form-label">Perfect Order Rate</label>
+                                    <label class="form-label">Sustainability and Emissions Metrics</label>
                                     <div id="gauge-chart" class="e-charts"></div>
                                 </div>
                             </div>
@@ -253,7 +253,7 @@
                         <div class="col-md-3">
                             <div class="card ">
                                 <div class="card-body py-4 loaderDiv ">
-                                    <label class="form-label">Order Accuracy Rate</label>
+                                    <label class="form-label">Fuel Consumption(liter)</label>
                                     <div id="gauge-chart1" class="e-charts"></div>
                                 </div>
                             </div>
@@ -261,7 +261,7 @@
                         <div class="col-md-3">
                             <div class="card ">
                                 <div class="card-body py-4 loaderDiv ">
-                                    <label class="form-label">Fill Rate</label>
+                                    <label class="form-label">Fuel Savings(liter)</label>
                                     <div id="gauge-chart2" class="e-charts"></div>
                                 </div>
                             </div>
@@ -369,7 +369,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        {% comment %} <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body loaderDiv">
                                     <div class="d-flex flex-wrap">
@@ -381,7 +381,7 @@
                                     <div id="bar_chartEffe" class="apex-charts" dir="ltr"></div>
                                 </div>
                             </div>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
 
                     
@@ -488,50 +488,48 @@
 
 
 
-                var options = {
-                    chart: {
-                        height: 350,
-                        type: "bar",
-                        stacked: true,  // Enable stacked bars
-                        toolbar: { show: false }
-                    },
-                    plotOptions: {
-                        bar: {
-                            horizontal: true,
-                            barHeight: '60px'
-                        }
-                    },
-                    dataLabels: { enabled: false },
-                    series: [
-                        {
-                            name: 'Delivered Orders',  // Series for all orders
-                            data: [80, 300, 400, 250, 500, 180, 500, 180]  // Example data for delivered orders
-                        },
-                        {
-                            name: 'Total Orders',  // Series for delivered orders
-                            data: [100, 430, 450, 275, 550, 204, 550, 204]
-                        }
-                    ],
-                    colors: ["#18603e", "#f46a6a"],  // Two colors: one for all orders, one for delivered
-                    grid: { borderColor: "#18603e" },
-                    xaxis: {
-                        categories: [
-                            "Truck 1", "Truck 2", "Truck 3", 
-                            "Truck 4", "Truck 5", "Truck 6", 
-                            "Truck 7", "Truck 8",
-                        ],
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: function (val) {
-                                return val + " orders";  // Custom tooltip text for both series
-                            }
-                        }
-                    }
-                };
+    var options = {
+        chart: {
+            height: 350,
+            type: "bar",
+            stacked: true,  // Enable stacked bars
+            toolbar: { show: false }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                barHeight: '60px'
+            }
+        },
+        dataLabels: { enabled: false },
+        series: [
+            {
+                name: 'Total Orders',  // Series for all orders
+                data: [{%for i in trucks%}'{{i.on_time_deliveries}}',{%endfor%}]  // Example data for total orders
+            },
+            {
+                name: 'Delay Orders',  // Series for delivered orders
+                data: [{%for i in trucks%}'{{i.late_deliveries}}',{%endfor%}]  // Example data for delivered orders
+            }
+        ],
+        colors: ["#18603e", "#f46a6a"],  // Two colors: one for all orders, one for delivered
+        grid: { borderColor: "#18603e" },
+        xaxis: {
+            categories: [
+                {%for i in trucks%}'{{i.truck_name}}',{%endfor%}
+            ],
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + " orders";  // Custom tooltip text for both series
+                }
+            }
+        }
+    };
 
-                var chart = new ApexCharts(document.querySelector("#bar_chart"), options);
-                chart.render();
+    var chart = new ApexCharts(document.querySelector("#bar_chart"), options);
+    chart.render();
 
 
         var options = {
@@ -554,13 +552,13 @@
                 colors: ["transparent"]
             },
             series: [
-                { name: "Kilometre", data: [100, 120, 130, 110, 150, 140, 160] },  // Kilometre values
-                { name: "Fuel Consumption(liter)", data: [200, 255, 265, 155,300, 280, 233] },    // Fuel Consumption(liter) values
-                { name: "Delivered Load(Kg)", data: [600, 455, 665, 555,700, 680, 710] }    // Fuel Consumption(liter) values
+                { name: "Kilometre", data: [{%for i in trucks%}'{{i.driver_travel}}',{%endfor%}]  },  // Kilometre values
+                { name: "Fuel Consumption(liter)", data: [{%for i in trucks%}'{{i.fuel}}',{%endfor%}] },    // Fuel Consumption(liter) values
+                { name: "Delivered Load(Kg)", data: [{%for i in trucks%}'{{i.deleverd_load}}',{%endfor%}] }    // Fuel Consumption(liter) values 
             ],
             colors: ["#1d4f6a", "#f46a6a", "#f8c471"], // Colors for the two series
             xaxis: { 
-                categories: ["Truck 1", "Truck 2", "Truck 3", "Truck 4", "Truck 5", "Truck 6", "Truck 7"] 
+                categories: [{%for i in trucks%}'{{i.late_deliveries}}',{%endfor%}] 
             },
             yaxis: { 
                 title: { text: "Value", style: { fontWeight: "500" } } // General title
@@ -668,9 +666,9 @@
     }
 
     // Create different gauge charts with unique values
-    createGaugeChart("gauge-chart", "Perfect Order Rate", 97.94);
-    createGaugeChart("gauge-chart1", "Order Accuracy Rate", 89.50); // Example value
-    createGaugeChart("gauge-chart2", "Fill Rate", 92.30); // Example value
+    createGaugeChart("gauge-chart", "CO2 emission reductions in kilograms", {{all_co2_emission_reduction}});
+    createGaugeChart("gauge-chart1", "Fuel Consumption(liter)",{{all_fuel_consumption}} ); // Example value
+    createGaugeChart("gauge-chart2", "Fuel Savings(liter)", {{all_fuel_savings}}); // Example value
 
 
         var options = {
@@ -703,56 +701,9 @@
 
 
 
-        var barChart; // Declare bar chart variable globally
+      
 
-    // Function to initialize the bar chart
-    function initializeBarChart(truckData) {
-        var options = {
-            chart: {
-                height: 350,
-                type: "bar",
-                toolbar: { show: false }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: true,
-                    barHeight: '60px',
-                }
-            },
-            dataLabels: { enabled: false },
-            series: [{
-                data: truckData // Dynamically set data for each truck
-            }],
-            colors: ["#18603e"],
-            grid: { borderColor: "#18603e" },
-            xaxis: {
-                categories: [
-                    "Truck 1", "Truck 2", "Truck 3", 
-                    "Truck 4", "Truck 5", "Truck 6", 
-                    "Truck 7", "Truck 8",
-                ],  // Default truck names
-            },
-            tooltip: {
-                y: {
-                    formatter: function (val) {
-                        return val + " orders";
-                    }
-                }
-            }
-        };
-
-        barChart = new ApexCharts(document.querySelector("#bar_chart"), options);
-        barChart.render();
-    }
-
-    // Function to update the bar chart data
-    function updateBarChart(truckData) {
-        if (barChart) {
-            barChart.updateSeries([{
-                data: truckData // Update data based on AJAX response
-            }]);
-        }
-    }
+   
 
 
 
@@ -775,8 +726,6 @@
             var selectorder = document.getElementById("order_status");
             var selectedValueo = selectorder.value;
 
-            
-            
         
             $.ajax({
                 type: "POST",
