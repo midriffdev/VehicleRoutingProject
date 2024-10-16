@@ -1456,8 +1456,10 @@ def upload_orders(request):
 
 def delete_all_orders(request):
     if request.method == 'POST':
-        Notifications.objects.filter(receiver__warehouse__primary= True).delete()
-        Order.objects.filter(warehouse__primary= True).delete()  
+        # Notifications.objects.filter(receiver__warehouse__primary= True).delete()
+        # Order.objects.filter(warehouse__primary= True).delete()  
+        Notifications.objects.filter().delete()
+        Order.objects.filter().delete()  
         Truck.objects.filter().update(available=True, routedata=None)
         messages.success(request, "All orders have been successfully deleted.")
         return redirect('upload_orders')
