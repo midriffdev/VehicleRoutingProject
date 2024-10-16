@@ -712,10 +712,6 @@ def post_reports(request):
                 ).count()
 
 
-                print(within_time,"within_timewithin_timewithin_time")
-
-                
-
 
                 if strat_date or end_date:
 
@@ -785,24 +781,22 @@ def post_reports(request):
                 warehouses = HeadQuarter.objects.all()
                 trucks = Truck.objects.all().order_by('-id')
                 orders=Order.objects.all()
-
                 warehouse_total_order = Order.objects.all().count()
                 warehouse_cancel_order = Order.objects.filter(order_status='canceled').count()
+                warehouse_pending_order = Order.objects.filter(order_status='pending').count()
+
+                
                 warehouse_complete_order = Order.objects.filter(Q(order_status='delivered') or Q(order_status='completed')).count()
-
-
 
                 context={
                     'warehouses':warehouses,
                     'warehouse_list':warehouses,
                     'warehouse_total_order': warehouse_total_order,
                     'warehouse_cancel_order': warehouse_cancel_order,
+                    'warehouse_pending_order': warehouse_pending_order,
                     'warehouse_complete_order': warehouse_complete_order,
                     'within_time': within_time,
                     'out_of_time': out_of_time,
-
-
-
                      'trucks': trucks_list,
                                 
                                 
@@ -1010,12 +1004,23 @@ def post_reports(request):
     else:
 
         warehouse = HeadQuarter.objects.all()
+
+
+
         trucks = Truck.objects.all().order_by('-id')
+
+        
+
+
+
+
+
         order_list=Order.objects.all()
 
         warehouse_total_order = Order.objects.all().count()
         warehouse_cancel_order = Order.objects.filter(order_status='canceled').count()
         warehouse_complete_order = Order.objects.filter(Q(order_status='delivered') or Q(order_status='completed')).count()
+        warehouse_pending_order = Order.objects.filter(order_status='pending').count()
 
         within_time = order_list.filter(
             Q(on_time_delivery=True) & (Q(order_status='delivered') | Q(order_status='completed'))
@@ -1063,6 +1068,8 @@ def post_reports(request):
             'warehouse_complete_order': warehouse_complete_order,
             "within_time":within_time,
             'out_of_time':out_of_time,
+            'warehouse_pending_order':warehouse_pending_order,
+            'order_list':order_list,
 
 
 
