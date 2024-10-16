@@ -109,8 +109,8 @@ class Order(models.Model):
     order_status                        = models.CharField(max_length=20, choices=PRODUCT_STATUS_CHOICES, default='pending')
     payment_status                      = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
     send_email_count                    = models.PositiveIntegerField(default=0)
-    created_at                          = models.DateTimeField(auto_now_add=True)  # Automatically set when the order is created
-    updated_at                          = models.DateTimeField(auto_now=True) 
+    created_at                          = models.DateTimeField(null=True, blank=True)  # Automatically set when the order is created
+    updated_at                          = models.DateTimeField(null=True, blank=True) 
     delivered_date                      = models.DateTimeField(null=True, blank=True)
     due_reminder_sent_date              = models.DateTimeField(null=True, blank=True)
     past_due_reminder_sent_date         = models.DateTimeField(null=True, blank=True)
