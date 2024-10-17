@@ -731,6 +731,11 @@ def post_reports(request):
                 warehouse_complete_order = Order.objects.filter(Q(order_status='delivered') or Q(order_status='completed')).count()
 
 
+                all_co2_emission_reduction = sum(order.co2_emission_reduction for order in order_list if order.co2_emission_reduction is not None)
+                all_fuel_consumption = sum(order.fuel_consumption for order in order_list if order.fuel_consumption is not None)
+                all_fuel_savings = sum(order.fuel_savings for order in order_list if order.fuel_savings is not None)
+
+
                 if strat_date or end_date:
                     if strat_date:strat_date = datetime.strptime(strat_date, "%d %b, %Y").date()
                     if end_date:end_date = datetime.strptime(end_date, "%d %b, %Y").date()
@@ -776,10 +781,11 @@ def post_reports(request):
                                 Q(on_time_delivery=False) & (Q(order_status='delivered',created_at__date__range=[strat_date, end_date]) | Q(order_status='completed',created_at__date__range=[strat_date, end_date]))
                             ).count()
 
+                            all_co2_emission_reduction = sum(order.co2_emission_reduction for order in order_list if order.co2_emission_reduction is not None)
+                            all_fuel_consumption = sum(order.fuel_consumption for order in order_list if order.fuel_consumption is not None)
+                            all_fuel_savings = sum(order.fuel_savings for order in order_list if order.fuel_savings is not None)
+
                            
-
-                            
-
                 context={
                     'warehouses':warehouses,
                     'warehouse_list':warehouses,
@@ -802,13 +808,14 @@ def post_reports(request):
                 print("else part")
                 warehouse = HeadQuarter.objects.get(id=wids)
                 print(warehouse,"warehouse,,,,,,,,,,,,")
+
+
                 if orderstrat_date and orderend_date:
                     orderstrat_date = datetime.strptime(strat_date, "%d %b, %Y").date()
                     orderend_date = datetime.strptime(end_date, "%d %b, %Y").date()
 
                 if orderstatus == 'All':
                     orders=Order.objects.filter(warehouse=warehouse).order_by('-id')
-
                     order_list = list(orders.values(
                     'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
                     ))
@@ -994,72 +1001,34 @@ def post_reports(request):
     else:
 
         warehouse = HeadQuarter.objects.all()
-
-
-
         trucks = Truck.objects.all().order_by('-id')
         for i in trucks:
             i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True).count()
             i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False).count()
-
             total_distance = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('route_distance'))['total']
             i.driver_travel = total_distance if total_distance is not None else 0
-
             total_fuel_consumption = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('fuel_consumption'))['total']
             i.fuel = total_fuel_consumption if total_fuel_consumption is not None else 0 
-
-            print(i.fuel,"fuelllllllllllllll")
-
-
-
             total_load = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('quantity'))['total']
             i.deleverd_load = total_load if total_load is not None else 0  
 
 
         order_list=Order.objects.all()
-
         warehouse_total_order = Order.objects.all().count()
         warehouse_cancel_order = Order.objects.filter(order_status='canceled').count()
         warehouse_complete_order = Order.objects.filter(Q(order_status='delivered') or Q(order_status='completed')).count()
         warehouse_pending_order = Order.objects.filter(order_status='pending').count()
-
         within_time = order_list.filter(
             Q(on_time_delivery=True) & (Q(order_status='delivered') | Q(order_status='completed'))
         ).count()
-
         out_of_time = order_list.filter(
             Q(on_time_delivery=False) & (Q(order_status='delivered') | Q(order_status='completed'))
         ).count()
 
-
-
-        all_co2_emission_reduction = 0  
-        for truck in order_list:
-            if truck.co2_emission_reduction:
-                truck.co2_emission_reduction=truck.co2_emission_reduction
-            else:
-                truck.co2_emission_reduction = 0
-
-            all_co2_emission_reduction += truck.co2_emission_reduction
-
-        all_fuel_consumption = 0  # Use 0 instead of an empty string
-        for truck in order_list:
-            if truck.fuel_consumption:
-                truck.fuel_consumption=truck.fuel_consumption
-            else:
-                truck.fuel_consumption = 0
-
-            all_fuel_consumption += truck.fuel_consumption
-
-        all_fuel_savings = 0  # Use 0 instead of an empty string
-        for truck in order_list:
-            if truck.fuel_savings:
-                truck.fuel_savings=truck.fuel_savings
-            else:
-                truck.fuel_savings = 0
-
-            all_fuel_savings += truck.fuel_savings
-
+        
+        all_co2_emission_reduction = sum(order.co2_emission_reduction for order in order_list if order.co2_emission_reduction is not None)
+        all_fuel_consumption = sum(order.fuel_consumption for order in order_list if order.fuel_consumption is not None)
+        all_fuel_savings = sum(order.fuel_savings for order in order_list if order.fuel_savings is not None)
 
 
         context = {
@@ -1071,13 +1040,6 @@ def post_reports(request):
             'out_of_time':out_of_time,
             'warehouse_pending_order':warehouse_pending_order,
             'order_list':order_list,
-
-
-
-
-
-
-
 
             'all_co2_emission_reduction':all_co2_emission_reduction,
             'all_fuel_savings':all_fuel_savings,
