@@ -824,192 +824,119 @@ def post_reports(request):
                 warehouse = HeadQuarter.objects.get(id=wids)
                 print(warehouse,"warehouse,,,,,,,,,,,,")
 
+                trucks_list = Truck.objects.filter(warehouse=warehouse).order_by('-id')
+                for i in  trucks_list:
+                    i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True).count()
+                    i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False).count()
 
-                if orderstrat_date and orderend_date:
-                    orderstrat_date = datetime.strptime(strat_date, "%d %b, %Y").date()
-                    orderend_date = datetime.strptime(end_date, "%d %b, %Y").date()
+                    total_distance = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('route_distance'))['total']
+                    i.driver_travel = total_distance if total_distance is not None else 0
 
-                if orderstatus == 'All':
-                    orders=Order.objects.filter(warehouse=warehouse).order_by('-id')
-                    order_list = list(orders.values(
-                    'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
-                    ))
+                    total_fuel_consumption = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('fuel_consumption'))['total']
+                    i.fuel = total_fuel_consumption if total_fuel_consumption is not None else 0 
 
+                    total_load = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('quantity'))['total']
+                    i.deleverd_load = total_load if total_load is not None else 0
+
+                if orderstatus == 'All_orders':
+                    order_list=Order.objects.filter(warehouse=warehouse).order_by('-id')
                 else:
-                    orders=Order.objects.filter(order_status=orderstatus,warehouse=warehouse).order_by('-id')
-                    order_list = list(orders.values(
-                    'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
-                    ))
+                    order_list=Order.objects.filter(order_status=orderstatus,warehouse=warehouse).order_by('-id')
+
+                within_time = order_list.filter(
+                    Q(on_time_delivery=True) & (Q(order_status='delivered') | Q(order_status='completed'))
+                ).count()
+
+                out_of_time = order_list.filter(
+                    Q(on_time_delivery=False) & (Q(order_status='delivered') | Q(order_status='completed'))
+                ).count()
 
 
-                feedback=Feedback.objects.filter(order__warehouse=warehouse).order_by('-id')
-                feedback_list = list(feedback.values(
-                'id', 'order__product_name', 'rating_text', 'description', 'order__cname',
-                ))
-
-                warehouse_list = [
-                    {
-                        'id': warehouse.id,
-                        'name': warehouse.name,
-                        'total_stock': warehouse.total_stock,
-                        'available_stock': warehouse.available_stock,
-                        'left_stock': warehouse.left_stock,
-                    }
-                ]
-
+                warehouses = HeadQuarter.objects.all()
 
                 trucks = Truck.objects.filter(warehouse=warehouse).order_by('-id')
-                trucks_list = list(trucks.values(
-                    'id', 'truck_name', 'truck_type', 'truck_image', 'truck_number',
-                    'capacity', 'make', 'model', 'year', 'mileage', 'license_type',
-                    'truck_order', 'cost_per_km', 'status', 'purchase_date', 
-                    'last_service_date', 'driver_name', 'driver_email', 'contact_number',
-                    'driver_order', 'on_time_deliveries', 'late_deliveries', 'driver_travel',
-                    'languages', 'available', 
-                    'warehouse__name',               
-                ))
+                orders=Order.objects.filter(warehouse=warehouse).order_by('-id')
+                warehouse_total_order = Order.objects.filter(warehouse=warehouse).order_by('-id').count()
+                warehouse_cancel_order = Order.objects.filter(warehouse=warehouse,order_status='canceled').count()
+                warehouse_pending_order = Order.objects.filter(warehouse=warehouse,order_status='pending').count()
+                warehouse_complete_order = Order.objects.filter(Q(warehouse=warehouse,order_status='delivered') or Q(warehouse=warehouse,order_status='completed')).count()
+
+
+                all_co2_emission_reduction = sum(order.co2_emission_reduction for order in order_list if order.co2_emission_reduction is not None)
+                all_fuel_consumption = sum(order.fuel_consumption for order in order_list if order.fuel_consumption is not None)
+                all_fuel_savings = sum(order.fuel_savings for order in order_list if order.fuel_savings is not None)
+
 
 
                 if strat_date or end_date:
-                    if strat_date:
-                        # Convert to datetime object
-                        strat_date = datetime.strptime(strat_date, "%d %b, %Y").date()
-
-                    if end_date:
-                        # Convert to datetime object
-                        end_date = datetime.strptime(end_date, "%d %b, %Y").date()
-
-                    # Initialize order counters
-                    warehouse_total_order = Order.objects.filter(warehouse=warehouse).count()
-                    warehouse_pending_order = 0
-                    warehouse_complete_order = 0
-
-                    # Filter orders based on the dates
-                    if strat_date and not end_date:
-                        print("Orders created on the start date")
-                        warehouse_pending_order = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='pending',
-                            created_at__date=strat_date
-                        ).count()
-                        warehouse_complete_order = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date=strat_date
-                        ).count()
-                        # Count orders delivered on time on the start date
-                        within_time = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date=strat_date,
-                            delivery_time__lte=strat_date # assuming you have delivery_time field
-                        ).count()
-                        out_of_time = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date=strat_date,
-                            delivery_time__gt=strat_date # assuming you have delivery_time field
-                        ).count()
-
-                    elif strat_date and end_date:
-                        print("Orders created between start date and end date (inclusive)")
-                        warehouse_pending_order = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='pending',
-                            created_at__date__range=[strat_date, end_date]
-                        ).count()
-                        warehouse_complete_order = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date__range=[strat_date, end_date]
-                        ).count()
-                        # Count orders delivered within time between start date and end date
-                        within_time = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date__range=[strat_date, end_date],
-                            delivery_time__lte=end_date # assuming you have delivery_time field
-                        ).count()
-                        out_of_time = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date__range=[strat_date, end_date],
-                            delivery_time__gt=end_date # assuming you have delivery_time field
-                        ).count()
-
-                    elif end_date and not strat_date:
-                        print("Orders created before end date")
-                        warehouse_pending_order = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='pending',
-                            created_at__date__lte=end_date
-                        ).count()
-                        warehouse_complete_order = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date__lte=end_date
-                        ).count()
-                        # Count orders delivered on time before end date
-                        within_time = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date__lte=end_date,
-                            delivery_time__lte=end_date # assuming you have delivery_time field
-                        ).count()
-                        out_of_time = Order.objects.filter(
-                            warehouse=warehouse,
-                            order_status='delivered',
-                            created_at__date__lte=end_date,
-                            delivery_time__gt=end_date # assuming you have delivery_time field
-                        ).count()
-
-                    print(within_time,"within_time")
-
-                    return JsonResponse({
-                        'trucks': trucks_list,
-                        'warehouse_total_order': warehouse_total_order,
-                        'warehouse_pending_order': warehouse_pending_order,
-                        'warehouse_complete_order': warehouse_complete_order,
-                        'within_time': within_time,
-                        'out_of_time': out_of_time,
-                        'status': 'SENT'
-                    }, status=200)
-                    
-                warehouse_pending_order = Order.objects.filter(
-                    warehouse=warehouse, 
-                    order_status='pending'
-                ).count()
-
-                # Count delivered or completed orders for the specific warehouse
-                warehouse_complete_order = Order.objects.filter(
-                    warehouse=warehouse, 
-                    order_status__in=['delivered', 'completed']
-                ).count()
-
-                # Calculate the total orders
-                warehouse_total_order = warehouse_pending_order + warehouse_complete_order
-
-                within_time = sum(truck['on_time_deliveries'] for truck in trucks_list)
-                out_of_time = sum(truck['late_deliveries'] for truck in trucks_list)
+                    if strat_date:strat_date = datetime.strptime(strat_date, "%d %b, %Y").date()
+                    if end_date:end_date = datetime.strptime(end_date, "%d %b, %Y").date()
 
 
-                print(feedback_list,"feedback_listfeedback_list")
+                    if strat_date or end_date:
+                        if strat_date and end_date:
+                            
+                            for i in  trucks_list:
+                                i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True,created_at__date__range=[strat_date, end_date]).count()
+                                i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False,created_at__date__range=[strat_date, end_date]).count()
 
-                return JsonResponse({
-                                'trucks': trucks_list,
-                                'warehouse_total_order': warehouse_total_order,
-                                'warehouse_pending_order': warehouse_pending_order,
-                                'warehouse_complete_order': warehouse_complete_order,
-                                'within_time': within_time,
-                                'out_of_time': out_of_time,
-                                'warehouse_list':warehouse_list,
-                                'feedback_list':feedback_list,
-                                'order_list':order_list,
+                                total_distance = Order.objects.filter(assigned_truck=i,created_at__date__range=[strat_date, end_date]).aggregate(total=Sum('route_distance'))['total']
+                                i.driver_travel = total_distance if total_distance is not None else 0
+
+                                total_fuel_consumption = Order.objects.filter(assigned_truck=i,created_at__date__range=[strat_date, end_date]).aggregate(total=Sum('fuel_consumption'))['total']
+                                i.fuel = total_fuel_consumption if total_fuel_consumption is not None else 0 
+
+                                total_load = Order.objects.filter(assigned_truck=i,created_at__date__range=[strat_date, end_date]).aggregate(total=Sum('quantity'))['total']
+                                i.deleverd_load = total_load if total_load is not None else 0
+
+                                print(i.on_time_deliveries,"i.on_time_deliveriesi.on_time_deliveries")
+
+                                order_list=order_list.filter(
+                                Q(on_time_delivery=True) & (Q(order_status='delivered') | Q(order_status='completed'))
+                                ).count()
+
+                                if orderstatus == 'All_orders':
+                                    order_list=Order.objects.filter(created_at__date__range=[strat_date, end_date])
+                                else:
+                                    order_list=Order.objects.filter(order_status=orderstatus,created_at__date__range=[strat_date, end_date]).order_by('-id')
 
 
+                                warehouse_total_order = Order.objects.filter(warehouse=warehouse,created_at__date__range=[strat_date, end_date]).count()
+
+                                warehouse_cancel_order = Order.objects.filter(warehouse=warehouse,order_status='canceled',created_at__date__range=[strat_date, end_date]).count()
+
+                                warehouse_pending_order = Order.objects.filter(warehouse=warehouse,order_status='pending',created_at__date__range=[strat_date, end_date]).count()
+
+                                warehouse_complete_order = Order.objects.filter(Q(warehouse=warehouse,order_status='delivered',created_at__date__range=[strat_date, end_date]) or Q(warehouse=warehouse,order_status='completed',created_at__date__range=[strat_date, end_date])).count()
+
+                                within_time = order_list.filter(
+                                    Q(on_time_delivery=True) & (Q(order_status='delivered',created_at__date__range=[strat_date, end_date]) | Q(order_status='completed',created_at__date__range=[strat_date, end_date]))
+                                ).count()
+
+                                out_of_time = order_list.filter(
+                                    Q(on_time_delivery=False) & (Q(order_status='delivered',created_at__date__range=[strat_date, end_date]) | Q(order_status='completed',created_at__date__range=[strat_date, end_date]))
+                                ).count()
+
+                                all_co2_emission_reduction = sum(order.co2_emission_reduction for order in order_list if order.co2_emission_reduction is not None)
+                                all_fuel_consumption = sum(order.fuel_consumption for order in order_list if order.fuel_consumption is not None)
+                                all_fuel_savings = sum(order.fuel_savings for order in order_list if order.fuel_savings is not None)
+
+                context={
+                    'warehouses':warehouses,
+                    'warehouse_list':warehouses,
+                    'warehouse_total_order': warehouse_total_order,
+                    'warehouse_cancel_order': warehouse_cancel_order,
+                    'warehouse_pending_order': warehouse_pending_order,
+                    'warehouse_complete_order': warehouse_complete_order,
+                    'within_time': within_time,
+                    'out_of_time': out_of_time,
+                     'trucks': trucks_list,
+                    'order_list':order_list,
+                               
+                                'feedback_list':'',
                                 'status': 'SENT'
-                                }, 
-                                status=200)
+                }
+                return render(request, 'home/post_reports.html', context)
         
         except HeadQuarter.DoesNotExist:
             return JsonResponse({'status': 'NOT FOUND'}, status=404)
