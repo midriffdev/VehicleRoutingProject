@@ -25,9 +25,9 @@ def headquarter(request):
     if request.method == 'POST':
         print("Request.POST__________ ",request.POST)
         if request.POST.get('action') == 'edit':
-            hq = HeadQuarter.objects.filter(id=request.POST.get('hqid')).update(name = request.POST.get('hname'),product_name = request.POST.get('product_name'), lat = request.POST.get('latitude'), long = request.POST.get('longitude'))
+            hq = HeadQuarter.objects.filter(id=request.POST.get('hqid')).update(name = request.POST.get('hname'),product_name = request.POST.get('product_name'),total_stock = request.POST.get('total_stock'), lat = request.POST.get('latitude'), long = request.POST.get('longitude'))
         else:
-            hq = HeadQuarter.objects.create(name = request.POST.get('hname'),product_name = request.POST.get('product_name'), lat = request.POST.get('latitude'), long = request.POST.get('longitude'))
+            hq = HeadQuarter.objects.create(name = request.POST.get('hname'),product_name = request.POST.get('product_name'), lat = request.POST.get('latitude'),total_stock = request.POST.get('total_stock'), long = request.POST.get('longitude'))
         return redirect('headquarter')
     else:
         hq = HeadQuarter.objects.all()
