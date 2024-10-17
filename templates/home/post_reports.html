@@ -38,24 +38,40 @@
                                                 <div class="col-md-4">
                                                     <label class="form-label mb-2">Warehouse</label>
                                                     <select name="wids" class="form-control select2" id="warehouseSelect" >
-                                                        <option selected>All Warehouse</option>
+                                                        <option value="All_Warehouse" selected>All Warehouse</option>
                                                         {% for w in warehouses %}
                                                             <option value="{{ w.id }}">{{ w.name }}</option>
                                                         {% endfor %}
                                                     </select>
                                                 </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Order Status</label>
+                                                    <select name="selectedValueo"  class="form-control select2">
+                                                        <option value="All_orders" selected>All</option>
+                                                        <option value="delivered">Delivered</option>
+                                                        <option value="pending" >Pending</option>
+                                                        <option value="canceled" >Cancel</option>
+                                                    </select>
+                                                </div>
+                                                
 
 
                                         <div class="col-md-8">
                                                 <label class="">Date</label>
                                                 <div class="d-flex align-items-start">
                                                     <div class="input-daterange input-group" id="datepicker5" data-date-format="dd M, yyyy" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker5'>
-                                                        <input  type="text" class="form-control" name="start" id="start" placeholder="Start Date" />
-                                                        <input type="text"  class="form-control" name="end" id="end" placeholder="End Date" />
+                                                        <input  type="text" class="form-control" name="strat_date" id="start" placeholder="Start Date" />
+                                                        <input type="text"  class="form-control" name="end_date" id="end" placeholder="End Date" />
                                                     </div>
                                                     <button type="submit" class="btn btn-md btn-secondary ms-1 text-nowrap">Apply Filter 1</button>
                                                 </div>
                                         </div>
+
+
+
+
+
+
                                     </div>
 
                                 </form>
@@ -222,15 +238,7 @@
                         <div class="col-md-3">
                             <div class="card ">
                                 <div class="card-body py-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Order Status</label>
-                                        <select onchange="alertSelectedValue()" id="order_status"  class="form-control select2">
-                                            <option selected>All</option>
-                                            <option value="delivered">Delivered</option>
-                                            <option value="pending" >Pending</option>
-                                            <option value="canceled" >Cancel</option>
-                                        </select>
-                                    </div>
+                                    
                                     <div class="mb-3">
                                         <label>Order Date</label>
     
@@ -293,6 +301,7 @@
                                                 <tr>
                                                     <th class="ps-2">Sr.no</th>
                                                     <th>Product Name</th>
+                                                    <th>Order Date</th>
                                                     <th class="ps-2">Customer</th>
                                                     <th class="ps-2">Qty</th>
                                                     <th class="ps-2">Destination</th>
@@ -306,6 +315,7 @@
                                                         <tr>
                                                             <td>{{forloop.counter}}</td> 
                                                             <td>{{order.product_name}}</td>
+                                                            <td>{{order.created_at}}</td>
                                                             <td>{{order.cname}}</td>
                                                             <td>{{order.quantity}}</td>
                                                             <td>{{order.destination}}</td>
@@ -368,7 +378,7 @@
                             <div class="card ">
                                 <div class="card-body loaderDiv ">
                                     <div class="d-flex flex-wrap">
-                                        <h4 class="card-title mb-4">Vehicles Deliveries</h4>
+                                        <h4 class="card-title mb-4">Truck Delivery Efficiency</h4>
     
                                         <div class="ms-auto">
 
@@ -555,50 +565,61 @@
     chart.render();
 
 
-        var options = {
-            chart: {
-                height: 350,
-                type: "bar",
-                toolbar: { show: false }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: "45%",
-                    endingShape: "rounded"
-                }
-            },
-            dataLabels: { enabled: false },
-            stroke: {
-                show: true,
-                width: 2,
-                colors: ["transparent"]
-            },
-            series: [
-                { name: "Kilometre", data: [{%for i in trucks%}'{{i.driver_travel}}',{%endfor%}]  },  // Kilometre values
-                { name: "Fuel Consumption(liter)", data: [{%for i in trucks%}'{{i.fuel}}',{%endfor%}] },    // Fuel Consumption(liter) values
-                { name: "Delivered Load(Kg)", data: [{%for i in trucks%}'{{i.deleverd_load}}',{%endfor%}] }    // Fuel Consumption(liter) values 
-            ],
-            colors: ["#1d4f6a", "#f46a6a", "#f8c471"], // Colors for the two series
-            xaxis: { 
-                categories: [{%for i in trucks%}'{{i.late_deliveries}}',{%endfor%}] 
-            },
-            yaxis: { 
-                title: { text: "Value", style: { fontWeight: "500" } } // General title
-            },
-            grid: { borderColor: "#f1f1f1" },
-            fill: { opacity: 1 },
-            tooltip: {
-                shared: true, // Show shared tooltip for both bars
-                intersect: false,
-                formatter: function (series) {
-                    return series.map((s) => `${s.seriesName}: ${s.data} ${s.seriesName === 'Fuel Consumption(liter)' ? 'units' : 'km'}`).join('<br>');
+    var options = {
+        chart: {
+            height: 350,
+            type: "bar",
+            toolbar: { show: false }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: "45%",
+                endingShape: "rounded"
+            }
+        },
+        dataLabels: { enabled: false },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ["transparent"]
+        },
+        series: [
+            { name: "Kilometre", data: [{% for i in trucks %}{{ i.driver_travel|floatformat:2 }},{% endfor %}] },  // Kilometre values rounded to 2 decimals
+            { name: "Fuel Consumption(liter)", data: [{% for i in trucks %}{{ i.fuel|floatformat:2 }},{% endfor %}] }, // Fuel Consumption(liter) values rounded
+            { name: "Delivered Load(Kg)", data: [{% for i in trucks %}{{ i.deleverd_load|floatformat:2 }},{% endfor %}] } // Delivered Load(Kg) values rounded
+        ],
+        colors: ["#1d4f6a", "#f46a6a", "#f8c471"], // Colors for the series
+        xaxis: {
+            categories: [{% for i in trucks %}'{{ i.truck_name }}',{% endfor %}]
+        },
+        yaxis: {
+            title: { text: "Value", style: { fontWeight: "500" } } // General title
+        },
+        grid: { borderColor: "#f1f1f1" },
+        fill: { opacity: 1 },
+        tooltip: {
+            shared: true,
+            intersect: false,
+            y: {
+                formatter: function (value, { seriesIndex }) {
+                    let unit = "";
+                    switch (seriesIndex) {
+                        case 0: unit = "km"; break;               // Kilometre
+                        case 1: unit = "liters"; break;           // Fuel Consumption
+                        case 2: unit = "kg"; break;               // Delivered Load
+                    }
+                    return `${value.toFixed(2)} ${unit}`;
                 }
             }
-        };
-
-        var chart = new ApexCharts(document.querySelector("#column_chart"), options);
-        chart.render();
+        }
+    };
+    
+    var chart = new ApexCharts(document.querySelector("#column_chart"), options);
+    chart.render();
+    
+    
+    
 
 
        // Function to create a gauge chart
