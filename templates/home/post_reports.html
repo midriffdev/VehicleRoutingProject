@@ -261,7 +261,7 @@
                         <div class="col-md-4">
                             <div class="card ">
                                 <div class="card-body py-4 loaderDiv  ">
-                                    <label class="form-label">Sustainability and Emissions Metrics</label>
+                                    <label class="form-label">Sustainability and Emissions Metrics (Kg)</label>
                                     <div id="gauge-chart" class="e-charts"></div>
                                 </div>
                             </div>
@@ -269,7 +269,7 @@
                         <div class="col-md-4">
                             <div class="card ">
                                 <div class="card-body py-4 loaderDiv ">
-                                    <label class="form-label">Fuel Consumption(liter)</label>
+                                    <label class="form-label">Fuel Consumption(litre)</label>
                                     <div id="gauge-chart1" class="e-charts"></div>
                                 </div>
                             </div>
@@ -277,7 +277,7 @@
                         <div class="col-md-4">
                             <div class="card ">
                                 <div class="card-body py-4 loaderDiv ">
-                                    <label class="form-label">Fuel Savings(liter)</label>
+                                    <label class="form-label">Fuel Savings(litre)</label>
                                     <div id="gauge-chart2" class="e-charts"></div>
                                 </div>
                             </div>
@@ -615,7 +615,7 @@
         },
         series: [
             { name: "Kilometre", data: [{% for i in trucks %}{{ i.driver_travel|floatformat:2 }},{% endfor %}] },  // Kilometre values rounded to 2 decimals
-            { name: "Fuel Consumption(liter)", data: [{% for i in trucks %}{{ i.fuel|floatformat:2 }},{% endfor %}] }, // Fuel Consumption(liter) values rounded
+            { name: "Fuel Consumption(litre)", data: [{% for i in trucks %}{{ i.fuel|floatformat:2 }},{% endfor %}] }, // Fuel Consumption(litre) values rounded
             { name: "Delivered Load(Kg)", data: [{% for i in trucks %}{{ i.deleverd_load|floatformat:2 }},{% endfor %}] } // Delivered Load(Kg) values rounded
         ],
         colors: ["#1d4f6a", "#f46a6a", "#f8c471"], // Colors for the series
@@ -635,7 +635,7 @@
                     let unit = "";
                     switch (seriesIndex) {
                         case 0: unit = "km"; break;               // Kilometre
-                        case 1: unit = "liters"; break;           // Fuel Consumption
+                        case 1: unit = "litres"; break;           // Fuel Consumption
                         case 2: unit = "kg"; break;               // Delivered Load
                     }
                     return `${value.toFixed(2)} ${unit}`;
@@ -740,8 +740,8 @@
 
     // Create different gauge charts with unique values
     createGaugeChart("gauge-chart", "CO2 emission reductions in kilograms", {{all_co2_emission_reduction}});
-    createGaugeChart("gauge-chart1", "Fuel Consumption(liter)",{{all_fuel_consumption}} ); // Example value
-    createGaugeChart("gauge-chart2", "Fuel Savings(liter)", {{all_fuel_savings}}); // Example value
+    createGaugeChart("gauge-chart1", "Fuel Consumption(litre)",{{all_fuel_consumption}} ); // Example value
+    createGaugeChart("gauge-chart2", "Fuel Savings(litre)", {{all_fuel_savings}}); // Example value
 
 
         var options = {

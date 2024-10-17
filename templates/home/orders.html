@@ -206,6 +206,7 @@
                                         <th>Assinged Truck</th>
                                         <th>Warehouse</th>
                                         <th>Destination</th>
+                                        <th>Delivery Timings</th>
                                         <th>Status</th>
                                         <th>Payment</th>
                                         <th>Action</th>
@@ -222,6 +223,7 @@
                                         <td>{%if i.assigned_truck%}{{i.assigned_truck.truck_name}}{%else%}Not assigned   yet{%endif%}</td>
                                         <td>{{i.warehouse.name}}</td>
                                         <td>{{i.destination}}</td>
+                                        <td>{{i.opening_time}} - {{i.closing_time}}</td>
                                         <td >{{i.order_status}}</td>
                                         <td>
                                             <span class="badge badge-pill font-size-11 text-capitalize 
