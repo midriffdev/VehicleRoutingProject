@@ -204,6 +204,7 @@
                                         <th>Customer</th>
                                         <th>Qty</th>
                                         <th>Assinged Truck</th>
+                                        <th>Warehouse</th>
                                         <th>Destination</th>
                                         <th>Status</th>
                                         <th>Payment</th>
@@ -219,6 +220,7 @@
                                         <td>{{i.cname|title}}<br>({{i.email}})</td>
                                         <td>{{i.quantity}}</td>
                                         <td>{%if i.assigned_truck%}{{i.assigned_truck.truck_name}}{%else%}Not assigned   yet{%endif%}</td>
+                                        <td>{{i.warehouse.name}}</td>
                                         <td>{{i.destination}}</td>
                                         <td >{{i.order_status}}</td>
                                         <td>
