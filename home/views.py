@@ -752,6 +752,9 @@ def post_reports(request):
                 all_fuel_savings = sum(order.fuel_savings for order in order_list if order.fuel_savings is not None)
 
 
+                print(all_co2_emission_reduction,"all_co2_emission_reduction")
+
+
                 if strat_date or end_date:
                     if strat_date:strat_date = datetime.strptime(strat_date, "%d %b, %Y").date()
                     if end_date:end_date = datetime.strptime(end_date, "%d %b, %Y").date()
@@ -804,6 +807,9 @@ def post_reports(request):
 
                            
                 context={
+                    'all_co2_emission_reduction':all_co2_emission_reduction,
+                    'all_fuel_consumption':all_fuel_consumption,
+                    'all_fuel_savings':all_fuel_savings,
                     'warehouses':warehouses,
                     'warehouse_list':warehouses,
                     'warehouse_total_order': warehouse_total_order,
@@ -926,6 +932,9 @@ def post_reports(request):
                                 all_fuel_savings = sum(order.fuel_savings for order in order_list if order.fuel_savings is not None)
 
                 context={
+                    'all_co2_emission_reduction':all_co2_emission_reduction,
+                    'all_fuel_consumption':all_fuel_consumption,
+                    'all_fuel_savings':all_fuel_savings,
                     'warehouses':warehouses,
                     'warehouse_list':warehouses,
                     'warehouse_total_order': warehouse_total_order,
