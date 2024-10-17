@@ -236,7 +236,7 @@
 
                     <div class="row">
                         <div class="col-md-3">
-                            <div class="card ">
+                            {% comment %} <div class="card ">
                                 <div class="card-body py-4">
                                     
                                     <div class="mb-3">
@@ -251,7 +251,7 @@
                                         <button type="button" class="btn btn-md btn-secondary ms-1 text-nowrap">Apply Filter</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
                             {% comment %} <div class="card ">
                                 <div class="card-body py-4">
                                     
@@ -301,11 +301,12 @@
                                                 <tr>
                                                     <th class="ps-2">Sr.no</th>
                                                     <th>Product Name</th>
-                                                    <th>Order Date</th>
+                                                   
                                                     <th class="ps-2">Customer</th>
                                                     <th class="ps-2">Qty</th>
                                                     <th class="ps-2">Destination</th>
                                                     <th class="ps-2">Status</th>
+                                                    <th>Order Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -315,11 +316,12 @@
                                                         <tr>
                                                             <td>{{forloop.counter}}</td> 
                                                             <td>{{order.product_name}}</td>
-                                                            <td>{{order.created_at}}</td>
+                                                           
                                                             <td>{{order.cname}}</td>
                                                             <td>{{order.quantity}}</td>
                                                             <td>{{order.destination}}</td>
                                                             <td>{{order.order_status}}</td>
+                                                            <td>{{order.created_at}}</td>
                                                         </tr>
                                                     {% endfor %}
                                                 {% else %}
@@ -355,16 +357,38 @@
     
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>Customer Order Number </th>
+                                                    <th> Order Number </th>
+                                                    <th> Product Name</th>
                                                     <th class="ps-2">Customer Name</th>
                                                     <th class="ps-2">Rating</th>
                                                     <th class="ps-2">Order Defect Description</th>
+                                                    <th class="ps-2">Order Date</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="feedback-body"  >
-                                                
-                                               
-                                            </tbody>
+                                            {% if order_list %}
+                                                {% for order in order_list %}
+                                         
+
+                                                    {% if order.order_status != 'pending' %}
+                                                        <tr>
+                                                            <td>#{{order.id}}</td> 
+                                                            <td>{{order.product_name}}</td>
+                                                            <td>{{order.cname}}</td>
+
+                                                            <td>{{order.ratings}}</td>
+                                                            <td>{{order.feedback}}</td>
+                                                            <td>{{order.created_at}}</td>
+                                                        
+                                                            {% comment %} <td>{{order.quantity}}</td>
+                                                            <td>{{order.destination}}</td>
+                                                            <td>{{order.order_status}}</td> {% endcomment %}
+                                                        </tr>
+                                                        {% endif %}
+
+                                                {% endfor %}
+                                            {% else %}
+                                                <p class='text-center p-2'>No orders yet</p>
+                                            {% endif%}
                                         </table>
                                     </div>
     
@@ -402,7 +426,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        {% comment %} <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body loaderDiv">
                                     <div class="d-flex flex-wrap">
@@ -414,7 +438,7 @@
                                     <div id="bar_chartEffe" class="apex-charts" dir="ltr"></div>
                                 </div>
                             </div>
-                        </div>
+                        </div> {% endcomment %}
                     </div>
 
                     
@@ -536,20 +560,25 @@
         },
         dataLabels: { enabled: false },
         series: [
+        {
+            name: 'All Orders',  // Series for delivered orders
+            data: [{%for i in trucks%}'{{i.late_deliveries}}',{%endfor%}]  // Example data for delivered orders
+        },
             {
-                name: 'Total Orders',  // Series for all orders
+                name: 'On Time Orders',  // Series for all orders
                 data: [{%for i in trucks%}'{{i.on_time_deliveries}}',{%endfor%}]  // Example data for total orders
             },
             {
                 name: 'Delay Orders',  // Series for delivered orders
                 data: [{%for i in trucks%}'{{i.late_deliveries}}',{%endfor%}]  // Example data for delivered orders
-            }
+            },
+           
         ],
-        colors: ["#18603e", "#f46a6a"],  // Two colors: one for all orders, one for delivered
+        colors: ["#f8c471","#18603e", "#f46a6a"],  // Two colors: one for all orders, one for delivered
         grid: { borderColor: "#18603e" },
         xaxis: {
             categories: [
-                {%for i in trucks%}'{{i.truck_name}}',{%endfor%}
+                {%for i in trucks%}'{{i.truck_name}}({{i.on_time_deliveries}})',{%endfor%}
             ],
         },
         tooltip: {
@@ -630,7 +659,7 @@
         var myChart = echarts.init(dom);
         var option = {
             tooltip: {
-                formatter: "{a} <br/>{b} : {c}%"
+                formatter: "{a} <br/>{b} : {c}"
             },
             toolbox: {
                 feature: false,
@@ -639,7 +668,7 @@
                 name: title,
                 type: "gauge",
                 detail: {
-                    formatter: "{value}%",
+                    formatter: "{value}",
                     offsetCenter: [0, '90%'], // Move detail text down
                     textStyle: {
                         fontSize: 20,
