@@ -697,7 +697,7 @@ def post_reports(request):
                 trucks_list = Truck.objects.all().order_by('-id')
                 for i in  trucks_list:
                     i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True).count()
-                    i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True).count()
+                    i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False).count()
 
                     total_distance = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('route_distance'))['total']
                     i.driver_travel = total_distance if total_distance is not None else 0
@@ -1378,68 +1378,48 @@ def upload_orders(request):
             headqids = [i.id for i in HeadQuarter.objects.all()]
             for row in csv_reader:
                 print(row, "row....................")  
-                cname = row[0]  
-                email = row[1]  
-                product_name = row[2]  
-                quantity = int(row[3]) 
-                # from_location = row[4]  
-                destination = row[4]  
-                payment_amount = float(row[5]) 
-                lat = row[6] if row[6] else None
-                long = row[7] if row[7] else None
-
-
-
-                # name	email	product_name	quantity	destination	payment_amount	lat	long	
-
-
 
                 order = Order.objects.create(
-                    product_name=product_name,
-                    quantity=quantity,
-                    destination=destination,
-                    # from_location=from_location,
-                    email=email,
-                    cname=cname,
-                    payment_amount=payment_amount,
-                    # order_status='pending',  
-                    lat=lat,
-                    long=long,
-                    # warehouse=HeadQuarter.objects.get(primary=True),
-                    # created_at                      =   datetime.now(),
-                    # updated_at                      =   datetime.now(),
-                    warehouse                       =   HeadQuarter.objects.get(product_name=product_name),
-                    assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=random.choice(truckids)),
-                    # warehouse                       =   HeadQuarter.objects.get(id=int(row[12])+3),
-                    # assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=4),
-
+                    cname                           =   row[0],
+                    email                           =   row[1],
+                    product_name                    =   row[2],
+                    quantity                        =   int(row[3]),
+                    destination                     =   row[4],
+                    payment_amount                  =   float(row[5]),
+                    lat                             =   row[6] if row[6] else None,
+                    long                            =   row[7] if row[7] else None,
                     created_at                      =   datetime.fromisoformat(row[8]),
                     updated_at                      =   datetime.fromisoformat(row[8]),
                     delivered_date                  =   datetime.fromisoformat(row[9]),
                     payment_date                    =   datetime.fromisoformat(row[10]),
-                    # delivery_time                   =   datetime.fromisoformat(row[17]),
-                    # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
+                    warehouse                       =   HeadQuarter.objects.get(product_name=row[2]),
+                    assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=random.choice(truckids)),
 
-                    # hours_worked                    =   row[22],
-                    idle_time                       =   changedurations(row[23]),
-                    time_saved                      =   changedurations(row[25]),
-
-                    route_adherence                 =   bool(int(row[24])),
                     late_payment_status             =   bool(int(row[11])),
-                    on_time_delivery                =   bool(int(row[19])),
-                    rerouted                        =   bool(int(row[30])),
-
+                    # warehouse                       =   HeadQuarter.objects.get(id=int(row[12])+3),
                     payment_status                  =   row[13],
+                    # assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=4),
+
                     order_status                    =   row[14],
                     route_distance                  =   row[16],
+                    # delivery_time                   =   datetime.fromisoformat(row[17]),
                     fuel_consumption                =   row[18],
+                    on_time_delivery                =   bool(int(row[19])),
                     fuel_savings                    =   row[20],
                     vehicle_maintenance_savings     =   row[21],
+                    # hours_worked                    =   row[22],
+                    idle_time                       =   changedurations(row[23]),
+                    route_adherence                 =   bool(int(row[24])),
+                    time_saved                      =   changedurations(row[25]),
+                    # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
                     co2_emission_reduction          =   row[27],
                     green_route                     =   row[28],
                     adjusted_stops                  =   row[29],
+                    rerouted                        =   bool(int(row[30])),
                     ratings                         =   row[31] if row[31] else None,
                     feedback                        =   row[32] if row[32] else None,                    
+                    opening_time                    =   row[33] if row[33] else None,                    
+                    closing_time                    =   row[34] if row[34] else None,                    
                 )
                    
         return redirect('upload_orders') 
