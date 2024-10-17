@@ -1237,6 +1237,19 @@ def single_order(request,pk):
             order.delivered_date = timezone.now()
             order.save()
 
+            # print(order.assigned_truck,'assigned_truck')
+            # print(order.routedata,'routedata')
+            # print(order.driver_travel,'driver_travel')
+
+
+            # on_service
+
+
+
+
+
+
+
 
             due_date_formatted = order.due_payment_date.strftime('%Y-%m-%d')
 
