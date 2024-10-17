@@ -1356,21 +1356,9 @@ def single_order(request,pk):
 
 def changedurations(duration_str):
     a = duration_str.split(' days ')
-    print("a___", a)
     time_part = a[1]
     hours, minutes, seconds = map(float, time_part.split(':'))
-
-    # Create a timedelta object
     return timedelta(days=int(a[0]), hours=int(hours), minutes=int(minutes), seconds=seconds)
-    # if len(a) == 2:
-    #     time_part = a[1]
-    #     hours, minutes, seconds = map(float, time_part.split(':'))
-
-    #     # Create a timedelta object
-    #     return timedelta(days=int(a[0]), hours=int(hours), minutes=int(minutes), seconds=seconds)
-    # else:
-    #     # Create a timedelta object
-    #     return timedelta(days=int(1), hours=int(0), minutes=int(0), seconds=0)
 
 @csrf_exempt
 def upload_orders(request):
@@ -1450,7 +1438,8 @@ def upload_orders(request):
                     co2_emission_reduction          =   row[27],
                     green_route                     =   row[28],
                     adjusted_stops                  =   row[29],
-                    
+                    ratings                         =   row[31] if row[31] else None,
+                    feedback                        =   row[32] if row[32] else None,                    
                 )
                    
         return redirect('upload_orders') 
@@ -1467,8 +1456,10 @@ def upload_orders(request):
 
 def delete_all_orders(request):
     if request.method == 'POST':
-        Notifications.objects.filter(receiver__warehouse__primary= True).delete()
-        Order.objects.filter(warehouse__primary= True).delete()  
+        # Notifications.objects.filter(receiver__warehouse__primary= True).delete()
+        # Order.objects.filter(warehouse__primary= True).delete()  
+        Notifications.objects.filter().delete()
+        Order.objects.filter().delete()  
         Truck.objects.filter().update(available=True, routedata=None)
         messages.success(request, "All orders have been successfully deleted.")
         return redirect('upload_orders')

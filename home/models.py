@@ -148,7 +148,9 @@ class Order(models.Model):
     rerouted                            = models.BooleanField(null=True, blank=True, default=False, help_text="Was the route dynamically adjusted due to traffic or accidents?")
 
 
-    report_status                 = models.BooleanField(default=False)
+    report_status                       = models.BooleanField(default=False)
+    ratings                             = models.CharField(null=True, blank=True, max_length=10)
+    feedback                            = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f'#{self.id} {self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}{" | assigned to " + self.assigned_truck.truck_name if self.assigned_truck else ""}'
