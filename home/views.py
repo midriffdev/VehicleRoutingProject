@@ -1445,7 +1445,7 @@ def upload_orders(request):
         return redirect('upload_orders') 
     
     else:
-        orders=Order.objects.filter(warehouse__primary=True).order_by('-order_status')
+        orders=Order.objects.filter().order_by('-order_status')
         report_orders=Order.objects.filter(report_status=True)
         context={
             'orders':orders,
