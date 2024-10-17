@@ -711,6 +711,7 @@ def post_reports(request):
 
                 trucks_list = Truck.objects.all().order_by('-id')
                 for i in  trucks_list:
+                    i.total_deliveries=Order.objects.filter(assigned_truck=i).count()
                     i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True).count()
                     i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False).count()
 
@@ -759,6 +760,7 @@ def post_reports(request):
                         if strat_date and end_date:
 
                             for i in  trucks_list:
+                                i.total_deliveries=Order.objects.filter(assigned_truck=i).count()
                                 i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True,created_at__date__range=[strat_date, end_date]).count()
                                 i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False,created_at__date__range=[strat_date, end_date]).count()
 
@@ -826,6 +828,7 @@ def post_reports(request):
 
                 trucks_list = Truck.objects.filter(warehouse=warehouse).order_by('-id')
                 for i in  trucks_list:
+                    i.total_deliveries=Order.objects.filter(assigned_truck=i).count()
                     i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True).count()
                     i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False).count()
 
@@ -877,6 +880,7 @@ def post_reports(request):
                         if strat_date and end_date:
                             
                             for i in  trucks_list:
+                                i.total_deliveries=Order.objects.filter(assigned_truck=i).count()
                                 i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True,created_at__date__range=[strat_date, end_date]).count()
                                 i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False,created_at__date__range=[strat_date, end_date]).count()
 
@@ -945,6 +949,7 @@ def post_reports(request):
         warehouse = HeadQuarter.objects.all()
         trucks = Truck.objects.all().order_by('-id')
         for i in trucks:
+            i.total_deliveries=Order.objects.filter(assigned_truck=i).count()
             i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True).count()
             i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False).count()
             total_distance = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('route_distance'))['total']
