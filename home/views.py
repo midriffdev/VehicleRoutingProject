@@ -1383,6 +1383,14 @@ def upload_orders(request):
                     opening_time                    =   row[33] if row[33] else None,                    
                     closing_time                    =   row[34] if row[34] else None,                    
                 )
+            trucks_list = Truck.objects.all().order_by('-id')
+            for i in  trucks_list:
+                i.driver_travel= 0
+                i.save()
+                total_distance = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('route_distance'))['total']
+                i.driver_travel = total_distance if total_distance is not None else 0
+                i.save()
+            
                    
         return redirect('upload_orders') 
     
