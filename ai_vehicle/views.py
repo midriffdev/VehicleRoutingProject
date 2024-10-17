@@ -104,8 +104,10 @@ def getroute(request):
         # temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
         temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300} # start location and (optional) end location of your drivers.
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
-        temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}] # means that the driver will leave his startLocation at exactly 08:00 and arrive at his endLocation by 12:00.
-        temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
+        temp["start_time_windows"] = [{"start_time": i.start_time}] 
+        temp["end_time_windows"] = [{"end_time": i.end_time}]
+        # temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}] # means that the driver will leave his startLocation at exactly 08:00 and arrive at his endLocation by 12:00.
+        # temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
         temp["label"] = f'{i.truck_name}--{i.truck_number}--{i.driver_name}'
         temp["cost_per_kilometer"] = int(i.cost_per_km) # "costPerKilometer": sets a baseline for your driving distance costs. GMPRO or any delivery route optimization package is going to try to route as many deliveries as possible for the smallest cost, so you need to tell GMPRO what these costs are in order for it to calculate an efficient route.
         reqjson["vehicles"].append(temp)

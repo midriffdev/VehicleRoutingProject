@@ -23,14 +23,14 @@ class GenRoutes(models.Model):
     warehouse   = models.ForeignKey('HeadQuarter', on_delete=models.PROTECT)
 
 class HeadQuarter(models.Model):
-    name    = models.CharField(max_length=30)
-    primary = models.BooleanField(default=False)
-    lat     = models.CharField(max_length=15)
-    long    = models.CharField(max_length=15)
+    name            = models.CharField(max_length=30)
+    primary         = models.BooleanField(default=False)
+    lat             = models.CharField(max_length=15)
+    long            = models.CharField(max_length=15)
     product_name    = models.CharField(max_length=15,null=True, blank=True,)
-    total_stock=models.PositiveIntegerField(null=True, blank=True,default=0)
-    available_stock=models.PositiveIntegerField(null=True, blank=True,default=0)
-    left_stock=models.PositiveIntegerField(null=True, blank=True,default=0)
+    total_stock     = models.PositiveIntegerField(null=True, blank=True,default=0)
+    available_stock = models.PositiveIntegerField(null=True, blank=True,default=0)
+    left_stock      = models.PositiveIntegerField(null=True, blank=True,default=0)
 
 
     def __str__(self): return f'{self.id} || {self.name}{" || MAIN" if self.primary else ""}'

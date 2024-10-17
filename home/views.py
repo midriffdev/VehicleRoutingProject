@@ -1407,7 +1407,7 @@ def upload_orders(request):
                     # warehouse=HeadQuarter.objects.get(primary=True),
                     # created_at                      =   datetime.now(),
                     # updated_at                      =   datetime.now(),
-                    warehouse                       =   HeadQuarter.objects.get(id=random.choice(headqids)),
+                    warehouse                       =   HeadQuarter.objects.get(product_name=product_name),
                     assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=random.choice(truckids)),
                     # warehouse                       =   HeadQuarter.objects.get(id=int(row[12])+3),
                     # assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=4),
@@ -1444,7 +1444,7 @@ def upload_orders(request):
         return redirect('upload_orders') 
     
     else:
-        orders=Order.objects.filter(warehouse__primary=True)
+        orders=Order.objects.filter(warehouse__primary=True).order_by('-order_status')
         report_orders=Order.objects.filter(report_status=True)
         context={
             'orders':orders,
