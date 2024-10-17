@@ -130,6 +130,17 @@
                                                 <label for="truck_number" class="form-label">Vehicle Number</label>
                                                 <input type="text" required maxlength="10" name="truck_number" class="form-control" id="truck_number" placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
                                             </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="start_time" class="form-label">Vehicle Working Start Time</label>
+                                                <input type="time" required name="start_time" class="form-control" id="start_time" placeholder="Enter start time">
+                                            </div>
+                                            
+                                            <div class="col-md-6 mb-3">
+                                                <label for="end_time" class="form-label">Vehicle Working End Time</label>
+                                                <input type="time" required name="end_time" class="form-control" id="end_time" placeholder="Enter end time">
+                                            </div>
+                                            
                         
                                             <!-- Truck Type -->
                                             <div class="col-md-6 mb-3">
@@ -403,6 +414,18 @@
                                                             <div class="col-md-6 mb-3">
                                                                 <label for="truck_number" class="form-label">Vehicle Number</label>
                                                                 <input type="text" required maxlength="10" name="truck_number" value="{{i.truck_number}}" class="form-control" id="truck_number" placeholder="Enter vehicle's registration number" pattern="[A-Za-z0-9]+" title="Please use alphanumeric characters only">
+                                                            </div>
+
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="start_time" class="form-label">Vehicle Working Start Time</label>
+                                                                <input type="time" required name="start_time" class="form-control" 
+                                                                       value="{{ i.start_time|date:'H:i' }}" id="start_time" placeholder="Enter start time">
+                                                            </div>
+                                                            
+                                                            
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="end_time" class="form-label">Vehicle Working End Time</label>
+                                                                <input type="time" value="{{ i.end_time|date:'H:i' }}" required name="end_time" class="form-control" id="end_time" placeholder="Enter end time">
                                                             </div>
 
                                                             <!-- Truck Type -->

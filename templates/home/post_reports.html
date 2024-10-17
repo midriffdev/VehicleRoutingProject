@@ -236,7 +236,7 @@
 
                     <div class="row">
                         <div class="col-md-3">
-                            <div class="card ">
+                            {% comment %} <div class="card ">
                                 <div class="card-body py-4">
                                     
                                     <div class="mb-3">
@@ -251,7 +251,7 @@
                                         <button type="button" class="btn btn-md btn-secondary ms-1 text-nowrap">Apply Filter</button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
                             {% comment %} <div class="card ">
                                 <div class="card-body py-4">
                                     
@@ -365,30 +365,30 @@
                                                     <th class="ps-2">Order Date</th>
                                                 </tr>
                                             </thead>
-                                            {% if order_list%}
-                                            {% for order in order_list %}
+                                            {% if order_list %}
+                                                {% for order in order_list %}
                                          
 
-                                            {% if order.order_status != 'pending' %}
-                                                <tr>
-                                                    <td>#{{order.id}}</td> 
-                                                    <td>{{order.product_name}}</td>
-                                                    <td>{{order.cname}}</td>
+                                                    {% if order.order_status != 'pending' %}
+                                                        <tr>
+                                                            <td>#{{order.id}}</td> 
+                                                            <td>{{order.product_name}}</td>
+                                                            <td>{{order.cname}}</td>
 
-                                                    <td>{{order.ratings}}</td>
-                                                    <td>{{order.feedback}}</td>
-                                                    <td>{{order.created_at}}</td>
-                                                   
-                                                    {% comment %} <td>{{order.quantity}}</td>
-                                                    <td>{{order.destination}}</td>
-                                                    <td>{{order.order_status}}</td> {% endcomment %}
-                                                </tr>
-                                                {% endif %}
+                                                            <td>{{order.ratings}}</td>
+                                                            <td>{{order.feedback}}</td>
+                                                            <td>{{order.created_at}}</td>
+                                                        
+                                                            {% comment %} <td>{{order.quantity}}</td>
+                                                            <td>{{order.destination}}</td>
+                                                            <td>{{order.order_status}}</td> {% endcomment %}
+                                                        </tr>
+                                                        {% endif %}
 
-                                            {% endfor %}
-                                        {% else %}
-                                        <p class='text-center p-2'>No orders yet</p>
-                                        {% endif%}
+                                                {% endfor %}
+                                            {% else %}
+                                                <p class='text-center p-2'>No orders yet</p>
+                                            {% endif%}
                                         </table>
                                     </div>
     

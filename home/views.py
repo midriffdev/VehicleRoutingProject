@@ -63,6 +63,12 @@ def vehicles(request):
         mileage=request.POST.get('mileage')
         license_type=request.POST.get('license_type')
         purchase_date=request.POST.get('purchase_date')
+
+
+        start_time=request.POST.get('start_time')
+        end_time=request.POST.get('end_time')
+
+        
         
         try:
             truck=Truck.objects.get(truck_number=truck_number)
@@ -77,6 +83,9 @@ def vehicles(request):
                 cost_per_km=cost_per_km,
                 contact_number=contact_number,
 
+
+                start_time=start_time,
+                end_time=end_time,
                 truck_type=truck_type,
                 truck_image=truck_image,
                 make=make,
@@ -116,6 +125,12 @@ def edit_vehicle(request, pk):
             
             vehicle.truck_name = request.POST.get('truck_name')
             if not vehicle.truck_name:error_messages.append('Truck name is required.')
+
+            vehicle.start_time = request.POST.get('start_time')
+            if not vehicle.start_time:error_messages.append('start_time is required.')
+
+            vehicle.end_time = request.POST.get('end_time')
+            if not vehicle.end_time:error_messages.append('end_time is required.')
 
             
             vehicle.driver_name = request.POST.get('driver_name')
