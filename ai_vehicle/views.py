@@ -105,7 +105,7 @@ def getroute(request):
         temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300} # start location and (optional) end location of your drivers.
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
         temp["start_time_windows"] = [{"start_time": i.start_time}] 
-        temp["end_time_windows"] = [{"end_time": i.end_time}]
+        if i.end_time: temp["end_time_windows"] = [{"end_time": i.end_time}]
         # temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}] # means that the driver will leave his startLocation at exactly 08:00 and arrive at his endLocation by 12:00.
         # temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
         temp["label"] = f'{i.truck_name}--{i.truck_number}--{i.driver_name}'
@@ -119,8 +119,10 @@ def getroute(request):
                 "arrival_location": {"latitude": float(i.lat),"longitude": float(i.long)} if i.lat else get_lat_long(i.destination),
                 "duration": "600s", # when the driver arrives, he will spend 10 minutes making the delivery.
                 "time_windows": [{ # to make sure your driver only arrives there during business hours
-                    "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
-                    "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
+                    "start_time": i.opening_time,
+                    "end_time": i.closing_time
+                    # "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
+                    # "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
                 }]
             }]
         temp["load_demands"] = {"weight": {"amount": i.quantity}}
@@ -168,13 +170,13 @@ def getroute(request):
     pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
 
 
-    print("\n\n____making json downloadable__request.jdon>> ", reqjson)
+    print("\n\n____making json downloadable__request.json>> ", reqjson)
     newreqjson = reqjson
     newreqjson['global_start_time'] = newreqjson['global_start_time'].isoformat()
     newreqjson['global_end_time'] = newreqjson['global_end_time'].isoformat()
     for i in newreqjson['vehicles']:
         i['start_time_windows'][0]['start_time'] = i['start_time_windows'][0]['start_time'].isoformat()
-        i['end_time_windows'][0]['end_time'] = i['end_time_windows'][0]['end_time'].isoformat()
+        if 'end_time_windows' in i: i['end_time_windows'][0]['end_time']=i['end_time_windows'][0]['end_time'].isoformat()
     for i in newreqjson['shipments']:
         if 'deliveries' in i:
             if 'start_time' in i['deliveries'][0]['time_windows'][0]:

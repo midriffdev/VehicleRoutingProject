@@ -22,42 +22,40 @@ class Truck(models.Model):
     ]
 
     truck_name                          = models.CharField(max_length=255)
-    truck_type = models.CharField(max_length=50, choices=TRUCK_TYPE_CHOICES,default='Tanker')
+    truck_type                          = models.CharField(max_length=50, choices=TRUCK_TYPE_CHOICES,default='Tanker')
     truck_image                         = models.ImageField(upload_to='trucks', null=True, blank=True)
     truck_number                        = models.CharField(max_length=100, unique=True)
     capacity                            = models.PositiveIntegerField()  # Assuming capacity is in kilograms or liters
-    make = models.CharField(max_length=100,null=True, blank=True)
-    model = models.CharField(max_length=100,null=True, blank=True)
-    year = models.PositiveIntegerField(null=True, blank=True)
-    mileage = models.PositiveIntegerField(verbose_name="Mileage (in km)",null=True, blank=True)
-    license_type = models.CharField(max_length=2, choices=LICENSE_TYPE_CHOICES, verbose_name="Required License Type",null=True, blank=True,default='B')
-    truck_order = models.PositiveIntegerField(null=True, blank=True)
+    make                                = models.CharField(max_length=100,null=True, blank=True)
+    model                               = models.CharField(max_length=100,null=True, blank=True)
+    year                                = models.PositiveIntegerField(null=True, blank=True)
+    mileage                             = models.PositiveIntegerField(verbose_name="Mileage (in km)",null=True, blank=True)
+    license_type                        = models.CharField(max_length=2, choices=LICENSE_TYPE_CHOICES, verbose_name="Required License Type",null=True, blank=True,default='B')
+    truck_order                         = models.PositiveIntegerField(null=True, blank=True)
     cost_per_km                         = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available',null=True, blank=True)
-    purchase_date = models.DateField(null=True, blank=True)
-    last_service_date = models.DateField(null=True, blank=True)
+    status                              = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available',null=True, blank=True)
+    purchase_date                       = models.DateField(null=True, blank=True)
+    last_service_date                   = models.DateField(null=True, blank=True)
 
     driver_name                         = models.CharField(max_length=255)
     driver_email                        = models.EmailField(max_length=100)
     contact_number                      = models.CharField(max_length=100, null=True, blank=True, default=9876543213)
-    driver_order = models.PositiveIntegerField(null=True, blank=True,default=0)
-    on_time_deliveries = models.PositiveIntegerField(null=True, blank=True,default=0)
-    late_deliveries = models.PositiveIntegerField(null=True, blank=True,default=0)
+    driver_order                        = models.PositiveIntegerField(null=True, blank=True,default=0)
+    on_time_deliveries                  = models.PositiveIntegerField(null=True, blank=True,default=0)
+    late_deliveries                     = models.PositiveIntegerField(null=True, blank=True,default=0)
 
-    driver_travel = models.PositiveIntegerField(null=True, blank=True,default=0)
-    fuel = models.PositiveIntegerField(null=True, blank=True,default=0)
-    deleverd_load = models.PositiveIntegerField(null=True, blank=True,default=0)
-    languages = models.CharField(max_length=100,null=True, blank=True,default='English')
-
-    
-
-
-
+    driver_travel                       = models.PositiveIntegerField(null=True, blank=True,default=0)
+    fuel                                = models.PositiveIntegerField(null=True, blank=True,default=0)
+    deleverd_load                       = models.PositiveIntegerField(null=True, blank=True,default=0)
+    languages                           = models.CharField(max_length=100,null=True, blank=True,default='English')
 
     
     available                           = models.BooleanField(default=True)
     routedata                           = models.ForeignKey('ai_vehicle.routedata', null=True, blank=True, on_delete=models.PROTECT)
     warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT, null=True, blank=True,default=1)
+
+    start_time                          = models.TimeField(null=True, blank=True)
+    end_time                            = models.TimeField(null=True, blank=True)
 
     def __str__(self): return f"{self.truck_name} ({self.truck_number}) | avl-{self.available} | onreoute-{bool(self.routedata)} | warehouse - {self.warehouse.name}"
 
@@ -151,6 +149,8 @@ class Order(models.Model):
     report_status                       = models.BooleanField(default=False)
     ratings                             = models.CharField(null=True, blank=True, max_length=10)
     feedback                            = models.TextField(null=True, blank=True)
+    opening_time                        = models.TimeField(null=True, blank=True)
+    closing_time                        = models.TimeField(null=True, blank=True)
 
     def __str__(self):
         return f'#{self.id} {self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}{" | assigned to " + self.assigned_truck.truck_name if self.assigned_truck else ""}'
