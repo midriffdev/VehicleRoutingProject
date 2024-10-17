@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.http import HttpResponse, FileResponse, JsonResponse
-from huggingface_hub import login
-from transformers import AutoModelForCausalLM, AutoTokenizer
+# from huggingface_hub import login
+# from transformers import AutoModelForCausalLM, AutoTokenizer
 from google.maps import routeoptimization_v1 as ro
 from geopy.geocoders import Nominatim, GoogleV3
 from google.protobuf.json_format import MessageToDict, MessageToJson
@@ -81,7 +81,6 @@ def fetchorders(request):
         orders.append( [HeadQuarter.objects.get(id=wh).name, temp] )
     return JsonResponse({'orders':orders, 'status':'SENT'}, status = 200)
 
-
 # GMPRO DOCUMENTATION API hit trial
 def getroute(request):
     if request.method == 'GET':
@@ -103,20 +102,21 @@ def getroute(request):
     for i in avl_trucks:
         temp = {}
         # temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
-        temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300}
+        temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300} # start location and (optional) end location of your drivers.
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
-        temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
+        temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}] # means that the driver will leave his startLocation at exactly 08:00 and arrive at his endLocation by 12:00.
         temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
         temp["label"] = f'{i.truck_name}--{i.truck_number}--{i.driver_name}'
-        temp["cost_per_kilometer"] = int(i.cost_per_km)
-        reqjson["vehicles"].append(temp)    
+        temp["cost_per_kilometer"] = int(i.cost_per_km) # "costPerKilometer": sets a baseline for your driving distance costs. GMPRO or any delivery route optimization package is going to try to route as many deliveries as possible for the smallest cost, so you need to tell GMPRO what these costs are in order for it to calculate an efficient route.
+        reqjson["vehicles"].append(temp)
 
     for i in avl_orders:
         temp = {}
         temp['pickups'] = [{"arrival_location": {"latitude": float(i.warehouse.lat),"longitude": float(i.warehouse.long)}}]
         temp['deliveries'] = [{
                 "arrival_location": {"latitude": float(i.lat),"longitude": float(i.long)} if i.lat else get_lat_long(i.destination),
-                "time_windows": [{
+                "duration": "600s", # when the driver arrives, he will spend 10 minutes making the delivery.
+                "time_windows": [{ # to make sure your driver only arrives there during business hours
                     "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
                     "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
                 }]
@@ -168,26 +168,16 @@ def getroute(request):
 
     print("\n\n____making json downloadable__request.jdon>> ", reqjson)
     newreqjson = reqjson
-    # newreqjson['global_start_time'] = newreqjson['global_start_time'].isoformat()
-    # newreqjson['global_end_tim'] = newreqjson['global_end_time'].isoformat()
-    del newreqjson['global_start_time']
-    del newreqjson['global_end_time']
+    newreqjson['global_start_time'] = newreqjson['global_start_time'].isoformat()
+    newreqjson['global_end_time'] = newreqjson['global_end_time'].isoformat()
     for i in newreqjson['vehicles']:
-        # del i['start_time_windows']
-        # del i['end_time_windows']
-        del i['start_time_windows'][0]['start_time']
-        del i['end_time_windows'][0]['end_time']
+        i['start_time_windows'][0]['start_time'] = i['start_time_windows'][0]['start_time'].isoformat()
+        i['end_time_windows'][0]['end_time'] = i['end_time_windows'][0]['end_time'].isoformat()
     for i in newreqjson['shipments']:
-        # del i['start_time_windows']
-        # del i['end_time_windows']  
         if 'deliveries' in i:
             if 'start_time' in i['deliveries'][0]['time_windows'][0]:
-                del i['deliveries'][0]['time_windows'][0]['start_time']
-            # if 'deliveries' in i:
-            del i['deliveries'][0]['time_windows'][0]['end_time']
-        # else:
-        #     del i['pickups'][0]['time_windows'][0]['end_time']
-        #     del i['pickups'][0]['time_windows'][0]['end_time']
+                i['deliveries'][0]['time_windows'][0]['start_time'] = i['deliveries'][0]['time_windows'][0]['start_time'].isoformat()
+            i['deliveries'][0]['time_windows'][0]['end_time'] = i['deliveries'][0]['time_windows'][0]['end_time'].isoformat()
     json_file = ContentFile(json.dumps({"model": newreqjson, "populatePolylines": True}).encode('utf-8'), name='request.json')
 
 
