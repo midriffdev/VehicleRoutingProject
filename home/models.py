@@ -51,6 +51,7 @@ class Truck(models.Model):
 
     
     available                           = models.BooleanField(default=True)
+    on_service                           = models.BooleanField(default=False)
     routedata                           = models.ForeignKey('ai_vehicle.routedata', null=True, blank=True, on_delete=models.PROTECT)
     warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT, null=True, blank=True,default=1)
 
