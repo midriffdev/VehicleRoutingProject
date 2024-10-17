@@ -88,7 +88,10 @@ def getroute(request):
 
     # REQUEST.POST
     print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist'))    
-    reqjson = {"shipments": [], "vehicles": [], "global_start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"), "global_end_time": datetime.datetime.strptime("2024-10-06T06:59:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}
+    today = datetime.datetime.now()
+    reqjson = {"shipments": [], "vehicles": [], 
+    "global_start_time": datetime.datetime.combine(today, datetime.time(00,00,00)), 
+    "global_end_time": datetime.datetime.combine(today+datetime.timedelta(days=7), datetime.time(23,59,59)) }
 
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
@@ -104,8 +107,8 @@ def getroute(request):
         # temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
         temp["start_location"] = {"latitude": 30.718236,"longitude": 76.696300} # start location and (optional) end location of your drivers.
         temp["load_limits"] = {"weight": {"max_load": i.capacity}}
-        temp["start_time_windows"] = [{"start_time": i.start_time}] 
-        if i.end_time: temp["end_time_windows"] = [{"end_time": i.end_time}]
+        temp["start_time_windows"] = [{"start_time": datetime.datetime.combine(today, i.start_time)}] 
+        if i.end_time: temp["end_time_windows"] = [{"end_time": datetime.datetime.combine(today, i.end_time)}]
         # temp["start_time_windows"] = [{"start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}] # means that the driver will leave his startLocation at exactly 08:00 and arrive at his endLocation by 12:00.
         # temp["end_time_windows"] = [{"end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")}]
         temp["label"] = f'{i.truck_name}--{i.truck_number}--{i.driver_name}'
@@ -117,10 +120,10 @@ def getroute(request):
         temp['pickups'] = [{"arrival_location": {"latitude": float(i.warehouse.lat),"longitude": float(i.warehouse.long)}}]
         temp['deliveries'] = [{
                 "arrival_location": {"latitude": float(i.lat),"longitude": float(i.long)} if i.lat else get_lat_long(i.destination),
-                "duration": "600s", # when the driver arrives, he will spend 10 minutes making the delivery.
+                # "duration": datetime.timedelta(seconds=600), # when the driver arrives, he will spend 10 minutes making the delivery.
                 "time_windows": [{ # to make sure your driver only arrives there during business hours
-                    "start_time": i.opening_time,
-                    "end_time": i.closing_time
+                    "start_time": datetime.datetime.combine(today, i.opening_time),
+                    "end_time": datetime.datetime.combine(today, i.closing_time)
                     # "start_time": datetime.datetime.strptime("2024-10-05T09:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ"),
                     # "end_time": datetime.datetime.strptime("2024-10-05T23:00:00.000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
                 }]
@@ -179,6 +182,7 @@ def getroute(request):
         if 'end_time_windows' in i: i['end_time_windows'][0]['end_time']=i['end_time_windows'][0]['end_time'].isoformat()
     for i in newreqjson['shipments']:
         if 'deliveries' in i:
+            # i['deliveries'][0]['duration'] = (datetime.datetime(1970, 1, 1) + i['deliveries'][0]['duration']).isoformat()
             if 'start_time' in i['deliveries'][0]['time_windows'][0]:
                 i['deliveries'][0]['time_windows'][0]['start_time'] = i['deliveries'][0]['time_windows'][0]['start_time'].isoformat()
             i['deliveries'][0]['time_windows'][0]['end_time'] = i['deliveries'][0]['time_windows'][0]['end_time'].isoformat()

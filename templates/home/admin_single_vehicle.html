@@ -159,7 +159,11 @@
                     <div class="card-body p-2">
                         <span class="badge rounded-pill bg-success p-2 floatTruckstatus">Available</span>
                         <!-- <span class="badge rounded-pill bg-danger p-2 floatTruckstatus">Unavailable</span> -->
-                        <img src="{{ truck.truck_image.url }}" class="w-100" alt="Truck Image">
+                        {%if truck.truck_image%}
+                         <img src="{{truck.truck_image.url}}"  class="w-100" alt="Truck Image">
+                         {%else%}
+                         <img src="{% static 'images/dummy_truck.png'%}"  class="w-100" alt="Truck Image">
+                        {%endif%}
                     </div>
                 </div>
                 <!-- Admin Information Card -->
