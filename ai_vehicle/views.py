@@ -81,13 +81,7 @@ def fetchorders(request):
         orders.append( [HeadQuarter.objects.get(id=wh).name, temp] )
     return JsonResponse({'orders':orders, 'status':'SENT'}, status = 200)
 
-# GMPRO DOCUMENTATION API hit trial
-def getroute(request):
-    if request.method == 'GET':
-        return redirect('upload_orders')
-
-    # REQUEST.POST
-    print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist'))    
+def optimizeroute(olist, realtime=True):
     today = datetime.datetime.now()
     reqjson = {"shipments": [], "vehicles": [], 
     "global_start_time": datetime.datetime.combine(today, datetime.time(00,00,00)), 
@@ -95,13 +89,14 @@ def getroute(request):
 
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
-    hq = HeadQuarter.objects.get(primary=True)
-    avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
-    # avl_orders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None)
-    avl_orders = Order.objects.filter(order_status='pending', assigned_truck=None, id__in=request.POST.getlist('orderslist'))
+    if realtime:
+        avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
+        avl_orders = Order.objects.filter(order_status='pending', assigned_truck=None, id__in=olist)
+    else:
+        avl_trucks = Truck.objects.filter()
+        avl_orders = Order.objects.filter(id__in=olist)
     if (not avl_trucks) or (not avl_orders) :
-        messages.success(request, 'No available trucks at the moment.')
-        return redirect('upload_orders')
+        return "no_trucks"
     for i in avl_trucks:
         temp = {}
         # temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
@@ -142,7 +137,24 @@ def getroute(request):
     )
     response = client.optimize_tours(request=grequest)
     # json_output = MessageToJson(response._pb) ## RESPONSE JSON
-    dict_output = MessageToDict(response._pb)
+    return MessageToDict(response._pb) # dict_output
+
+    """for non real time, assign trucks and other parameters in orders record"""
+
+# GMPRO DOCUMENTATION API hit trial
+def getroute(request):
+    if request.method == 'GET':
+        return redirect('upload_orders')
+
+    # REQUEST.POST
+    print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist'))    
+    hq = HeadQuarter.objects.get(primary=True)
+
+    dict_output = optimizeroute(request.POST.getlist('orderslist'))
+
+    if dict_output == "no_trucks":
+        messages.success(request, 'No available trucks at the moment.')
+        return redirect('upload_orders')
 
     print("\n\nresponse or routes____", dict_output['routes'])
 
