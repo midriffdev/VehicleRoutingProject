@@ -1254,7 +1254,7 @@ def single_order(request,pk):
             if order.routedata:
                 order.assigned_truck.service_travel_km += order.routedata
                 if order.assigned_truck.service_travel_km >= 1000:
-                    order.assigned_truck.service_travel_km = 0
+                    order.assigned_truck.service_travel_km -= 1000 
                     order.assigned_truck.status = 'maintenance'
                     order.assigned_truck.on_service = True
                     order.assigned_truck.save()
