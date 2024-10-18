@@ -698,17 +698,12 @@ def post_reports(request):
     if request.method == 'POST':
         print(request.POST,"dataaaaaaaaaaaaaaaaaaaaaa here")
 
-
         wids = request.POST.get('wids')
         orderstatus = request.POST.get('selectedValueo')
         strat_date = request.POST.get('strat_date')
         end_date = request.POST.get('end_date')
 
-        orderstrat_date = request.POST.get('selectorderstart')
-        orderend_date = request.POST.get('selectorderend')
         
-       
-
         try:
             trucks_list=[]
             if wids == 'All_Warehouse':
@@ -742,6 +737,27 @@ def post_reports(request):
                 out_of_time = order_list.filter(
                     Q(on_time_delivery=False) & (Q(order_status='delivered') | Q(order_status='completed'))
                 ).count()
+
+
+                for i in order_list:
+                    i.assigned_truck.capacity 
+                    i.quantity 
+
+                    load_efficenecy=
+
+                for order in order_list:
+                    order.assigned_truck.current_load += order.quantity
+
+                # Calculate load efficiency for each truck
+                for truck in trucks_list:
+                    load_efficiency = (truck.current_load / truck.capacity) * 100
+                    print(f"Load Efficiency of Truck {truck.name}: {load_efficiency:.2f}%")
+
+
+
+
+
+
 
                 warehouses = HeadQuarter.objects.all()
                 trucks = Truck.objects.all().order_by('-id')
