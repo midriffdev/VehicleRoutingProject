@@ -45,6 +45,9 @@ class Truck(models.Model):
     late_deliveries                     = models.PositiveIntegerField(null=True, blank=True,default=0)
 
     driver_travel                       = models.PositiveIntegerField(null=True, blank=True,default=0)
+    service_travel_km                       = models.PositiveIntegerField(null=True, blank=True,default=0)
+
+
     fuel                                = models.PositiveIntegerField(null=True, blank=True,default=0)
     deleverd_load                       = models.PositiveIntegerField(null=True, blank=True,default=0)
     languages                           = models.CharField(max_length=100,null=True, blank=True,default='English')
