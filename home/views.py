@@ -739,11 +739,7 @@ def post_reports(request):
                 ).count()
 
 
-                for i in order_list:
-                    i.assigned_truck.capacity 
-                    i.quantity 
-
-                    load_efficenecy=
+                
 
                 for order in order_list:
                     order.assigned_truck.current_load += order.quantity
@@ -752,6 +748,22 @@ def post_reports(request):
                 for truck in trucks_list:
                     load_efficiency = (truck.current_load / truck.capacity) * 100
                     print(f"Load Efficiency of Truck {truck.name}: {load_efficiency:.2f}%")
+
+
+                truck_loads = {}
+
+                # Calculate the total load for each truck
+                for order in order_list:
+                    truck = order.assigned_truck
+                    if truck not in truck_loads:
+                        truck_loads[truck] = 0
+                    truck_loads[truck] += order.quantity
+
+                # Calculate and print the load efficiency for each truck
+                for truck, total_load in truck_loads.items():
+                    load_efficiency = (total_load / truck.capacity) * 100
+                    print(f"Load Efficiency of Truck {truck.name}: {load_efficiency:.2f}%")
+                    truck.load_efficiency=load_efficiency
 
 
 

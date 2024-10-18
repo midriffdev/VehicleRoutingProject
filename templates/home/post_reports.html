@@ -429,7 +429,7 @@
                         </div>
 
 
-                        <div class="col-md-6">
+                        {% comment %} <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body loaderDiv">
                                     <div class="d-flex flex-wrap">
@@ -441,9 +441,9 @@
                                     <div id="bar_chartEffe" class="apex-charts" dir="ltr"></div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>  {% endcomment %}
 
-                        
+
                     </div>
 
                     
@@ -461,8 +461,8 @@
             <script>
 
                 // Dummy data for vehicle capacity and load delivered
-                var vehicleCapacity = [1000, 1200, 1500, 1100, 1300, 1400, 1600, 1000]; // Vehicle capacities in kg
-                var loadDelivered = [800, 900, 1400, 1000, 1200, 1300, 1500, 900]; // Actual loads delivered in kg
+                var vehicleCapacity = [{%for i in trucks%}'{{i.total_deliveries}}',{%endfor%}]; // Vehicle capacities in kg
+                var loadDelivered = [{%for i in trucks%}'{{i.total_deliveries}}',{%endfor%}]; // Actual loads delivered in kg
 
                 // Calculate Load Efficiency as a percentage
                 var loadEfficiency = loadDelivered.map((delivered, index) => ((delivered / vehicleCapacity[index]) * 100).toFixed(2)); 
@@ -499,9 +499,7 @@
                     grid: { borderColor: "#e7e7e7" },
                     xaxis: {
                         categories: [
-                            "Truck 1", "Truck 2", "Truck 3", 
-                            "Truck 4", "Truck 5", "Truck 6", 
-                            "Truck 7", "Truck 8"
+                        {%for i in trucks%}'{{i.truck_name}}',{%endfor%}
                         ],
                         title: {
                             text: 'Trucks'

@@ -137,7 +137,7 @@ def optimizeroute(olist, realtime=True):
     )
     response = client.optimize_tours(request=grequest)
     # json_output = MessageToJson(response._pb) ## RESPONSE JSON
-    return MessageToDict(response._pb) # dict_output
+    return MessageToDict(response._pb),reqjson # dict_output
 
     """for non real time, assign trucks and other parameters in orders record"""
 
@@ -150,7 +150,7 @@ def getroute(request):
     print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist'))    
     hq = HeadQuarter.objects.get(primary=True)
 
-    dict_output = optimizeroute(request.POST.getlist('orderslist'))
+    dict_output,reqjson = optimizeroute(request.POST.getlist('orderslist'))
 
     if dict_output == "no_trucks":
         messages.success(request, 'No available trucks at the moment.')
