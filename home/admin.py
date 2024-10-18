@@ -9,4 +9,4 @@ admin.site.register(Truck, ImportExportModelAdmin)
 admin.site.register(Report_order)
 admin.site.register(ServiceRecord)
 admin.site.register(Feedback)
-
+admin.site.register(ServiceOrPart)

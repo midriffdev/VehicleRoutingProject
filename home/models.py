@@ -55,6 +55,9 @@ class Truck(models.Model):
     
     available                           = models.BooleanField(default=True)
     on_service                           = models.BooleanField(default=False)
+
+
+
     routedata                           = models.ForeignKey('ai_vehicle.routedata', null=True, blank=True, on_delete=models.PROTECT)
     warehouse                           = models.ForeignKey('ai_vehicle.HeadQuarter', on_delete=models.PROTECT, null=True, blank=True,default=1)
 
@@ -72,16 +75,33 @@ class Truck(models.Model):
         return license_mapping.get(self.license_type, 'Unknown License Type')
 
 
+
+
+
+
+class ServiceOrPart(models.Model):
+    SERVICE_TYPE_CHOICES = [
+        ('service', 'Service Description'),
+        ('part', 'Part Changed'),
+    ]
+    
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=10, choices=SERVICE_TYPE_CHOICES)
+
+    def __str__(self):
+        return f"{self.name} ({self.type})"
+
+
 class ServiceRecord(models.Model):
     truck = models.ForeignKey(Truck, on_delete=models.CASCADE, related_name='services')
     service_date = models.DateField()
-    service_description = models.TextField(default="Completed regular oil change, including filter replacement. Inspected and rotated tires, replaced two worn-out front tires.")
-    parts_changed = models.TextField(null=True, blank=True,default="Oil Filter,Front Tires,Headlight Bulbs")
-    # parts_changed = models.ManyToManyField(Part, blank=True)
-    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total Service Cost (in USD)",default=300)
-    
+    service_description = models.ManyToManyField(ServiceOrPart, related_name='service_records', limit_choices_to={'type': 'service'}, blank=True)
+    parts_changed = models.ManyToManyField(ServiceOrPart, related_name='parts_records', limit_choices_to={'type': 'part'}, blank=True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total Service Cost (in USD)", default=300)
+
     def __str__(self):
         return f"Service for {self.truck} on {self.service_date}"
+
 
 
 class Order(models.Model):
