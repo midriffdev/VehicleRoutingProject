@@ -63,13 +63,9 @@ def vehicles(request):
         mileage=request.POST.get('mileage')
         license_type=request.POST.get('license_type')
         purchase_date=request.POST.get('purchase_date')
-
-
         start_time=request.POST.get('start_time')
         end_time=request.POST.get('end_time')
 
-        
-        
         try:
             truck=Truck.objects.get(truck_number=truck_number)
         except:
@@ -100,10 +96,13 @@ def vehicles(request):
         return redirect('vehicles')
 
     else:
-        # vehicles=Truck.objects.all()
+        all_services=ServiceOrPart.objects.all()
         vehicles=Truck.objects.filter(warehouse__primary= True)
+        service_vehicles=Truck.objects.filter(warehouse__primary= True,on_service=True)
 
         context={
+            'all_services':all_services,
+            'service_vehicles':service_vehicles,
             'vehicles':vehicles,
         }
         return render(request, 'home/vehicles.html',context)
@@ -232,22 +231,34 @@ def edit_vehicle(request, pk):
 @csrf_exempt
 def add_service(request,pk):
     if request.method == 'POST':
-        service_date=request.POST.get('service_date')
-        service_description=request.POST.get('service_description')
-        parts_changed=request.POST.get('parts_changed')
-        warranty_period=request.POST.get('warranty_period')
-        cost=request.POST.get('cost')
+        print(request.POST,"oooooooo")
+        service_date = request.POST.get('service_date')
+        warranty_period = request.POST.get('warranty_period')
+        cost = request.POST.get('cost')
+        selected_services = request.POST.getlist('service_description[]')
+        selected_parts = request.POST.getlist('parts_changed[]')
 
-        truck=Truck.objects.get(id=pk)
+        
+        truck = Truck.objects.get(id=pk)
 
-        # parts_changed
+       
+        # Create the service record
+        service_record = ServiceRecord.objects.create(
+            truck=truck,
+            service_date=service_date,
+            cost=cost,
+        )
 
-        service=ServiceRecord.objects.create(truck=truck,
-                                             service_date=service_date,
-                                             service_description=service_description,
-                                             cost=cost,
-                                             parts_changed=parts_changed
-                                             )
+        
+        for service_id in selected_services:
+            service = ServiceOrPart.objects.get(id=service_id, type='service')
+            service_record.service_description.add(service)
+
+        for part_id in selected_parts:
+            part = ServiceOrPart.objects.get(id=part_id, type='part')
+            service_record.parts_changed.add(part)
+
+        service_record.save()
 
         return redirect('vehicles')
     
@@ -1237,6 +1248,9 @@ def single_order(request,pk):
         else:
             print("order_status ")
             order_status=request.POST.get('order_status')
+            time_status=request.POST.get('time_status')
+
+
             order=Order.objects.get(id=pk)
             order.order_status=order_status
             order.due_payment_date = order.created_at + timedelta(days=2)
@@ -1246,18 +1260,25 @@ def single_order(request,pk):
             order.save()
 
             print(order.assigned_truck,'assigned_truck')
-            print(order.routedata,'routedata')
+            print(order.route_distance,'route_distance')
             print(order.assigned_truck.driver_travel,'driver_travel')
 
+            if time_status == "true":
+                order.on_time_delivery = True
+                order.save()
 
-            order.assigned_truck.driver_travel + order.routedata
-            if order.routedata:
-                order.assigned_truck.service_travel_km += order.routedata
-                if order.assigned_truck.service_travel_km >= 1000:
-                    order.assigned_truck.service_travel_km -= 1000 
+
+            order.assigned_truck.driver_travel += order.route_distance
+            order.assigned_truck.save()
+            if order.route_distance:
+                order.assigned_truck.service_travel_km += order.route_distance
+                order.assigned_truck.save()
+                if order.assigned_truck.service_travel_km >= 100:
+                    order.assigned_truck.service_travel_km -= 100 
                     order.assigned_truck.status = 'maintenance'
                     order.assigned_truck.on_service = True
                     order.assigned_truck.save()
+                    order.save()
                    
 
             due_date_formatted = order.due_payment_date.strftime('%Y-%m-%d')
