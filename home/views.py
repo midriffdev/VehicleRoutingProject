@@ -445,16 +445,12 @@ def reports(request):
                                 status=200)
 
             else:
-                
                 warehouse = HeadQuarter.objects.get(id=wids)
-
                 print(warehouse,"warehouse,,,,,,,,,,,,")
 
                 if orderstrat_date and orderend_date:
                     orderstrat_date = datetime.strptime(strat_date, "%d %b, %Y").date()
                     orderend_date = datetime.strptime(end_date, "%d %b, %Y").date()
-
-                   
 
                 if orderstatus == 'All':
                     orders=Order.objects.filter(warehouse=warehouse).order_by('-id')
@@ -468,7 +464,6 @@ def reports(request):
                     order_list = list(orders.values(
                     'id', 'product_name', 'quantity', 'destination', 'cname','order_status'
                     ))
-
 
                 feedback=Feedback.objects.filter(order__warehouse=warehouse).order_by('-id')
                 feedback_list = list(feedback.values(
@@ -484,7 +479,6 @@ def reports(request):
                         'left_stock': warehouse.left_stock,
                     }
                 ]
-
 
                 trucks = Truck.objects.filter(warehouse=warehouse).order_by('-id')
                 trucks_list = list(trucks.values(
@@ -1253,20 +1247,10 @@ def single_order(request,pk):
 
             # print(order.assigned_truck,'assigned_truck')
             # print(order.routedata,'routedata')
-            # print(order.driver_travel,'driver_travel')
-
-
+            # print(order.assigned_truck.driver_travel,'driver_travel')
             # on_service
 
-
-
-
-
-
-
-
             due_date_formatted = order.due_payment_date.strftime('%Y-%m-%d')
-
             content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {due_date_formatted}, or earlier.Thank you for choosing us!"
 
             html_message = render_to_string('home/orderemail.html', {'user': order.cname,'content':content})
