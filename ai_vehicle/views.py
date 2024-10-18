@@ -154,16 +154,17 @@ def getroute(request):
         'fstop'     : None,
         'lstop'     : None,
         'stime'     : data.get('vehicleStartTime', None),
-        'type'      : 'delivery',
+        # 'type'      : 'delivery',
         'order'     : []
         }
         for i in data.get('visits', []):
-            if 'isPickup' in i:
-                # temp['order'].append(0)
-                temp['type']  = 'pickup'
-            else: temp['order'].append(Order.objects.get(id=i['shipmentLabel'].split('__')[1]))
+            # if 'isPickup' in i:
+            #     # temp['order'].append(0)
+            #     temp['type']  = 'pickup'
+            # else: 
+            temp['order'].append( {"ord": Order.objects.get(id=i['shipmentLabel'].split('__')[1]), "is_pickup":'isPickup' in i} )
             
-        obtained_orders.extend([i.id for i in temp['order']])
+        obtained_orders.extend([i['ord'].id for i in temp['order']])
         if data.get('visits', []):
             # if data.get('visits', [])[-1]['shipmentLabel']:
             i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('__')[1])
@@ -194,7 +195,7 @@ def getroute(request):
     for i in iroutes:
         if i['order']:
             b = routedata.objects.create(fstop=i['fstop'], lstop=i['lstop'])
-            [b.orders.add(ord) for ord in i['order']]
+            [b.orders.add(ord['ord']) for ord in i['order']]
             a = gen_route.truckdata.create(truck=i['truck'], routedata = b)
     gen_route.save()
 
