@@ -233,41 +233,11 @@
                                             {% else%}
                                             {{i.order_status}}
                                             {% endif %}
-
-
-
-                                            {% comment %} <button type="button" class="btn btn-warning btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target="#reportModal{{ i.id }}">
-                                                Add Report
-                                            </button> {% endcomment %}
                                         </div>
                                     </td>
                                 </tr>
 
-                                <!-- Report Modal -->
-                                <div class="modal fade" id="reportModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel{{ i.id }}" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="reportModalLabel{{ i.id }}">Report Issue for Order #13A{{ i.id }}</h5>
-                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form method="POST" action="{% url 'report_issue' i.id %}">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="order_id" value="{{ i.id }}">
-                                                    <input type="hidden" name="truck_id" value="{{ truck.id }}">
-                                                    <div class="form-group">
-                                                        <label for="issueText{{ i.id }}">Describe the Issue</label>
-                                                        <textarea class="form-control" id="issueText{{ i.id }}" name="issue_text" rows="4" required></textarea>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Send Report</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                              
                                 {% endfor %}
                             </tbody>
                         </table>
