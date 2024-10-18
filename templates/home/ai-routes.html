@@ -133,23 +133,43 @@
                                     <div class="d-flex flex-nowrap pt-4 w-100 overflow-auto scroll-style">
                                         {%if i.order%}
                                         {%for shipment in i.order%}
+                                        {%if shipment.is_pickup%}
                                         <div class="routeBox me-3 mb-1">
                                             <div class="text-center">
                                                 <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning">{{shipment.destination}}</p>
+                                                <p class="text-warning fw-bold">Pickup</p>
+                                                <p class="text-warning">(from <b>{{shipment.ord.warehouse.name}}</b> warehouse)</p>
                                             </div>
                                             <div class="card shadow-none">
                                                 <div class="card-body">
                                                     <div class="text-white text-letter-space">
-                                                        <p><span class="yellowColor">Order No</span> <br>#{{shipment.id}}</p>
-                                                        <p><span class="yellowColor">Order Quantity</span> <br>{{shipment.quantity}}</p>
-                                                        <p><span class="yellowColor">Pickup location</span> <br>{{shipment.warehouse.name}}</p>
-                                                        <p><span class="yellowColor">Order Price</span> <br>{{shipment.payment_amount}}</p>
-                                                        <p><span class="yellowColor">Customer</span> <br>{{shipment.cname|title}}</p>
+                                                        <p><span class="yellowColor">Order No</span> <br>#{{shipment.ord.id}}</p>
+                                                        <p><span class="yellowColor">Order Quantity</span> <br>{{shipment.ord.quantity}}</p>
+                                                        <p><span class="yellowColor">Delivery location</span> <br>{{shipment.ord.destination}}</p>
+                                                        <p><span class="yellowColor">Customer</span> <br>{{shipment.ord.cname|title}}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        {%else%}
+                                        <div class="routeBox me-3 mb-1">
+                                            <div class="text-center">
+                                                <i class="bx bx-map text-warning font-size-20"></i>
+                                                <p class="text-warning fw-bold">Delivery</p>
+                                                <p class="text-warning">(for <b>{{shipment.ord.destination}}</b>)</p>
+                                            </div>
+                                            <div class="card shadow-none">
+                                                <div class="card-body">
+                                                    <div class="text-white text-letter-space">
+                                                        <p><span class="yellowColor">Order No</span> <br>#{{shipment.ord.id}}</p>
+                                                        <p><span class="yellowColor">Order Quantity</span> <br>{{shipment.ord.quantity}}</p>
+                                                        <p><span class="yellowColor">Pickup location</span> <br>{{shipment.ord.warehouse.name}}</p>
+                                                        <p><span class="yellowColor">Customer</span> <br>{{shipment.ord.cname|title}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {%endif%}
                                         {%endfor%}
                                         {%else%}
                                             No orders for this truck to assign.

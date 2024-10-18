@@ -1275,8 +1275,22 @@ def changedurations(duration_str):
     hours, minutes, seconds = map(float, time_part.split(':'))
     return timedelta(days=int(a[0]), hours=int(hours), minutes=int(minutes), seconds=seconds)
 
+from geopy.distance import geodesic
 @csrf_exempt
 def upload_orders(request):
+    acc_data = {}
+    def get_distance(prod, lat, long):
+        cord = f'{prod}_{lat}_{long}'
+        if cord in acc_data: return acc_data[cord]
+        else:
+            hq = HeadQuarter.objects.get(product_name=prod)
+            coords_1 = (hq.lat, hq.long)
+            coords_2 = (lat, long)
+            datax = geodesic(coords_1, coords_2).kilometers
+            acc_data[cord] = datax
+            print("\ndatax________", datax)
+            # Calculate the distance in kilometers
+            return datax
     if request.method == 'POST':
         
         if not HeadQuarter.objects.filter(primary=True):
@@ -1293,7 +1307,7 @@ def upload_orders(request):
             headqids = [i.id for i in HeadQuarter.objects.all()]
             for row in csv_reader:
                 print(row, "row....................")  
-
+                mydistance = get_distance(row[2], row[6], row[7])
                 order = Order.objects.create(
                     cname                           =   row[0],
                     email                           =   row[1],
@@ -1316,18 +1330,18 @@ def upload_orders(request):
                     # assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=4),
 
                     order_status                    =   row[14],
-                    route_distance                  =   row[16],
+                    route_distance                  =   mydistance, # row[16],
                     # delivery_time                   =   datetime.fromisoformat(row[17]),
-                    fuel_consumption                =   row[18],
+                    fuel_consumption                =   mydistance/random.randint(7, 13), # row[18],
                     on_time_delivery                =   bool(int(row[19])),
-                    fuel_savings                    =   row[20],
-                    vehicle_maintenance_savings     =   row[21],
+                    fuel_savings                    =   mydistance*(random.randint(1,7)/100), # row[20],
+                    vehicle_maintenance_savings     =   mydistance*(random.randint(1,10)/100), # row[21]
                     # hours_worked                    =   row[22],
                     idle_time                       =   changedurations(row[23]),
                     route_adherence                 =   bool(int(row[24])),
                     time_saved                      =   changedurations(row[25]),
                     # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
-                    co2_emission_reduction          =   row[27],
+                    co2_emission_reduction          =   mydistance*(random.randint(50, 200)/1000), # row[27],
                     green_route                     =   row[28],
                     adjusted_stops                  =   row[29],
                     rerouted                        =   bool(int(row[30])),
