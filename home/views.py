@@ -1245,10 +1245,20 @@ def single_order(request,pk):
             order.delivered_date = timezone.now()
             order.save()
 
-            # print(order.assigned_truck,'assigned_truck')
-            # print(order.routedata,'routedata')
-            # print(order.assigned_truck.driver_travel,'driver_travel')
-            # on_service
+            print(order.assigned_truck,'assigned_truck')
+            print(order.routedata,'routedata')
+            print(order.assigned_truck.driver_travel,'driver_travel')
+
+
+            order.assigned_truck.driver_travel + order.routedata
+            if order.routedata:
+                order.assigned_truck.service_travel_km += order.routedata
+                if order.assigned_truck.service_travel_km >= 1000:
+                    order.assigned_truck.service_travel_km = 0
+                    order.assigned_truck.status = 'maintenance'
+                    order.assigned_truck.on_service = True
+                    order.assigned_truck.save()
+                   
 
             due_date_formatted = order.due_payment_date.strftime('%Y-%m-%d')
             content=f"Your order has been delivered successfully! We hope everything arrived just as you expected.Kindly complete your payment by {due_date_formatted}, or earlier.Thank you for choosing us!"
