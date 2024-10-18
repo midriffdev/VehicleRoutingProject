@@ -241,7 +241,6 @@ def add_service(request,pk):
         
         truck = Truck.objects.get(id=pk)
 
-       
         # Create the service record
         service_record = ServiceRecord.objects.create(
             truck=truck,
@@ -249,7 +248,6 @@ def add_service(request,pk):
             cost=cost,
         )
 
-        
         for service_id in selected_services:
             service = ServiceOrPart.objects.get(id=service_id, type='service')
             service_record.service_description.add(service)
@@ -258,7 +256,10 @@ def add_service(request,pk):
             part = ServiceOrPart.objects.get(id=part_id, type='part')
             service_record.parts_changed.add(part)
 
-        service_record.save()
+        truck.status = 'available'
+        truck.on_service = False
+        truck.save()
+
 
         return redirect('vehicles')
     
