@@ -233,7 +233,6 @@ def add_service(request,pk):
     if request.method == 'POST':
         print(request.POST,"oooooooo")
         service_date = request.POST.get('service_date')
-        warranty_period = request.POST.get('warranty_period')
         cost = request.POST.get('cost')
         selected_services = request.POST.getlist('service_description[]')
         selected_parts = request.POST.getlist('parts_changed[]')
@@ -258,8 +257,8 @@ def add_service(request,pk):
 
         truck.status = 'available'
         truck.on_service = False
+        truck.service_travel_km = 0
         truck.save()
-
 
         return redirect('vehicles')
     
@@ -1275,11 +1274,20 @@ def single_order(request,pk):
                 order.assigned_truck.service_travel_km += order.route_distance
                 order.assigned_truck.save()
                 if order.assigned_truck.service_travel_km >= 100:
-                    order.assigned_truck.service_travel_km -= 100 
+                    order.assigned_truck.service_travel_km -= 0 
                     order.assigned_truck.status = 'maintenance'
                     order.assigned_truck.on_service = True
                     order.assigned_truck.save()
                     order.save()
+
+            if order.warehouse:
+                try:
+                    order.warehouse.total_stock -= order.quantity
+                    order.warehouse.left_stock += order.quantity
+                    order.warehouse.save()
+                except:
+                    pass
+
                    
 
             due_date_formatted = order.due_payment_date.strftime('%Y-%m-%d')

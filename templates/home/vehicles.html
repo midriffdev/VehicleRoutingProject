@@ -272,7 +272,6 @@
                         <span class="badge badge-pill badge-soft-danger font-size-12 float-badge">Need Service</span>
                         <div class="card-body d-flex p-3">
 
-                          
                             
                             {%if i.truck_image%}
                             <img src="{{i.truck_image.url}}"  class="serviceTruckImg" alt="Truck Image">
@@ -280,9 +279,6 @@
                             <img src="{% static 'images/dummy_truck.png'%}"  class="serviceTruckImg" alt="Truck Image">
                            {%endif%}
 
-                          
-
-                           
                             <div class="ps-3">
                                 <h4>{{i.truck_name}}
                                 </h4>
@@ -420,13 +416,13 @@
                                                                 {% endfor %}
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-12">         
+                                                        {% comment %} <div class="col-md-12">         
                                                             <!-- Warranty Period Input -->
                                                             <div class="mb-4">
                                                                 <label for="warranty_period{{i.id}}" class="form-label font-size-18">Warranty Years</label>
                                                                 <input value="2" type="number" step="0.01" name="warranty_period" class="form-control" id="warranty_period{{i.id}}" required>
                                                             </div>
-                                                        </div>
+                                                        </div> {% endcomment %}
                                                         <div class="col-md-12">
                                                             <!-- Service Cost Input -->
                                                             <div class="mb-4">

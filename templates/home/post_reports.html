@@ -197,7 +197,7 @@
                             <div class="card">
                                 <div class="card-body loaderDiv  ">
                                     <div class="d-flex flex-wrap">
-                                        <h4 class="card-title mb-4">Product Stock Details</h4>
+                                        <h4 class="card-title mb-4">Warehouse Stock Details</h4>
     
                                         <div class="ms-auto">
                                         </div>
@@ -210,9 +210,9 @@
                                                     <th class="ps-2">Sr.no</th>
                                                     <th>Warehouse</th>
                                                     <th>Product</th>
-                                                    <th class="ps-2">Total Stock</th>
-                                                    <th class="ps-2">Stock In Hand</th>
-                                                    <th class="ps-2">Stock On Order</th>
+                                                    <th class="ps-2">In-Stock Quantity</th>
+                                                    <th class="ps-2">Dispatched Quantity</th>
+                                                 
                                                 </tr>
                                             </thead>
                                             <tbody >
@@ -222,7 +222,6 @@
                                                     <td>{{warehouse.name}}</td>
                                                     <td>{{warehouse.product_name}}</td>
                                                     <td>{{warehouse.total_stock}}</td>
-                                                    <td>{{warehouse.available_stock}}</td>
                                                     <td>{{warehouse.left_stock}}</td>
                                                 </tr>
                                                 {% endfor %}

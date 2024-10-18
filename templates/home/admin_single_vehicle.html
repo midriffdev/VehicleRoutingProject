@@ -135,11 +135,36 @@
                                                {% for d in services %}
                                                 <tr>
                                                     <td>{{d.service_date}}</td>
-                                                    <td>{{d.service_description}}</td>
                                                     <td>
-                                                        {{d.parts_changed}}
+
+                                                        {% if d.service_description.all %}
+                                                            {% for ss in d.service_description.all %}
+                                                            <p>
+                                                                {{ss.name}}
+                                                            </p>
+                                                            {% endfor %}
+                                                            {% else %}
+                                                            <p>
+                                                                No changes done
+                                                            </p>
+                                                            {% endif %}
+                                                        </td>
+
+                                                    <td>
+                                                        {% if d.parts_changed.all %}
+                                                            {% for ss in d.parts_changed.all %}
+                                                            <p>
+                                                                {{ss.name}}
+                                                            </p>
+                                                            {% endfor %}
+                                                            {% else %}
+                                                            <p>
+                                                                No changes done
+                                                            </p>
+                                                            {% endif %}
+                                                        
                                                     </td>
-                                                    <td>{{d.cost}}</td>
+                                                    <td>${{d.cost}}</td>
                                                 </tr>
                                                 {% endfor %}
                                                 {% else %}
@@ -177,6 +202,14 @@
                         </div>
                     </div>
                 </div>
+                {% comment %} <div class="card bg-warning bg-soft border border-warning">
+                    <div class="card-body">
+                        <div class="mt-2">
+                            <p><strong>Need Service:</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div> {% endcomment %}
             </div>
         </div>
 
