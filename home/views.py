@@ -288,7 +288,11 @@ def delete_vehicle(request,pk):
 @csrf_exempt
 def reset_assinged_trucks(request):
     Truck.objects.filter().update(available=True, routedata=None)
-    Order.objects.filter(warehouse__primary= True).update(assigned_truck=None)
+    for i in Order.objects.filter(order_status='pending').assign:
+        i.assigned_truck=None
+        i.save()
+        i.warehouse.total_stock += i.quantity
+        i.warehouse.save()
     return redirect('vehicles')
     
 @csrf_exempt
@@ -310,6 +314,7 @@ from django.http import HttpResponse, FileResponse, JsonResponse
 from django.utils.dateparse import parse_date
 from django.db.models import Q
 from datetime import datetime
+from django.db.models import Sum
 
 
 
@@ -690,9 +695,6 @@ def reports(request):
         }
         return render(request, 'home/reports.html', context)
 
-
-from django.db.models import Sum
-
 @csrf_exempt
 def post_reports(request):
     if request.method == 'POST':
@@ -1032,21 +1034,6 @@ def post_reports(request):
             'trucks':trucks,
         }
         return render(request, 'home/post_reports.html', context)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @csrf_exempt
 def customer_single_order(request,pk):
@@ -1431,7 +1418,7 @@ def upload_orders(request):
         
             # reoptimization for all old data__________________________________________________
             orders = (Order.objects
-            .filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today())
+            .filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today()).exclude(order_status='pending')
             .annotate(day=TruncDate('created_at'))  # Truncate to date
             .values('id', 'day'))  # Fetch the id and day
 
@@ -1442,13 +1429,17 @@ def upload_orders(request):
 
             # Format the result as a list of dictionaries
             result = [order_ids for day, order_ids in grouped_orders.items()]
-            # print("orders_by_day_________", result)
+            print("orders_by_day_________", result)
 
             for i in range(0, len(result)):
                 olist = result[i]
-                dict_output = optimizeroute(olist, realtime=False)[0]
-                print(dict_output, f'{i}/{len(result)}', "__ routessss________________")
-                print(f'{i}/{len(result)}', "__ routessss________________")
+                dict_output, reqjson, status = optimizeroute(olist, realtime=False)
+                print("output - ", dict_output, reqjson, status)
+                if status != "done":
+                    messages.success(request, 'Reports generations failed, please delete all the orders and try again.')
+                    return redirect('upload_orders')
+                # print(dict_output, f'{i}/{len(result)}', "__ routessss________________")
+                print("\n\n", "__ routessss________________", f'>>{i+1}/{len(result)}')
 
                 # obtained_orders = []
                 for data in dict_output['routes']:
@@ -1480,9 +1471,22 @@ def upload_orders(request):
                 # pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
                 # pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
 
-            for i in Order.objects.filter():
-                i.fuel_consumption = round(float(i.route_distance)/float(random.randint(7, 13)), 2)
-                i.save()
+
+            for i in Order.objects.exclude(order_status='pending'):
+                print(i)
+                try:
+                    i.fuel_consumption = round(float(i.route_distance)/float(random.randint(7, 13)), 2)
+                    i.save()
+                except:
+                    pass
+
+            # Notifications.objects.create(
+            #     content=f"Your Reports are ready. Thank you!",
+            #     title=f"Reports are ready",
+            #     count=4,
+            #     receiver=i
+            # )
+            print("\n\n\nALLDONE\n\n\n")
             # _____________________reoptimization for old data ends here____________________________________
 
 

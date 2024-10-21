@@ -70,6 +70,8 @@ def assign_routes_to_trucks(request, route_id):
         for ordr in tdata.routedata.orders.all():
             ordr.assigned_truck = tdata.truck
             ordr.save()
+            ordr.warehouse.total_stock -= ordr.quantity
+            ordr.warehouse.save()
     messages.success(request, 'Trucks has been assinged with respective orders.')
     return redirect('vehicles')
 
@@ -82,6 +84,7 @@ def fetchorders(request):
     return JsonResponse({'orders':orders, 'status':'SENT'}, status = 200)
 
 def optimizeroute(olist, realtime=True):
+    print("olist, realtime____________", olist, realtime)
     today = datetime.datetime.now()
     reqjson = {"shipments": [], "vehicles": [], 
     "global_start_time": datetime.datetime.combine(today, datetime.time(00,00,00)), 
@@ -97,15 +100,16 @@ def optimizeroute(olist, realtime=True):
             if i.warehouse in whstock: whstock[i.warehouse] = int(whstock[i.warehouse]) + i.quantity
             else: whstock[i.warehouse] = i.quantity
         for k, v in whstock.items():
-            if k.total_stock < v: less_stock.append([k.name, v-k.available_stock])
+            if k.total_stock < v: less_stock.append([k.name, v-k.total_stock, k.product_name])
         print("\n\nStocks__________________",whstock, less_stock)
         if less_stock:
-            return less_stock, {}
+            return less_stock, {}, 'less_stock'
     else:
         avl_trucks = Truck.objects.filter()
-        avl_orders = Order.objects.filter(id__in=olist, order_status='pending')
-    if (not avl_trucks) or (not avl_orders) :
-        return "no_trucks", {}
+        avl_orders = Order.objects.filter(id__in=olist).exclude(order_status='pending')
+    print("alv______________", avl_orders, avl_trucks)
+    if (not avl_trucks) : return [], {}, "no_trucks"
+    if (not avl_orders) : return [], {}, "no_orders"
     for i in avl_trucks:
         temp = {}
         # temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
@@ -146,7 +150,7 @@ def optimizeroute(olist, realtime=True):
     )
     response = client.optimize_tours(request=grequest)
     # json_output = MessageToJson(response._pb) ## RESPONSE JSON
-    return MessageToDict(response._pb),reqjson # dict_output
+    return MessageToDict(response._pb), reqjson, 'done' # dict_output
 
     """for non real time, assign trucks and other parameters in orders record"""
 
@@ -159,11 +163,18 @@ def getroute(request):
     print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist'))    
     hq = HeadQuarter.objects.get(primary=True)
 
-    dict_output,reqjson = optimizeroute(request.POST.getlist('orderslist'))
+    dict_output, reqjson, status = optimizeroute(request.POST.getlist('orderslist'))
 
-    if not reqjson:
-        if dict_output == "no_trucks":
+    if status != 'done':
+        if status == "no_trucks":
             messages.success(request, 'No available trucks at the moment.')
+            return redirect('upload_orders')
+        if status == "no_orders":
+            messages.success(request, 'No available orders.')
+            return redirect('upload_orders')
+        elif status == "less_stock":
+            lstock = " & ".join([f' {a[1]} {a[2]} at {a[0]}' for a in dict_output])
+            messages.success(request, f'Less Stocks: You need to add these stocks: { lstock } to process route analysis for the given orders.')
             return redirect('upload_orders')
 
     print("\n\nresponse or routes____", dict_output['routes'])
