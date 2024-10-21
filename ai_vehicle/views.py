@@ -92,11 +92,20 @@ def optimizeroute(olist, realtime=True):
     if realtime:
         avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
         avl_orders = Order.objects.filter(order_status='pending', assigned_truck=None, id__in=olist)
+        whstock, less_stock = {}, []
+        for i in avl_orders:
+            if i.warehouse in whstock: whstock[i.warehouse] = int(whstock[i.warehouse]) + i.quantity
+            else: whstock[i.warehouse] = i.quantity
+        for k, v in whstock.items():
+            if k.total_stock < v: less_stock.append([k.name, v-k.available_stock])
+        print("\n\nStocks__________________",whstock, less_stock)
+        if less_stock:
+            return less_stock, {}
     else:
         avl_trucks = Truck.objects.filter()
-        avl_orders = Order.objects.filter(id__in=olist)
+        avl_orders = Order.objects.filter(id__in=olist, order_status='pending')
     if (not avl_trucks) or (not avl_orders) :
-        return "no_trucks"
+        return "no_trucks", {}
     for i in avl_trucks:
         temp = {}
         # temp["start_location"] = {"latitude": float(hq.lat),"longitude": float(hq.long)}
@@ -152,9 +161,10 @@ def getroute(request):
 
     dict_output,reqjson = optimizeroute(request.POST.getlist('orderslist'))
 
-    if dict_output == "no_trucks":
-        messages.success(request, 'No available trucks at the moment.')
-        return redirect('upload_orders')
+    if not reqjson:
+        if dict_output == "no_trucks":
+            messages.success(request, 'No available trucks at the moment.')
+            return redirect('upload_orders')
 
     print("\n\nresponse or routes____", dict_output['routes'])
 

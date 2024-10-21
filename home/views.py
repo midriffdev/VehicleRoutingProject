@@ -1308,13 +1308,13 @@ def single_order(request,pk):
                     order.assigned_truck.save()
                     order.save()
 
-            if order.warehouse:
-                try:
-                    order.warehouse.total_stock -= order.quantity
-                    order.warehouse.left_stock += order.quantity
-                    order.warehouse.save()
-                except:
-                    pass
+            # if order.warehouse:
+            #     try:
+            #         order.warehouse.total_stock -= order.quantity
+            #         order.warehouse.left_stock += order.quantity
+            #         order.warehouse.save()
+            #     except:
+            #         pass
 
                    
 
@@ -1347,6 +1347,7 @@ from django.db.models.functions import TruncDate
 from datetime import datetime
 from collections import defaultdict
 from ai_vehicle.views import optimizeroute
+from geopy.distance import geodesic
 @csrf_exempt
 def upload_orders(request):
     acc_data = {}
@@ -1379,6 +1380,7 @@ def upload_orders(request):
             for row in csv_reader:
                 print(row, "row....................")  
                 # mydistance = get_distance(row[2], row[6], row[7])
+                # mydistance = row[16]
                 order = Order.objects.create(
                     cname                           =   row[0],
                     email                           =   row[1],
@@ -1394,25 +1396,25 @@ def upload_orders(request):
                     payment_date                    =   datetime.fromisoformat(row[10]),
                     warehouse                       =   HeadQuarter.objects.get(product_name=row[2]),
                     assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=random.choice(truckids)),
-
                     late_payment_status             =   bool(int(row[11])),
                     # warehouse                       =   HeadQuarter.objects.get(id=int(row[12])+3),
                     payment_status                  =   row[13],
                     # assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=4),
-
                     order_status                    =   row[14],
-                    # route_distance                  =   mydistance, # row[16],
                     # delivery_time                   =   datetime.fromisoformat(row[17]),
-                    # fuel_consumption                =   mydistance/random.randint(7, 13), # row[18],
                     on_time_delivery                =   bool(int(row[19])),
-                    # fuel_savings                    =   mydistance*(random.randint(1,7)/100), # row[20],
-                    # vehicle_maintenance_savings     =   mydistance*(random.randint(1,10)/100), # row[21]
+
+                    # route_distance                  =   mydistance, # row[16],
+                    # fuel_consumption                =   float(mydistance/random.randint(7, 13)), # row[18],
+                    # fuel_savings                    =   float(mydistance*(random.randint(1,7)/100)), # row[20],
+                    # vehicle_maintenance_savings     =   float(mydistance*(random.randint(1,10)/100)), # row[21]
+                    # co2_emission_reduction          =   float(mydistance*(random.randint(50, 200)/1000)), # row[27],
+                    
                     # hours_worked                    =   row[22],
                     idle_time                       =   changedurations(row[23]),
                     route_adherence                 =   bool(int(row[24])),
                     time_saved                      =   changedurations(row[25]),
                     # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
-                    # co2_emission_reduction          =   mydistance*(random.randint(50, 200)/1000), # row[27],
                     green_route                     =   row[28],
                     adjusted_stops                  =   row[29],
                     rerouted                        =   bool(int(row[30])),
@@ -1430,62 +1432,62 @@ def upload_orders(request):
                 i.save()
 
             
-            
+        
+            # reoptimization for all old data__________________________________________________
+            orders = (Order.objects
+            .filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today())
+            .annotate(day=TruncDate('created_at'))  # Truncate to date
+            .values('id', 'day'))  # Fetch the id and day
 
+            # Group orders by day using a defaultdict
+            grouped_orders = defaultdict(list)
+            for order in orders:
+                grouped_orders[order['day']].append(order['id'])
 
+            # Format the result as a list of dictionaries
+            result = [order_ids for day, order_ids in grouped_orders.items()]
+            # print("orders_by_day_________", result)
 
+            for i in range(0, len(result)):
+                olist = result[i]
+                dict_output = optimizeroute(olist, realtime=False)[0]
+                print(dict_output, f'{i}/{len(result)}', "__ routessss________________")
+                print(f'{i}/{len(result)}', "__ routessss________________")
 
+                # obtained_orders = []
+                for data in dict_output['routes']:
+                    if data.get('metrics', []):
+                        temp = {
+                        'truck'     : Truck.objects.get(truck_number=data['vehicleLabel'].split('--')[1]),
+                        'order'     : [],
+                        'distance'  : float(  int(int(data['metrics']['travelDistanceMeters'])/1000)  /  int(data['metrics']['performedShipmentCount'])  ),
+                        # 'seconds'   : int(data['metrics']['totalDuration'].replace('s',''))/int(data['metrics']['performedShipmentCount']),
+                        # 'cost'      : int(data['metrics']['routeTotalCost'])/int(data['metrics']['performedShipmentCount'])
+                        }
+                        for i in data.get('visits', []):
+                            if not 'isPickup' in i:
+                                # print("temp['distance']________", temp['distance'])
+                                # print(round(temp['distance']/random.randint(7, 13), 2))
+                                # print(round(temp['distance']*(random.randint(1,7)/100), 2))
+                                # print(round(temp['distance']*(random.randint(1,10)/100),2))
+                                # print(round(temp['distance']*(random.randint(50, 200)/1000), 2))
+                                Order.objects.filter(id=i['shipmentLabel'].split('__')[1]).update( route_distance=temp['distance'], assigned_truck = temp['truck'],
+                                # fuel_consumption                =   round(temp['distance']/float(random.randint(7, 13)), 2),
+                                fuel_savings                    =   round(temp['distance']*(random.randint(1,7)/100), 2),
+                                vehicle_maintenance_savings     =   round(temp['distance']*(random.randint(1,10)/100),2),
+                                co2_emission_reduction          =   round(temp['distance']*(random.randint(50, 200)/1000), 2),
+                                # delivery_time = temp['seconds'],
+                                # cost = temp['cost'],
+                                )
+                                # temp['order'].append( Order.objects.get(id=i['shipmentLabel'].split('__')[1]) )
+                        # obtained_orders.extend([i['ord'].id for i in temp['order']])
+                # pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
+                # pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
 
-
-
-                # orders = (Order.objects
-                # .filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today())
-                # .annotate(day=TruncDate('created_at'))  # Truncate to date
-                # .values('id', 'day'))  # Fetch the id and day
-
-                # # Group orders by day using a defaultdict
-                # grouped_orders = defaultdict(list)
-                # for order in orders:
-                #     grouped_orders[order['day']].append(order['id'])
-
-                # # Format the result as a list of dictionaries
-                # result = [order_ids for day, order_ids in grouped_orders.items()]
-                # # print("orders_by_day_________", result)
-
-                # for i in range(0, len(result)):
-                #     olist = result[i]
-                #     dict_output = optimizeroute(olist, realtime=False)
-                #     print(f'{i}/{len(result)}', "__ routessss________________", dict_output)
-
-                #     # obtained_orders = []
-                #     for data in dict_output['routes']:
-                #         if data.get('metrics', []):
-                #             temp = {
-                #             'truck'     : Truck.objects.get(truck_number=data['vehicleLabel'].split('--')[1]),
-                #             'order'     : [],
-                #             'distance'  : float(int(int(data['metrics']['travelDistanceMeters'])/int(data['metrics']['performedShipmentCount']))),
-                #             # 'seconds'   : int(data['metrics']['totalDuration'].replace('s',''))/int(data['metrics']['performedShipmentCount']),
-                #             # 'cost'      : int(data['metrics']['routeTotalCost'])/int(data['metrics']['performedShipmentCount'])
-                #             }
-                #             for i in data.get('visits', []):
-                #                 if not 'isPickup' in i:
-                #                     print("temp['distance']________", temp['distance'])
-                #                     print(temp['distance']/random.randint(7, 13))
-                #                     print(temp['distance']*(random.randint(1,7)/100))
-                #                     print(temp['distance']*(random.randint(1,10)/100))
-                #                     print(temp['distance']*(random.randint(50, 200)/1000))
-                #                     Order.objects.filter(id=i['shipmentLabel'].split('__')[1]).update( route_distance=temp['distance'], assigned_truck = temp['truck'],
-                #                     fuel_consumption                =   round(temp['distance']/random.randint(7, 13), 2),
-                #                     fuel_savings                    =   round(temp['distance']*(random.randint(1,7)/100), 2),
-                #                     vehicle_maintenance_savings     =   round(temp['distance']*(random.randint(1,10)/100),2),
-                #                     co2_emission_reduction          =   round(temp['distance']*(random.randint(50, 200)/1000), 2),
-                #                     # delivery_time = temp['seconds'],
-                #                     # cost = temp['cost'],
-                #                     )
-                #                     # temp['order'].append( Order.objects.get(id=i['shipmentLabel'].split('__')[1]) )
-                #             # obtained_orders.extend([i['ord'].id for i in temp['order']])
-                #     # pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
-                #     # pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
+            for i in Order.objects.filter():
+                i.fuel_consumption = round(float(i.route_distance)/float(random.randint(7, 13)), 2)
+                i.save()
+            # _____________________reoptimization for old data ends here____________________________________
 
 
 
