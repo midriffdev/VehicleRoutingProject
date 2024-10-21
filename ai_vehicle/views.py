@@ -84,7 +84,7 @@ def fetchorders(request):
     return JsonResponse({'orders':orders, 'status':'SENT'}, status = 200)
 
 def optimizeroute(olist, realtime=True):
-    print("olist, realtime____________", olist, realtime)
+    # print("olist, realtime____________", olist, realtime)
     today = datetime.datetime.now()
     reqjson = {"shipments": [], "vehicles": [], 
     "global_start_time": datetime.datetime.combine(today, datetime.time(00,00,00)), 
@@ -107,7 +107,7 @@ def optimizeroute(olist, realtime=True):
     else:
         avl_trucks = Truck.objects.filter()
         avl_orders = Order.objects.filter(id__in=olist).exclude(order_status='pending')
-    print("alv______________", avl_orders, avl_trucks)
+    # print("alv______________", avl_orders, avl_trucks)
     if (not avl_trucks) : return [], {}, "no_trucks"
     if (not avl_orders) : return [], {}, "no_orders"
     for i in avl_trucks:
@@ -128,7 +128,7 @@ def optimizeroute(olist, realtime=True):
         temp['pickups'] = [{"arrival_location": {"latitude": float(i.warehouse.lat),"longitude": float(i.warehouse.long)}}]
         temp['deliveries'] = [{
                 "arrival_location": {"latitude": float(i.lat),"longitude": float(i.long)} if i.lat else get_lat_long(i.destination),
-                # "duration": datetime.timedelta(seconds=600), # when the driver arrives, he will spend 10 minutes making the delivery.
+                "duration": datetime.timedelta(seconds=900), # when the driver arrives, he will spend 10 minutes making the delivery.
                 "time_windows": [{ # to make sure your driver only arrives there during business hours
                     "start_time": datetime.datetime.combine(today, i.opening_time),
                     "end_time": datetime.datetime.combine(today, i.closing_time)
@@ -160,7 +160,7 @@ def getroute(request):
         return redirect('upload_orders')
 
     # REQUEST.POST
-    print("\n\nrequest.POST____________", request.POST, request.POST.getlist('orderslist'))    
+    print("\n\nrequest.POST____________", request.POST)    
     hq = HeadQuarter.objects.get(primary=True)
 
     dict_output, reqjson, status = optimizeroute(request.POST.getlist('orderslist'))
@@ -195,7 +195,7 @@ def getroute(request):
             #     # temp['order'].append(0)
             #     temp['type']  = 'pickup'
             # else: 
-            temp['order'].append( {"ord": Order.objects.get(id=i['shipmentLabel'].split('__')[1]), "is_pickup":'isPickup' in i} )
+            temp['order'].append( {"ord": Order.objects.get(id=i['shipmentLabel'].split('__')[1]), "is_pickup":'isPickup' in i, "etime":datetime.datetime.strptime(i['startTime'], "%Y-%m-%dT%H:%M:%SZ")} )
             
         obtained_orders.extend([i['ord'].id for i in temp['order']])
         if data.get('visits', []):
@@ -207,7 +207,7 @@ def getroute(request):
     pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
 
 
-    print("\n\n____making json downloadable__request.json>> ", reqjson)
+    print("\n\n____making json downloadable__request.json ")
     newreqjson = reqjson
     newreqjson['global_start_time'] = newreqjson['global_start_time'].isoformat()
     newreqjson['global_end_time'] = newreqjson['global_end_time'].isoformat()
@@ -216,7 +216,7 @@ def getroute(request):
         if 'end_time_windows' in i: i['end_time_windows'][0]['end_time']=i['end_time_windows'][0]['end_time'].isoformat()
     for i in newreqjson['shipments']:
         if 'deliveries' in i:
-            # i['deliveries'][0]['duration'] = (datetime.datetime(1970, 1, 1) + i['deliveries'][0]['duration']).isoformat()
+            i['deliveries'][0]['duration'] = (datetime.datetime(1970, 1, 1) + i['deliveries'][0]['duration']).isoformat()
             if 'start_time' in i['deliveries'][0]['time_windows'][0]:
                 i['deliveries'][0]['time_windows'][0]['start_time'] = i['deliveries'][0]['time_windows'][0]['start_time'].isoformat()
             i['deliveries'][0]['time_windows'][0]['end_time'] = i['deliveries'][0]['time_windows'][0]['end_time'].isoformat()
