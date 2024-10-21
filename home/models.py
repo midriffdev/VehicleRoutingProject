@@ -177,7 +177,7 @@ class Order(models.Model):
     closing_time                        = models.TimeField(null=True, blank=True)
 
     def __str__(self):
-        return f'#{self.id} {self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}{" | assigned to " + self.assigned_truck.truck_name if self.assigned_truck else ""}'
+        return f'#{self.id} {self.product_name} {self.payment_status} (Quantity: {self.quantity}) - {self.order_status}{" | assigned to " + self.assigned_truck.truck_name if self.assigned_truck else ""} {" | assigned to " + self.warehouse.name if self.warehouse.name else ""}'
 
 
 
