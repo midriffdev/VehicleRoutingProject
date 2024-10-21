@@ -738,49 +738,32 @@ def post_reports(request):
                     Q(on_time_delivery=False) & (Q(order_status='delivered') | Q(order_status='completed'))
                 ).count()
 
-                # truck_loads = {}
+                
+                truck_loads = {}
+                # Assume order_list is populated as before
+                for order in order_list:
+                    if order.assigned_truck:
+                        truck_id = order.assigned_truck.id
+                        truck_name = order.assigned_truck.truck_name
+                        order_quantity = order.quantity
+                        truck_capacity = order.assigned_truck.capacity
+                        
+                        if truck_id not in truck_loads:
+                            truck_loads[truck_id] = {
+                                'truck_name': truck_name,  # Store the truck name for later use
+                                'total_load': 0,
+                                'capacity': truck_capacity
+                            }
+                        
+                        truck_loads[truck_id]['total_load'] += order_quantity
 
-                # # Calculate the total load for each truck
-                # for order in order_list:
-                #     truck = order.assigned_truck
-                #     if truck not in truck_loads:
-                #         truck_loads[truck] = 0
-                #     truck_loads[truck] += order.quantity
-
-                # # Calculate and print the load efficiency for each truck
-                # for truck, total_load in truck_loads.items():
-                #     if truck:
-                #         load_efficiency = (total_load / truck.capacity) * 100
-                #         print(f"Load Efficiency of Truck {truck.truck_name}: {load_efficiency:.2f}%")
-                #         truck.load_efficiency=load_efficiency
-
-
-                # Initialize a dictionary to keep track of total loads for each truck
-                # truck_loads = {}
-
-                # # Process each order
-                # for order in order_list:
-                #     truck_name = order.assigned_truck.truck_name
-                #     order_quantity = order.quantity
-                #     truck_capacity = order.assigned_truck.capacity
+                # Calculate load efficiency
+                for truck_id, data in truck_loads.items():
+                    total_load = data['total_load']
+                    capacity = data['capacity']
                     
-                #     # Initialize truck load in dictionary if not already present
-                #     if truck_name not in truck_loads:
-                #         truck_loads[truck_name] = {
-                #             'total_load': 0,
-                #             'capacity': truck_capacity  # Get the unique capacity for this truck
-                #         }
-                    
-                #     # Accumulate the order quantity
-                #     truck_loads[truck_name]['total_load'] += order_quantity
-
-                # # Calculate and print load efficiency for each truck
-                # for truck_name, data in truck_loads.items():
-                #     total_load = data['total_load']
-                #     capacity = data['capacity']
-                    
-                #     load_efficiency = (total_load / capacity) * 100 if capacity else 0
-                #     print(f"Truck {truck_name}: Total Load = {total_load} kg, Capacity = {capacity} kg, Load Efficiency = {load_efficiency:.2f}%")
+                    load_efficiency = (total_load / capacity) * 100 if capacity else 0
+                    truck_loads[truck_id]['load_efficiency'] = load_efficiency
 
 
                 warehouses = HeadQuarter.objects.all()
@@ -852,6 +835,7 @@ def post_reports(request):
 
                            
                 context={
+                    'truck_loads':truck_loads,
                     'all_co2_emission_reduction':all_co2_emission_reduction,
                     'all_fuel_consumption':all_fuel_consumption,
                     'all_fuel_savings':all_fuel_savings,

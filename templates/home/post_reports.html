@@ -429,11 +429,25 @@
                         </div>
 
 
-                        {% comment %} <div class="col-md-6">
+                        <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body loaderDiv">
                                     <div class="d-flex flex-wrap">
-                                        <h4 class="card-title mb-4">Truck Efficiency </h4>
+
+                                        {% comment %} {% for truck_id, data in truck_loads.items %}
+                                        <div>
+                                            <h3>Truck {{ data.truck_name }}</h3>
+                                            <p>Total Load: {{ data.total_load }} kg</p>
+                                            <p>Capacity: {{ data.capacity }} kg</p>
+                                            <p>Load Efficiency: {{ data.load_efficiency|floatformat:2 }}%</p>
+                                        </div>
+                                       {% endfor %} {% endcomment %}
+
+
+
+                                        <h4 class="card-title mb-4">Truck Efficiency  </h4>
+
+                                      
     
                                         <div class="ms-auto">
                                         </div>
@@ -441,7 +455,7 @@
                                     <div id="bar_chartEffe" class="apex-charts" dir="ltr"></div>
                                 </div>
                             </div>
-                        </div>  {% endcomment %}
+                        </div> 
 
 
                     </div>
@@ -461,11 +475,14 @@
             <script>
 
                 // Dummy data for vehicle capacity and load delivered
-                var vehicleCapacity = [{%for i in trucks%}'{{i.total_deliveries}}',{%endfor%}]; // Vehicle capacities in kg
-                var loadDelivered = [{%for i in trucks%}'{{i.total_deliveries}}',{%endfor%}]; // Actual loads delivered in kg
+                var vehicleCapacity = [{% for truck_id, data in truck_loads.items %}'{{ data.capacity }}',{%endfor%}]; // Vehicle capacities in kg
+                var loadDelivered = [{% for truck_id, data in truck_loads.items %}'{{ data.total_load }}',{%endfor%}]; // Actual loads delivered in kg
 
                 // Calculate Load Efficiency as a percentage
-                var loadEfficiency = loadDelivered.map((delivered, index) => ((delivered / vehicleCapacity[index]) * 100).toFixed(2)); 
+                {% comment %} var loadEfficiency = loadDelivered.map((delivered, index) => ((delivered / vehicleCapacity[index]) * 100).toFixed(2));  {% endcomment %}
+                var loadEfficiency = [{% for truck_id, data in truck_loads.items %}'{{ data.load_efficiency }}',{%endfor%}];
+
+                
 
                 var options = {
                     chart: {
@@ -499,7 +516,8 @@
                     grid: { borderColor: "#e7e7e7" },
                     xaxis: {
                         categories: [
-                        {%for i in trucks%}'{{i.truck_name}}',{%endfor%}
+
+                        {% for truck_id, data in truck_loads.items %}'{{ data.truck_name }}',{%endfor%}
                         ],
                         title: {
                             text: 'Trucks'
