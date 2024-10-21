@@ -291,14 +291,12 @@
                                 <div class="modal fade" id="reportModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel{{ i.id }}" aria-hidden="true"> 
                                     <div class="modal-dialog modal-dialog-centered" role="document"> <!-- Added modal-dialog-centered for vertical centering -->
                                         <div class="modal-content">
-                                            <div class="modal-header bg-primary text-white"> <!-- Improved design for header -->
+                                            <div class="modal-header">
                                                 <h5 class="modal-title" id="reportModalLabel{{ i.id }}">Marked Order Status</h5>
-                                                <button type="button" class="close text-white" data-bs-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
+                                            <form method="post" action="{% url 'single_order' i.id %}">
                                             <div class="modal-body p-4"> <!-- Added padding for a cleaner look -->
-                                                <form method="post" action="{% url 'single_order' i.id %}">
                                                  
                                                     {% csrf_token %}
                                                     <input type="hidden" name="order_id" value="{{ i.id }}">
@@ -306,34 +304,55 @@
 
                                                     <!-- Radio Buttons for Time Status -->
                                                     <div class="form-group">
-                                                        <label class="font-weight-bold">Time Status:</label>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="time_status" id="withinTime{{ i.id }}" value="true" required>
-                                                            <label class="form-check-label" for="withinTime{{ i.id }}">
-                                                                Within Time
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="time_status" id="outOfTime{{ i.id }}" value="false" required>
-                                                            <label class="form-check-label" for="outOfTime{{ i.id }}">
-                                                                Out Of Time
-                                                            </label>
+                                                        <label class="font-weight-bold">Delivery Status:</label>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label class="form-check-label position-relative w-100" for="withinTime{{ i.id }}">
+                                                                    <input class="form-check-input radioClick" type="radio" name="time_status" id="withinTime{{ i.id }}" value="true" required>
+                                                                    <div class="card bg-info bg-soft mb-0">
+                                                                        <div class="card-body">
+                                                                            <div class="form-check mb-0">
+                                                                                Within Time
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label class="form-check-label  position-relative w-100" for="outOfTime{{ i.id }}">
+                                                                <input class="form-check-input radioClick" type="radio" name="time_status" id="outOfTime{{ i.id }}" value="false" required>
+                                                                <div class="card bg-info bg-soft mb-0">
+                                                                    <div class="card-body">
+                                                                        <div class="form-check mb-0">
+                                                                            
+                                                                            
+                                                                                
+                                                                                        Out Of Time
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </label>
+                                                                
+                                                            </div>
                                                         </div>
                                                     </div>
 
 
+                                                   
+
+
+                                                    </div>
                                                     {% if i.order_status == 'pending' %}
-                                                       
-                                                            <input type="hidden" name="order_status" value="delivered" />
-                                                            <button type="submit" class="btn btn-success btn-sm">Submit</button>
-                                                        </form>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="order_status" value="delivered" />
+                                                            <button type="submit" class="btn btn-success">Submit</button>
+                                                    </div>
+                                                            
+                                                        
                                                         {% else%}
                                                         {{i.order_status}}
                                                         {% endif %}
-
-
                                                 </form>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

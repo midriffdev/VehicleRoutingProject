@@ -262,3 +262,12 @@
     border-radius: 4px;
     font-weight: 500;
 }
+.radioClick {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    margin-top: 0;
+    width: 1.2em;
+    height: 1.2em;
+    transform: translateY(-50%);
+}
