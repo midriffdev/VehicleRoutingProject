@@ -705,7 +705,6 @@ def post_reports(request):
         strat_date = request.POST.get('strat_date')
         end_date = request.POST.get('end_date')
 
-        
         try:
             trucks_list=[]
             if wids == 'All_Warehouse':
