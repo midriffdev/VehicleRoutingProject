@@ -1089,6 +1089,18 @@ def post_reports(request):
     else:
 
         warehouse = HeadQuarter.objects.all()
+        for w in warehouse:
+            w.deliveredStck = w.total_stock-w.left_stock
+
+            print(w.deliveredStck,"oooooooo")
+
+            
+                
+
+        
+
+
+
         trucks = Truck.objects.all().order_by('-id')
         for i in trucks:
             i.total_deliveries=Order.objects.filter(assigned_truck=i).count()
@@ -1141,6 +1153,8 @@ def post_reports(request):
         all_fuel_consumption = sum(order.fuel_consumption for order in order_list if order.fuel_consumption is not None)
         all_fuel_savings = sum(order.fuel_savings for order in order_list if order.fuel_savings is not None)
 
+        
+
         context = {
             'warehouses': warehouse,
             'warehouse_total_order': warehouse_total_order,
@@ -1155,6 +1169,7 @@ def post_reports(request):
             'all_co2_emission_reduction':all_co2_emission_reduction,
             'all_fuel_savings':all_fuel_savings,
             'all_fuel_consumption':all_fuel_consumption,
+
             'trucks':trucks,
         }
         return render(request, 'home/post_reports.html', context)

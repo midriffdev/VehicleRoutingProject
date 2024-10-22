@@ -168,7 +168,7 @@
                                                     <th>Warehouse</th>
                                                     <th>Product Name</th>
                                                     <th class="ps-2">Total Stock</th>
-                                                    <!-- <th class="ps-2">Dispatched Stock</th> -->
+                                                    <th class="ps-2">Dispatched Stock</th>
                                                     <th class="ps-2">Remaining Stock</th>
                                                     <th class="ps-2 text-center">Action</th>
                                                  
@@ -182,6 +182,7 @@
                                                     <td>{{warehouse.product_name}}</td>
                                                     <td>{{warehouse.total_stock}}</td>
                                                     <td>{{warehouse.left_stock}}</td>
+                                                    <td>{{warehouse.deliveredStck}}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
                                                             <a href="{% url 'headquarter' %}" class="btn btn-sm btn-secondary"><i class="bx bx-pencil me-1"></i> Raise Stock </a></td>
@@ -222,37 +223,66 @@
                                 </div>
                             </div> 
                         </div> {% endcomment %}
-                            <div class="col-md-4">
-                                <div class="card shadow-lg border border-secondary">
-                                    <div class="card-body py-4 loaderDiv  ">
-                                        <label class="form-label text-dark-primary mb-4">Sustainability and Emissions Metrics (Kg)</label>
-                                        <div id="gauge-chart" class="e-charts" ></div>
+
+                        <div class="col-8">
+                            
+                                <div class="card shadow-lg">
+                                    <div class="card-body loaderDiv ">
+                                        <div class="d-flex flex-wrap">
+                                            <h4 class="card-title text-dark-primary mb-4">Truck Delivery Efficiency</h4>
+        
+                                            <div class="ms-auto">
+    
+                                            </div>
+                                        </div>
+                                        <div id="bar_chart" class="apex-charts" dir="ltr"></div>
+    
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card shadow-lg border border-secondary ">
-                                    <div class="card-body py-4 loaderDiv ">
-                                        <label class="form-label text-dark-primary mb-4">Fuel Consumption(litre)</label>
-                                        <div id="gauge-chart1" class="e-charts"></div>
+
+                                <div class="card shadow-lg">
+                                    <div class="card-body loaderDiv ">
+                                        <div class="d-flex flex-wrap">
+                                            <h4 class="card-title text-dark-primary mb-4">Route Optimization Metrics</h4>
+        
+                                            <div class="ms-auto">
+                                            </div>
+                                        </div>
+                                        <div id="column_chart" class="apex-charts" dir="ltr"></div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card shadow-lg border border-secondary">
-                                    <div class="card-body py-4 loaderDiv ">
-                                        <label class="form-label text-dark-primary mb-4">Fuel Savings(litre)</label>
-                                        <div id="gauge-chart2" class="e-charts"></div>
+
+                                <div class="card shadow-lg">
+                                    <div class="card-body loaderDiv">
+                                        <div class="d-flex flex-wrap">
+    
+                                            {% comment %} {% for truck_id, data in truck_loads.items %}
+                                            <div>
+                                                <h3>Truck {{ data.truck_name }}</h3>
+                                                <p>Total Load: {{ data.total_load }} kg</p>
+                                                <p>Capacity: {{ data.capacity }} kg</p>
+                                                <p>Load Efficiency: {{ data.load_efficiency|floatformat:2 }}%</p>
+                                            </div>
+                                           {% endfor %} {% endcomment %}
+    
+    
+    
+                                            <h4 class="card-title text-dark-primary mb-4">Truck Efficiency  </h4>
+    
+                                          
+        
+                                            <div class="ms-auto">
+                                            </div>
+                                        </div>
+                                        <div id="bar_chartEffe" class="apex-charts" dir="ltr"></div>
                                     </div>
                                 </div>
-                            </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="card shadow-lg">
+                        </div>
+                        <div class="col-4">
+                            <div class="card shadow-lg border border-secondary">
                                 <div class="card-body loaderDiv ">
                                     <div class="d-flex flex-wrap">
-                                        <h4 class="card-title text-dark-primary mb-4">One Time Shipment</h4>
+                                        <h4 class="card-title text-dark-primary mb-4 text-center d-block w-100">One Time Shipment</h4>
                                       
                                        
     
@@ -298,67 +328,25 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div class="card shadow-lg">
-                                <div class="card-body loaderDiv ">
-                                    <div class="d-flex flex-wrap">
-                                        <h4 class="card-title text-dark-primary mb-4">Truck Delivery Efficiency</h4>
-    
-                                        <div class="ms-auto">
-
-                                        </div>
-                                    </div>
-                                    <div id="bar_chart" class="apex-charts" dir="ltr"></div>
-
+                            <div class="card shadow-lg border border-secondary">
+                                <div class="card-body py-4 loaderDiv  ">
+                                    <label class="form-label text-dark-primary mb-4 d-block text-center fw-bold">Sustainability and Emissions Metrics (Kg)</label>
+                                    <div id="gauge-chart" class="e-charts mb-minus80" ></div>
+                                </div>
+                            </div>
+                            <div class="card shadow-lg border border-secondary ">
+                                <div class="card-body py-4 loaderDiv ">
+                                    <label class="form-label text-dark-primary mb-4 d-block text-center fw-bold">Fuel Consumption(litre)</label>
+                                    <div id="gauge-chart1" class="e-charts mb-minus80"></div>
+                                </div>
+                            </div>
+                            <div class="card shadow-lg border border-secondary">
+                                <div class="card-body py-4 loaderDiv ">
+                                    <label class="form-label text-dark-primary mb-4 d-block text-center fw-bold">Fuel Savings(litre)</label>
+                                    <div id="gauge-chart2" class="e-charts mb-minus80"></div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="col-md-12">
-                            <div class="card shadow-lg">
-                                <div class="card-body loaderDiv ">
-                                    <div class="d-flex flex-wrap">
-                                        <h4 class="card-title text-dark-primary mb-4">Route Optimization Metrics</h4>
-    
-                                        <div class="ms-auto">
-                                        </div>
-                                    </div>
-                                    <div id="column_chart" class="apex-charts" dir="ltr"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        
-                        <div class="col-md-12">
-                            <div class="card shadow-lg">
-                                <div class="card-body loaderDiv">
-                                    <div class="d-flex flex-wrap">
-
-                                        {% comment %} {% for truck_id, data in truck_loads.items %}
-                                        <div>
-                                            <h3>Truck {{ data.truck_name }}</h3>
-                                            <p>Total Load: {{ data.total_load }} kg</p>
-                                            <p>Capacity: {{ data.capacity }} kg</p>
-                                            <p>Load Efficiency: {{ data.load_efficiency|floatformat:2 }}%</p>
-                                        </div>
-                                       {% endfor %} {% endcomment %}
-
-
-
-                                        <h4 class="card-title text-dark-primary mb-4">Truck Efficiency  </h4>
-
-                                      
-    
-                                        <div class="ms-auto">
-                                        </div>
-                                    </div>
-                                    <div id="bar_chartEffe" class="apex-charts" dir="ltr"></div>
-                                </div>
-                            </div>
-                        </div> 
-
-
                     </div>
                     <div class="row">
                         <div class="col-md-12">
@@ -476,6 +464,23 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card shadow-lg">
+                                <div class="card-body loaderDiv ">
+                                    <div class="d-flex flex-wrap">
+                                        <h4 class="card-title text-dark-primary mb-4">Warehouse Operations Timeline</h4>
+    
+                                        <div class="ms-auto">
+                                        </div>
+                                    </div>
+                                    <div id="chartdiv"></div>	
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                     
 
                     
@@ -490,7 +495,155 @@
                 <script src="{% static 'libs/apexcharts/apexcharts.min.js' %}"></script>
 
 
+                <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+                <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+                <script src="https://www.amcharts.com/lib/3/gantt.js"></script>
+                <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+                <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+                <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+
+
             <script>
+
+
+AmCharts.useUTC = true;
+var chart = AmCharts.makeChart( "chartdiv", {
+    "type": "gantt",
+    "theme": "light",
+    "marginRight": 70,
+    "period": "hh",
+    "dataDateFormat":"YYYY-MM-DD",
+    "balloonDateFormat": "JJ:NN",
+    "columnWidth": 0.5,
+    "valueAxis": {
+        "type": "date",
+        "minimum": 7,
+        "maximum": 31
+    },
+    "brightnessStep": 10,
+    "graph": {
+        "fillAlphas": 1,
+        "balloonText": "<b>[[task]]</b>: [[open]] [[value]]"
+    },
+    "rotate": true,
+    "categoryField": "category",
+    "segmentsField": "segments",
+    "colorField": "color",
+    "startDate": "2015-01-01",
+    "startField": "start",
+    "endField": "end",
+    "durationField": "duration",
+    "dataProvider": [ 
+        {
+            "category": "Warehouse A",
+            "segments": [ 
+                {
+                    "start": 7,
+                    "duration": 3,
+                    "color": "#46615e",
+                    "task": "Inventory Check"
+                }, 
+                {
+                    "duration": 2,
+                    "color": "#727d6f",
+                    "task": "Packing Orders"
+                }
+            ]
+        }, 
+        {
+            "category": "Warehouse B",
+            "segments": [ 
+                {
+                    "start": 9,
+                    "duration": 4,
+                    "color": "#8dc49f",
+                    "task": "Loading Trucks"
+                }, 
+                {
+                    "duration": 3,
+                    "color": "#46615e",
+                    "task": "Shipping"
+                }
+            ]
+        },
+        {
+            "category": "Driver Team 1",
+            "segments": [ 
+                {
+                    "start": 12,
+                    "duration": 5,
+                    "color": "#FFE4C4",
+                    "task": "On-road Delivery"
+                }
+            ]
+        },
+        {
+            "category": "Driver Team 2",
+            "segments": [ 
+                {
+                    "start": 10,
+                    "duration": 3,
+                    "color": "#727d6f",
+                    "task": "On-road Delivery"
+                },
+                {
+                    "duration": 2,
+                    "color": "#8dc49f",
+                    "task": "Unloading at Destination"
+                }
+            ]
+        },
+        {
+            "category": "Warehouse C",
+            "segments": [ 
+                {
+                    "start": 8,
+                    "duration": 4,
+                    "color": "#46615e",
+                    "task": "Restocking Shelves"
+                }
+            ]
+        }
+    ],
+    "valueScrollbar": {
+        "autoGridCount":true
+    },
+    "chartCursor": {
+        "cursorColor":"#55bb76",
+        "valueBalloonsEnabled": false,
+        "cursorAlpha": 0,
+        "valueLineAlpha":0.5,
+        "valueLineBalloonEnabled": true,
+        "valueLineEnabled": true,
+        "zoomable":false,
+        "valueZoomable":true
+    },
+    "export": {
+        "enabled": false
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 // Dummy data for vehicle capacity and load delivered
                 var vehicleCapacity = [{% for truck_id, data in truck_loads.items %}'{{ data.capacity }}',{%endfor%}]; // Vehicle capacities in kg
@@ -613,7 +766,7 @@
             },
            
         ],
-        colors: ["#f8c471","#18603e", "#f46a6a"],  // Two colors: one for all orders, one for delivered
+        colors: ["#f8c471","#ea8a2a", "#f46a6a"],  // Two colors: one for all orders, one for delivered
         grid: { borderColor: "#18603e" },
         xaxis: {
             categories: [
@@ -690,100 +843,108 @@
     
 
 
-        // Function to create a gauge chart
-       function createGaugeChart(elementId, title, value) {
-        var dom = document.getElementById(elementId);
-        dom.style.height = '290px'; // Set height of the chart
+       // Function to create a gauge chart
+        function createGaugeChart(elementId, title, value, colorRanges) {
+            var dom = document.getElementById(elementId);
+            dom.style.height = '350px'; // Set height of the chart
 
-        var myChart = echarts.init(dom);
-        var option = {
-            tooltip: {
-                formatter: "{a} <br/>{b} : {c}"
-            },
-            toolbox: {
-                feature: false,
-            },
-            series: [{
-                name: title,
-                startAngle: 180,
-                endAngle: 0,
-                radius: '85%',
-                type: "gauge",
-                detail: {
-                    formatter: "{value}",
-                    offsetCenter: [0, '30%'], // Move detail text down
-                    textStyle: {
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        color: '#000'
-                    }
+            var myChart = echarts.init(dom);
+            var option = {
+                tooltip: {
+                    formatter: "{a} <br/>{b} : {c}"
                 },
-                axisLine: {
-                    lineStyle: {
-                        // Green for 0-90%, Yellow for 90-95%, Red for 95-100%
-                        color: [[0.9, "#34c38f"], [0.95, "#f8c471"], [1, "#f46a6a"]],
-                        width: 40
-                    }
+                toolbox: {
+                    feature: false,
                 },
-                splitLine: {
-                    show: true,
-                    length: 15,
-                    lineStyle: {
-                        color: '#000',
-                        width: 2
-                    }
-                },
-                axisTick: {
-                    show: true,
-                    splitNumber: 5,
-                    length: 8,
-                    lineStyle: {
-                        color: '#000'
-                    }
-                },
-                axisLabel: {
-                    show: true,
-                    formatter: function (value) {
-                        if (value % 20 === 0) {
-                            return value;
+                series: [{
+                    name: title,
+                    startAngle: 180,
+                    endAngle: 0,
+                    radius: '85%',
+                    type: "gauge",
+                    detail: {
+                        formatter: "{value}",
+                        offsetCenter: [0, '30%'], // Move detail text down
+                        textStyle: {
+                            fontSize: 20,
+                            fontWeight: 'bold',
+                            color: '#000'
                         }
-                        return '';
                     },
-                    textStyle: {
-                        color: '#000',
-                        fontSize: 12
-                    }
-                },
-                pointer: {
-                    itemStyle: {
-                        color: "#556ee6"
-                    }
-                },
-                title: {
-                    show: true,
-                    offsetCenter: [0, '60%'], 
-                    textStyle: {
-                        fontSize: 10,
-                        fontWeight: 'bold',
-                        color: '#000'
-                    }
-                },
-                data: [{ value: value, name: "" }]
-            }]
-        };
+                    axisLine: {
+                        lineStyle: {
+                            color: colorRanges, // Apply different colors
+                            width: 60
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        length: 15,
+                        lineStyle: {
+                            color: '#000',
+                            width: 2
+                        }
+                    },
+                    axisTick: {
+                        show: true,
+                        splitNumber: 5,
+                        length: 8,
+                        lineStyle: {
+                            color: '#000'
+                        }
+                    },
+                    axisLabel: {
+                        show: true,
+                        formatter: function (value) {
+                            if (value % 20 === 0) {
+                                return value;
+                            }
+                            return '';
+                        },
+                        textStyle: {
+                            color: '#000',
+                            fontSize: 12
+                        }
+                    },
+                    pointer: {
+                        itemStyle: {
+                            color: "#556ee6"
+                        }
+                    },
+                    title: {
+                        show: true,
+                        offsetCenter: [0, '60%'],
+                        textStyle: {
+                            fontSize: 10,
+                            fontWeight: 'bold',
+                            color: '#000'
+                        }
+                    },
+                    data: [{ value: value, name: "" }]
+                }]
+            };
 
-        // Update the chart periodically
-        setInterval(function () {
+            // Update the chart periodically
+            setInterval(function () {
+                myChart.setOption(option, true);
+            }, 2000);
+
             myChart.setOption(option, true);
-        }, 2000);
+        }
 
-        myChart.setOption(option, true);
-    }
+        // Create different gauge charts with unique colors
+        createGaugeChart("gauge-chart", "CO2 emission reductions in kilograms", {{all_co2_emission_reduction}}, [
+            [0.9, "#19aac2"], [0.95, "#f8c471"], [1, "#f46a6a"]
+        ]); // Blue for CO2 emission reduction
 
-    // Create different gauge charts with unique values
-    createGaugeChart("gauge-chart", "CO2 emission reductions in kilograms", {{all_co2_emission_reduction}});
-    createGaugeChart("gauge-chart1", "Fuel Consumption(litre)",{{all_fuel_consumption}} ); // Example value
-    createGaugeChart("gauge-chart2", "Fuel Savings(litre)", {{all_fuel_savings}}); // Example value
+        createGaugeChart("gauge-chart1", "Fuel Consumption(litre)", {{all_fuel_consumption}}, [
+            [0.9, "#ffcc00"], [0.95, "#ff8800"], [1, "#ff4400"]
+        ]); // Yellow/Orange for Fuel Consumption
+
+        createGaugeChart("gauge-chart2", "Fuel Savings(litre)", {{all_fuel_savings}}, [
+            [0.9, "#66cc66"], [0.95, "#ffcc33"], [1, "#ff3300"]
+        ]); // Green to Red for Fuel Savings
+
 
 
 
@@ -792,7 +953,7 @@
             series: [{{within_time}},{{out_of_time}}], // Data for the donut chart
             chart: {
                 type: "donut", // Chart type
-                height: 440 // Height of the chart
+                height: 350 // Height of the chart
             },
             labels: ["Within Time", "Out Of Time"], // Labels for each section of the donut chart
             colors: ["#34c38f", "#f46a6a"], // Colors for each section of the chart
