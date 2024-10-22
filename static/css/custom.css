@@ -283,3 +283,11 @@
 .mb-minus80 {
     margin-bottom : -80px;
 }
+#chartdiv {
+    width: 100%;
+    height: 500px;
+  }		
+
+  .amcharts-chart-div a {
+    display: none !important;
+}
