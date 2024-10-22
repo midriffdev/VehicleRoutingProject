@@ -202,14 +202,21 @@
                         </div>
                     </div>
                 </div>
-                {% comment %} <div class="card bg-warning bg-soft border border-warning">
+
+                
+                
+
+                {% if truck.on_service == True %}
+                <div class="card bg-warning bg-soft border border-warning">
                     <div class="card-body">
                         <div class="mt-2">
-                            <p><strong>Need Service:</strong>
-                            </p>
+                            <p><strong>Your Vehicle Needs Service!</strong></p>
+                            <p>Ensure your vehicle runs smoothly and efficiently. Schedule a service now for better performance and a safer ride.</p>
                         </div>
                     </div>
-                </div> {% endcomment %}
+                </div>
+                {% endif %}
+
             </div>
         </div>
 

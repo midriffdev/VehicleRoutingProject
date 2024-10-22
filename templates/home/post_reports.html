@@ -37,47 +37,40 @@
 
 
                                     <div class="row">
-                                                <div class="col-md-3">
-                                                    <label class="form-label mb-2">Warehouse</label>
-                                                    <select name="wids" class="form-control select2" id="warehouseSelect" >
-                                                        <option value="All_Warehouse" selected>All Warehouse</option>
-                                                        {% for w in warehouses %}
-                                                            <option value="{{ w.id }}">{{ w.name }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label mb-2">Warehouse</label>
+                                            <select name="wids" class="form-control select2" id="warehouseSelect">
+                                                <option value="All_Warehouse" {% if wids == "All_Warehouse" %}selected{% endif %}>All Warehouse</option>
+                                                {% for w in warehouses %}
+                                                    <option value="{{ w.id }}" {% if wids == w.id %}selected{% endif %}>{{ w.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        
                                                 <div class="col-md-3">
                                                     <label class="form-label">Order Status</label>
-                                                    <select name="selectedValueo"  class="form-control select2">
-                                                        <option value="All_orders" selected>All</option>
-                                                        <option value="delivered">Delivered</option>
-                                                        <option value="pending" >Pending</option>
-                                                        <option value="canceled" >Cancel</option>
+                                                    <select name="selectedValueo" class="form-control select2">
+                                                        <option value="All_orders" {% if orderstatus == "All_orders" %}selected{% endif %}>All</option>
+                                                        <option value="delivered" {% if orderstatus == "delivered" %}selected{% endif %}>Delivered</option>
+                                                        <option value="pending" {% if orderstatus == "pending" %}selected{% endif %}>Pending</option>
+                                                        <option value="canceled" {% if orderstatus == "canceled" %}selected{% endif %}>Cancel</option>
                                                     </select>
                                                 </div>
-                                                
 
-
+                                            
+                                    
                                         <div class="col-md-6">
                                                 <label class="">Date</label>
                                                 <div class="d-flex align-items-start">
-                                                    <div class="input-daterange input-group" id="datepicker5" data-date-format="dd M, yyyy" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker5'>
-                                                        <input  type="text" class="form-control" name="strat_date" id="start" placeholder="Start Date" />
-                                                        <input type="text"  class="form-control" name="end_date" id="end" placeholder="End Date" />
-                                                    </div>
-                                                    <button type="submit" class="btn btn-md btn-secondary ms-1 text-nowrap">Apply Filter </button>
-                                                </div>
+                                                <div class="input-daterange input-group" id="datepicker5" data-date-format="dd M, yyyy" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker5'>
+                                            <input type="text" value="{{ start_date }}" class="form-control" name="start_date" id="start" placeholder="Start Date" autocomplete="off" />
+                                            <input type="text" value="{{ end_date }}" class="form-control" name="end_date" id="end" placeholder="End Date" autocomplete="off" /></div>
+                                                <button type="submit" class="btn btn-md btn-secondary ms-1 text-nowrap">Apply Filter </button>
+                                            </div>
                                         </div>
-
-
-
-
-
-
                                     </div>
-
                                 </form>
-
                                 </div>
                             </div>
 
@@ -173,9 +166,25 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="mt-4">
+
+
+                         <form action="{% url 'post_reports' %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="wids" value="{{wids}}" />
+                                <input type="hidden" name="start_date" value="{{start_date}}" />
+                                <input type="hidden" name="end_date" value="{{end_date}}" />
+                                <input type="hidden" name="orderstatus" value="{{orderstatus}}" />
+
+
                                                     <p class="mb-2 text-truncate">
                                                         <i class="mdi mdi-circle text-success me-1"></i> Within Time</p>
                                                     <h5 id="within_time">{{within_time}}</h5>
+                                                    </a>
+                                                    
+                                                </form>
+
+
+
                                                 </div>
                                             </div>
                                             <div class="col-6">
@@ -500,7 +509,7 @@
                     dataLabels: { enabled: false },
                     series: [
                         {
-                            name: 'Load Efficiency',  // Series for load efficiency
+                            name: 'Load Efficiency (%) ',  // Series for load efficiency
                             data: loadEfficiency  // Dummy data for load efficiency
                         },
                         {
