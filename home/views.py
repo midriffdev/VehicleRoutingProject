@@ -22,6 +22,7 @@ from collections import defaultdict
 
 from ai_vehicle.views import optimizeroute
 from .models import *  # Ensure you import your Order model
+from ai_vehicle.models import GenRoutes, Truckdata
 import requests, os, csv, random
 
 
@@ -105,6 +106,9 @@ def vehicles(request):
     else:
         all_services=ServiceOrPart.objects.all()
         vehicles=Truck.objects.filter(warehouse__primary= True)
+        for i in vehicles:
+            if (i.routedata and (i.available == False)):
+                i.routeid = GenRoutes.objects.get(truckdata__in=[Truckdata.objects.get(routedata=i.routedata)]).id
         service_vehicles=Truck.objects.filter(warehouse__primary= True,on_service=True)
 
         context={
@@ -1566,8 +1570,8 @@ def upload_orders(request):
                     long                            =   row[7] if row[7] else None,
                     created_at                      =   datetime.fromisoformat(row[8]),
                     updated_at                      =   datetime.fromisoformat(row[8]),
-                    delivered_date                  =   datetime.fromisoformat(row[9]),
-                    payment_date                    =   datetime.fromisoformat(row[10]),
+                    delivered_date                  =   datetime.fromisoformat(row[9]) if row[9] else None,
+                    payment_date                    =   datetime.fromisoformat(row[10]) if row[10] else None,
                     warehouse                       =   HeadQuarter.objects.get(product_name=row[2]),
                     assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=random.choice(truckids)),
                     late_payment_status             =   bool(int(row[11])),
@@ -1585,9 +1589,9 @@ def upload_orders(request):
                     # co2_emission_reduction          =   float(mydistance*(random.randint(50, 200)/1000)), # row[27],
                     
                     # hours_worked                    =   row[22],
-                    idle_time                       =   changedurations(row[23]),
+                    idle_time                       =   changedurations(row[23]) if row[23] else None,
                     route_adherence                 =   bool(int(row[24])),
-                    time_saved                      =   changedurations(row[25]),
+                    time_saved                      =   changedurations(row[25]) if row[25] else None,
                     # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
                     green_route                     =   row[28],
                     adjusted_stops                  =   row[29],
@@ -1626,7 +1630,7 @@ def upload_orders(request):
                 for i in range(0, len(result)):
                     olist = result[i]
                     if ((i % 55 == 0) and (i!=0)): timedelay(60)
-                    dict_output, reqjson, status = optimizeroute(olist, realtime=False)
+                    dict_output, reqjson, status = optimizeroute(olist, action='upload')
                     print("output - ", dict_output, reqjson, status)
                     if status != "done":
                         messages.success(request, 'Reports generations failed, please delete all the orders and try again.')
@@ -1651,7 +1655,7 @@ def upload_orders(request):
                                     # print(round(temp['distance']*(random.randint(1,7)/100), 2))
                                     # print(round(temp['distance']*(random.randint(1,10)/100),2))
                                     # print(round(temp['distance']*(random.randint(50, 200)/1000), 2))
-                                    Order.objects.filter(id=i['shipmentLabel'].split('__')[1]).update( route_distance=temp['distance'], assigned_truck = temp['truck'],
+                                    Order.objects.filter(id=i['shipmentLabel'].split('__')[1]).update( route_distance                  =   temp['distance'], assigned_truck = temp['truck'],
                                     # fuel_consumption                =   round(temp['distance']/float(random.randint(7, 13)), 2),
                                     fuel_savings                    =   round(temp['distance']*(random.randint(1,7)/100), 2),
                                     vehicle_maintenance_savings     =   round(temp['distance']*(random.randint(1,10)/100),2),

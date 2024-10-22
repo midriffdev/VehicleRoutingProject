@@ -127,7 +127,7 @@
 
                                     function showorders(){
                                         if ($('#orderslist').val().length) {
-                                            $('#showorders').html( `Selected Orders: ${String($('#orderslist').val()).replace(/,/g, ', ')}` ).show()
+                                            $('#showorders').html( `Selected Orders (${$('#orderslist').val().length}): ${String($('#orderslist').val()).replace(/,/g, ', ')}` ).show()
                                         }
                                         else {$('#showorders').html(``).hide()}
                                     }
