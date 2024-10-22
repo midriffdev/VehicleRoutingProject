@@ -17,6 +17,7 @@ from django.utils.dateparse import parse_date
 from django.db.models import Q, Sum
 from datetime import datetime
 import requests, os, csv, random
+from time import sleep as timedelay
 
 
 genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI")
@@ -1613,6 +1614,7 @@ def upload_orders(request):
 
                 for i in range(0, len(result)):
                     olist = result[i]
+                    if ((i % 5 == 0) and (i!=0)): timedelay(60)
                     dict_output, reqjson, status = optimizeroute(olist, realtime=False)
                     print("output - ", dict_output, reqjson, status)
                     if status != "done":
