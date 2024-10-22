@@ -2,6 +2,9 @@ from django.db import models
 # from ai_vehicle.models import routedata
 
 class Truck(models.Model):
+    TRUCK_OWNER = [
+        ('owned', 'owned'),
+        ('rented', 'rented')]
     TRUCK_TYPE_CHOICES = [
         ('Flatbed', 'Flatbed'),
         ('Box', 'Box'),
@@ -22,6 +25,7 @@ class Truck(models.Model):
     ]
 
     truck_name                          = models.CharField(max_length=255)
+    truck_owner                         = models.CharField(max_length=6, choices=TRUCK_OWNER,default='owned')
     truck_type                          = models.CharField(max_length=50, choices=TRUCK_TYPE_CHOICES,default='Tanker')
     truck_image                         = models.ImageField(upload_to='trucks', null=True, blank=True)
     truck_number                        = models.CharField(max_length=100, unique=True)
