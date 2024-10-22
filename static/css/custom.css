@@ -271,3 +271,11 @@
     height: 1.2em;
     transform: translateY(-50%);
 }
+.text-dark-primary {
+    color: #1A1A4B;
+}
+@media (min-width: 1200px) {
+    body[data-layout=horizontal] .container-fluid, body[data-layout=horizontal] .navbar-header {
+        max-width: 90%;
+    }
+}
