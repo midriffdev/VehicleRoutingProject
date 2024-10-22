@@ -79,7 +79,7 @@ def fetchorders(request):
     # print("request.POST___________", request.POST)
     orders = []
     for wh in request.POST.getlist('wids[]'):
-        temp = [{'text':f'{order.id} | {order.cname}', 'value':order.id} for order in Order.objects.filter(warehouse_id=wh, order_status='pending')]
+        temp = [{'text':f'{order.id} | {order.cname}', 'value':order.id} for order in Order.objects.filter(warehouse_id=wh, order_status='pending', assigned_truck=None)]
         orders.append( [HeadQuarter.objects.get(id=wh).name, temp] )
     return JsonResponse({'orders':orders, 'status':'SENT'}, status = 200)
 
@@ -177,7 +177,7 @@ def getroute(request):
             messages.success(request, f'Less Stocks: You need to add these stocks: { lstock } to process route analysis for the given orders.')
             return redirect('upload_orders')
 
-    print("\n\nresponse or routes____", dict_output['routes'])
+    print("\n\nresponse or routes____", dict_output)
 
     iroutes = []
     obtained_orders = []
@@ -188,7 +188,10 @@ def getroute(request):
         'lstop'     : None,
         'stime'     : data.get('vehicleStartTime', None),
         # 'type'      : 'delivery',
-        'order'     : []
+        'order'     : [],
+        'distance'  : 0,
+        'tot_orders': 0,
+        'timetaken' : 0,
         }
         for i in data.get('visits', []):
             # if 'isPickup' in i:
@@ -196,6 +199,10 @@ def getroute(request):
             #     temp['type']  = 'pickup'
             # else: 
             temp['order'].append( {"ord": Order.objects.get(id=i['shipmentLabel'].split('__')[1]), "is_pickup":'isPickup' in i, "etime":datetime.datetime.strptime(i['startTime'], "%Y-%m-%dT%H:%M:%SZ")} )
+            
+            temp['distance']    = data['metrics']['travelDistanceMeters']/1000.0
+            temp['tot_orders']  = int(data['metrics']['performedShipmentCount'])
+            temp['timetaken']   = datetime.timedelta(seconds=int(data['metrics']['totalDuration'].replace('s', '')))
             
         obtained_orders.extend([i['ord'].id for i in temp['order']])
         if data.get('visits', []):
@@ -227,7 +234,7 @@ def getroute(request):
     gen_route.pendorders.set(pendingorders)
     for i in iroutes:
         if i['order']:
-            b = routedata.objects.create(fstop=i['fstop'], lstop=i['lstop'])
+            b = routedata.objects.create(fstop=i['fstop'], lstop=i['lstop'], timetaken=i['timetaken'], tot_orders=i['tot_orders'], distance=i['distance'])
             [b.orders.add(ord['ord']) for ord in i['order']]
             a = gen_route.truckdata.create(truck=i['truck'], routedata = b)
     gen_route.save()
