@@ -10,14 +10,19 @@ from django.template.loader import render_to_string #for email send
 from django.utils.html import strip_tags #for email send
 from decouple import config
 from django.conf import settings
+from geopy.distance import geodesic
 import google.generativeai as genai
-from .models import *  # Ensure you import your Order model
 from ai_vehicle.models import HeadQuarter
 from django.utils.dateparse import parse_date
 from django.db.models import Q, Sum
 from datetime import datetime
-import requests, os, csv, random
 from time import sleep as timedelay
+from django.db.models.functions import TruncDate
+from collections import defaultdict
+
+from ai_vehicle.views import optimizeroute
+from .models import *  # Ensure you import your Order model
+import requests, os, csv, random
 
 
 genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI")
@@ -1154,10 +1159,6 @@ def post_reports(request):
         }
         return render(request, 'home/post_reports.html', context)
 
-
-
-
-
 @csrf_exempt
 def search_orders(request):
     if request.method == 'POST':
@@ -1171,8 +1172,6 @@ def search_orders(request):
             'warehouses':HeadQuarter.objects.all()
         }
         return render(request, 'home/search_orders.html',context) 
-
-
 
 @csrf_exempt
 def customer_single_order(request,pk):
@@ -1441,6 +1440,7 @@ def single_order(request,pk):
 
 
             order.assigned_truck.driver_travel += distance
+            if (order.assigned_truck.routedata.last_order == order): order.assigned_truck.available = True
             order.assigned_truck.save()
 
             if order.route_distance:
@@ -1498,6 +1498,7 @@ def changedurations(duration_str):
     hours, minutes, seconds = map(float, time_part.split(':'))
     return timedelta(days=int(a[0]), hours=int(hours), minutes=int(minutes), seconds=seconds)
 
+@csrf_exempt
 def fetchinprocess(request):
     checkorders = Order.objects.filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today(), order_status='delivered')
     total, pending = checkorders.count(), checkorders.filter(route_distance=None).count()
@@ -1506,11 +1507,6 @@ def fetchinprocess(request):
     else: inprocess, status = 0, 'done'
     return JsonResponse({'inprocess':inprocess, 'status':status}, status=200)
 
-from django.db.models.functions import TruncDate
-from datetime import datetime
-from collections import defaultdict
-from ai_vehicle.views import optimizeroute
-from geopy.distance import geodesic
 @csrf_exempt
 def upload_orders(request):
     acc_data = {}
