@@ -186,6 +186,7 @@ def getroute(request):
         'truck'     : Truck.objects.get(truck_number=data['vehicleLabel'].split('--')[1]),
         'fstop'     : None,
         'lstop'     : None,
+        'lorder'    : None,
         'stime'     : data.get('vehicleStartTime', None),
         # 'type'      : 'delivery',
         'order'     : [],
@@ -208,6 +209,7 @@ def getroute(request):
         if data.get('visits', []):
             # if data.get('visits', [])[-1]['shipmentLabel']:
             i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('__')[1])
+            temp['lorder'] = i.id
             temp['fstop'], temp['lstop'] = int(len(data.get('visits', []))/2), i.destination
         iroutes.append(temp)
     pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
@@ -235,7 +237,7 @@ def getroute(request):
     gen_route.pendorders.set(pendingorders)
     for i in iroutes:
         if i['order']:
-            b = routedata.objects.create(fstop=i['fstop'], lstop=i['lstop'], timetaken=i['timetaken'], tot_orders=i['tot_orders'], distance=i['distance'])
+            b = routedata.objects.create(fstop=i['fstop'], lstop=i['lstop'], timetaken=i['timetaken'], tot_orders=i['tot_orders'], distance=i['distance'], last_order_id=i['lorder'])
             [b.orders.add(ord['ord']) for ord in i['order']]
             a = gen_route.truckdata.create(truck=i['truck'], routedata = b)
     gen_route.save()
