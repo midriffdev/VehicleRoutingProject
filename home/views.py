@@ -1087,6 +1087,8 @@ def post_reports(request):
         for w in warehouse:
             w.deliveredStck = w.total_stock-w.left_stock
 
+            print(w.deliveredStck,"oooooooo")
+
             
                 
 
