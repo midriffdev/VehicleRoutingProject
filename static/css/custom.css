@@ -152,7 +152,7 @@
 }
 .reportTable tbody{
     display: block;
-    max-height: 250px;
+    max-height: 350px;
     overflow-y: auto;
 }
 .reportTable tbody::-webkit-scrollbar {
