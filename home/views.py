@@ -1262,9 +1262,11 @@ def admin_single_vehicle(request, pk=None):
         total_load = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('quantity'))['total']
         i.deleverd_load = total_load if total_load is not None else 0 
 
+        all_orders=Order.objects.filter(assigned_truck=i).order_by('-id')
+
 
         services=ServiceRecord.objects.filter(truck=i.id).order_by('-id')
-        context={ 'truck':i ,'services':services}
+        context={ 'truck':i ,'services':services,'all_orders':all_orders,}
         return render(request, 'home/admin_single_vehicle.html',context)
 
 @csrf_exempt
