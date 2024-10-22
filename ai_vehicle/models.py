@@ -3,9 +3,12 @@ from home.models import Truck, Order
 
 
 class routedata(models.Model):
-    orders  = models.ManyToManyField(Order, null=True, blank=True)
-    fstop   = models.CharField(max_length=30, null=True, blank=True)
-    lstop   = models.CharField(max_length=30, null=True, blank=True)
+    orders      = models.ManyToManyField(Order, null=True, blank=True)
+    fstop       = models.CharField(max_length=30, null=True, blank=True)
+    lstop       = models.CharField(max_length=30, null=True, blank=True)
+    timetaken   = models.DurationField(null=True, blank=True, help_text="Initial estimated time for delivery")
+    tot_orders  = models.IntegerField(null=True, blank=True, help_text="Total Orders")
+    distance    = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2, help_text="Distance in Kilometers")
     def __str__(self): return str(self.id)
     
 class Truckdata(models.Model):
@@ -21,6 +24,7 @@ class GenRoutes(models.Model):
     truckdata   = models.ManyToManyField(Truckdata, null=True, blank=True)
     pendorders  = models.ManyToManyField(Order, null=True, blank=True)
     warehouse   = models.ForeignKey('HeadQuarter', on_delete=models.PROTECT)
+    tot_delv    = models.IntegerField(null=True, blank=True, help_text="Number of deliveries")
 
 class HeadQuarter(models.Model):
     name            = models.CharField(max_length=30)

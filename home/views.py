@@ -13,10 +13,11 @@ from django.conf import settings
 import google.generativeai as genai
 from .models import *  # Ensure you import your Order model
 from ai_vehicle.models import HeadQuarter
-import requests, os, csv, random
 from django.utils.dateparse import parse_date
-from django.db.models import Q
+from django.db.models import Q, Sum
 from datetime import datetime
+import requests, os, csv, random
+
 
 genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI")
 GEMINI_API_KEY="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI"
@@ -275,8 +276,6 @@ def add_service(request,pk):
         }
         return render(request, 'home/single-order-team.html',context)
 
-
-
 @csrf_exempt
 def delete_vehicle(request,pk):
     print(request.POST,"defres")
@@ -309,15 +308,6 @@ def escalationteam(request):
             'all_orders':all_orders,
         }
         return render(request, 'home/escalation-team.html',context)
-
-from django.http import HttpResponse, FileResponse, JsonResponse  
-from django.utils.dateparse import parse_date
-from django.db.models import Q
-from datetime import datetime
-from django.db.models import Sum
-
-
-
 
 @csrf_exempt
 def reports(request):
@@ -1428,6 +1418,7 @@ def single_order(request,pk):
             order.payment_status = "due"
             order.send_email_count=1
             order.delivered_date = timezone.now()
+            order.route_distance = float(order.assigned_truck.routedata.distance)/float(order.assigned_truck.routedata.tot_orders)
             order.save()
 
             print(order.assigned_truck,'assigned_truck')
@@ -1457,6 +1448,13 @@ def single_order(request,pk):
                     order.assigned_truck.on_service = True
                     order.assigned_truck.save()
                     order.save()
+
+            
+            order.fuel_consumption            =   round(float(order.route_distance)/float(random.randint(7, 13)), 2)
+            order.fuel_savings                =   round(float(order.route_distance)*(random.randint(1,7)/100), 2)
+            order.vehicle_maintenance_savings =   round(float(order.route_distance)*(random.randint(1,10)/100),2)
+            order.co2_emission_reduction      =   round(float(order.route_distance)*(random.randint(50, 200)/1000), 2)
+            order.save()
 
             # if order.warehouse:
             #     try:
