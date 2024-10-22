@@ -93,7 +93,7 @@ def optimizeroute(olist, realtime=True):
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
     if realtime:
-        avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True)
+        avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True, on_service=False)
         avl_orders = Order.objects.filter(order_status='pending', assigned_truck=None, id__in=olist)
         whstock, less_stock = {}, []
         for i in avl_orders:
