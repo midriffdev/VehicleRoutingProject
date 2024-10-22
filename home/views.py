@@ -1262,9 +1262,11 @@ def admin_single_vehicle(request, pk=None):
         total_load = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('quantity'))['total']
         i.deleverd_load = total_load if total_load is not None else 0 
 
+        all_orders=Order.objects.filter(assigned_truck=i).order_by('-id')
+
 
         services=ServiceRecord.objects.filter(truck=i.id).order_by('-id')
-        context={ 'truck':i ,'services':services}
+        context={ 'truck':i ,'services':services,'all_orders':all_orders,}
         return render(request, 'home/admin_single_vehicle.html',context)
 
 @csrf_exempt
@@ -1495,6 +1497,14 @@ def changedurations(duration_str):
     hours, minutes, seconds = map(float, time_part.split(':'))
     return timedelta(days=int(a[0]), hours=int(hours), minutes=int(minutes), seconds=seconds)
 
+def fetchinprocess(request):
+    checkorders = Order.objects.filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today(), order_status='delivered')
+    total, pending = checkorders.count(), checkorders.filter(route_distance=None).count()
+    print(total, pending)
+    if total and pending: inprocess, status = round(100.00 - ((100*pending)/total), 2), 'pending'
+    else: inprocess, status = 0, 'done'
+    return JsonResponse({'inprocess':inprocess, 'status':status}, status=200)
+
 from django.db.models.functions import TruncDate
 from datetime import datetime
 from collections import defaultdict
@@ -1588,7 +1598,7 @@ def upload_orders(request):
             # reoptimization for all old data__________________________________________________
             while Order.objects.filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today(), route_distance=None).exclude(order_status='pending'):
                 orders = (Order.objects
-                .filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today()).exclude(order_status='pending')
+                .filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today(), route_distance=None).exclude(order_status='pending')
                 .annotate(day=TruncDate('created_at'))  # Truncate to date
                 .values('id', 'day'))  # Fetch the id and day
 
@@ -1663,7 +1673,15 @@ def upload_orders(request):
     else:
         orders=Order.objects.filter().order_by('-order_status')
         report_orders=Order.objects.filter(report_status=True)
+        
+        checkorders = Order.objects.filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today()).exclude(order_status='pending')
+        total, pending = checkorders.count(), checkorders.filter(route_distance=None).count()
+        print(total, pending)
+        if total and pending: inprocess = round(100.00 - ((100*pending)/total), 2)
+        else: inprocess = 0
+
         context={
+            'inprocess':inprocess,
             'orders':orders,
             'report_orders':report_orders,
             'warehouses':HeadQuarter.objects.all()

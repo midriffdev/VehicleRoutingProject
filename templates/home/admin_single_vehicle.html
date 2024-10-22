@@ -182,7 +182,11 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body p-2">
+                        {% if truck.avalible == True %}
                         <span class="badge rounded-pill bg-success p-2 floatTruckstatus">Available</span>
+                        {% else %}
+                        <span class="badge rounded-pill bg-danger p-2 floatTruckstatus">Not Available</span>
+                        {% endif %}
                         <!-- <span class="badge rounded-pill bg-danger p-2 floatTruckstatus">Unavailable</span> -->
                         {%if truck.truck_image%}
                          <img src="{{truck.truck_image.url}}"  class="w-100" alt="Truck Image">
@@ -202,6 +206,9 @@
                         </div>
                     </div>
                 </div>
+               
+                
+               
 
                 
                 
@@ -212,9 +219,11 @@
                         <div class="mt-2">
                             <p><strong>Your Vehicle Needs Service!</strong></p>
                             <p>Ensure your vehicle runs smoothly and efficiently. Schedule a service now for better performance and a safer ride.</p>
+                            <button class="btn btn-secondary mt-3" onclick="window.history.back();">Back & Service</button>
                         </div>
                     </div>
                 </div>
+               
                 {% endif %}
 
             </div>
@@ -373,6 +382,178 @@
             </div>
         </div>
         {% endif %}
+
+
+
+         <!-- Assigned Orders Section -->
+         {% if all_orders %}
+         <div class="row">
+             <div class="col-12">
+                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                     <h4 class="mb-sm-0 font-size-18">All Orders</h4>
+                 </div>
+             </div>
+         </div>
+ 
+         <div class="row">
+             <div class="col-12">
+                 <div class="card">
+                     <div class="card-body">
+                         <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                             <thead class="table-light">
+                                 <tr>
+                                     <th>Order ID</th>
+                                     <th>Order</th>
+                                     <th>Customer</th>
+                                     <th>Quantity</th>
+                                     <th>Destination</th>
+                                     <th>Status</th>
+                                     <th>Payment</th>
+                                     <th>Actions</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 {% for i in all_orders %}
+                                 <tr>
+                                     <td>#13A{{ i.id }}</td>
+                                     <td>{{ i.product_name }}</td>
+                                     <td>{{ i.cname|title }}<br>({{ i.email }})</td>
+                                     <td>{{ i.quantity }}</td>
+                                     <td>{{ i.destination }}</td>
+                                     <td>{{ i.order_status }}</td>
+                                     <td>
+                                         <span class="badge badge-pill font-size-11 text-capitalize 
+                                             {% if i.payment_status == 'pending' %}badge-soft-warning{% elif i.payment_status == 'due' %}badge-soft-info{% else %}badge-soft-success{% endif %}">
+                                             {{ i.payment_status }}
+                                         </span>
+                                     </td>
+ 
+ 
+                                    
+ 
+                                    
+ 
+                                   
+ 
+ 
+ 
+                                     <td>
+                                         {% if  i.order_status == 'delivered' %}
+                                                 <button disabled type="button" class="btn btn-success btn-sm btn-rounded" data-bs-toggle="modal">
+                                                     Delivered
+                                                 </button> 
+                                         {% else %}
+                                         {% if  i.order_status == 'pending' %}
+                                             <div class="d-flex">
+                                                 <button type="button" class="btn btn-success btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target="#reportModal{{ i.id }}">
+                                                     Mark as delivered
+                                                 </button> 
+                                             </div>
+                                         {% endif %}
+                                         {% endif %}
+                                     </td>
+ 
+                                   
+ 
+ 
+ 
+                                 </tr>
+ 
+                               <!-- Report Modal -->
+                                 <div class="modal fade" id="reportModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel{{ i.id }}" aria-hidden="true"> 
+                                     <div class="modal-dialog modal-dialog-centered" role="document"> <!-- Added modal-dialog-centered for vertical centering -->
+                                         <div class="modal-content">
+                                             <div class="modal-header">
+                                                 <h5 class="modal-title" id="reportModalLabel{{ i.id }}">Marked Order Status</h5>
+                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                             </div>
+                                             <form method="post" action="{% url 'single_order' i.id %}">
+                                             <div class="modal-body p-4"> <!-- Added padding for a cleaner look -->
+                                                  
+                                                     {% csrf_token %}
+                                                     <input type="hidden" name="order_id" value="{{ i.id }}">
+                                                     <input type="hidden" name="truck_id" value="{{ truck.id }}">
+ 
+                                                     <!-- Radio Buttons for Time Status -->
+                                                     <div class="form-group">
+                                                         <label class="font-weight-bold">Delivery Status:</label>
+                                                         <div class="row">
+                                                             <div class="col-md-6">
+                                                                 <label class="form-check-label position-relative w-100" for="withinTime{{ i.id }}">
+                                                                     <input class="form-check-input radioClick" type="radio" name="time_status" id="withinTime{{ i.id }}" value="true" required>
+                                                                     <div class="card bg-info bg-soft mb-0">
+                                                                         <div class="card-body">
+                                                                             <div class="form-check mb-0">
+                                                                                 Within Time
+                                                                             </div>
+                                                                         </div>
+                                                                     </div>
+                                                                 </label>
+                                                             </div>
+                                                             <div class="col-md-6">
+                                                                 <label class="form-check-label  position-relative w-100" for="outOfTime{{ i.id }}">
+                                                                 <input class="form-check-input radioClick" type="radio" name="time_status" id="outOfTime{{ i.id }}" value="false" required>
+                                                                 <div class="card bg-info bg-soft mb-0">
+                                                                     <div class="card-body">
+                                                                         <div class="form-check mb-0">
+                                                                             
+                                                                             
+                                                                                 
+                                                                                         Out Of Time
+                                                                                     </div>
+                                                                                 </div>
+                                                                             </div>
+                                                                         </label>
+                                                                 
+                                                             </div>
+                                                         </div>
+                                                     </div>
+ 
+ 
+                                                    
+ 
+ 
+                                                     </div>
+                                                     {% if i.order_status == 'pending' %}
+                                                     <div class="modal-footer">
+                                                         <input type="hidden" name="order_status" value="delivered" />
+                                                             <button type="submit" class="btn btn-success">Submit</button>
+                                                     </div>
+                                                             
+                                                         
+                                                         {% else%}
+                                                         {{i.order_status}}
+                                                         {% endif %}
+                                                 </form>
+                                         </div>
+                                     </div>
+                                 </div>
+ 
+                                 
+                                 {% endfor %}
+                             </tbody>
+                         </table>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
 
 </body>
