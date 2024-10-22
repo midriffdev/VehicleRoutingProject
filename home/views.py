@@ -1083,6 +1083,16 @@ def post_reports(request):
     else:
 
         warehouse = HeadQuarter.objects.all()
+        for w in warehouse:
+            w.deliveredStck = w.total_stock-w.left_stock
+
+            
+                
+
+        
+
+
+
         trucks = Truck.objects.all().order_by('-id')
         for i in trucks:
             i.total_deliveries=Order.objects.filter(assigned_truck=i).count()
