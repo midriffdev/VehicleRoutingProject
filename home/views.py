@@ -258,6 +258,7 @@ def add_service(request,pk):
 
         truck.status = 'available'
         truck.on_service = False
+        truck.available = True
         truck.service_travel_km = 0
         truck.save()
 
@@ -1446,6 +1447,9 @@ def single_order(request,pk):
                     order.assigned_truck.service_travel_km -= 0 
                     order.assigned_truck.status = 'maintenance'
                     order.assigned_truck.on_service = True
+                    order.assigned_truck.available = False
+
+                    
                     order.assigned_truck.save()
                     order.save()
 
