@@ -258,6 +258,7 @@ def add_service(request,pk):
 
         truck.status = 'available'
         truck.on_service = False
+        truck.available = True
         truck.service_travel_km = 0
         truck.save()
 
@@ -1250,10 +1251,20 @@ def admin_single_vehicle(request, pk=None):
         return redirect('driver_single', truck.first().id)
         
     else:
-        truck=Truck.objects.filter(id=pk)
-        services=ServiceRecord.objects.filter(truck=truck.first().id).order_by('-id')
+        i=Truck.objects.filter(id=pk).first()
+        i.total_deliveries=Order.objects.filter(assigned_truck=i).count()
+        i.on_time_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=True).count()
+        i.late_deliveries=Order.objects.filter(assigned_truck=i,on_time_delivery=False).count()
+        total_distance = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('route_distance'))['total']
+        i.driver_travel = total_distance if total_distance is not None else 0
+        total_fuel_consumption = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('fuel_consumption'))['total']
+        i.fuel = total_fuel_consumption if total_fuel_consumption is not None else 0 
+        total_load = Order.objects.filter(assigned_truck=i).aggregate(total=Sum('quantity'))['total']
+        i.deleverd_load = total_load if total_load is not None else 0 
 
-        context={ 'truck':truck.first() ,'services':services}
+
+        services=ServiceRecord.objects.filter(truck=i.id).order_by('-id')
+        context={ 'truck':i ,'services':services}
         return render(request, 'home/admin_single_vehicle.html',context)
 
 @csrf_exempt
@@ -1398,6 +1409,9 @@ def single_order(request,pk):
             order_status=request.POST.get('order_status')
             time_status=request.POST.get('time_status')
 
+            print(time_status,"time_statustime_statustime_statustime_status")
+            print(request.POST,"POST>>>>>>>>>>>>>")
+
 
             order=Order.objects.get(id=pk)
             order.order_status=order_status
@@ -1417,8 +1431,15 @@ def single_order(request,pk):
                 order.save()
 
 
-            order.assigned_truck.driver_travel += order.route_distance
+            if order.route_distance:
+                distance=order.route_distance
+            else:
+                distance=20
+
+
+            order.assigned_truck.driver_travel += distance
             order.assigned_truck.save()
+
             if order.route_distance:
                 order.assigned_truck.service_travel_km += order.route_distance
                 order.assigned_truck.save()
@@ -1426,6 +1447,9 @@ def single_order(request,pk):
                     order.assigned_truck.service_travel_km -= 0 
                     order.assigned_truck.status = 'maintenance'
                     order.assigned_truck.on_service = True
+                    order.assigned_truck.available = False
+
+                    
                     order.assigned_truck.save()
                     order.save()
 

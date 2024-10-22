@@ -223,7 +223,8 @@ def getroute(request):
         if 'end_time_windows' in i: i['end_time_windows'][0]['end_time']=i['end_time_windows'][0]['end_time'].isoformat()
     for i in newreqjson['shipments']:
         if 'deliveries' in i:
-            i['deliveries'][0]['duration'] = (datetime.datetime(1970, 1, 1) + i['deliveries'][0]['duration']).isoformat()
+            # i['deliveries'][0]['duration'] = (datetime.datetime(1970, 1, 1) + i['deliveries'][0]['duration']).isoformat()
+            i['deliveries'][0]['duration'] = '900s'
             if 'start_time' in i['deliveries'][0]['time_windows'][0]:
                 i['deliveries'][0]['time_windows'][0]['start_time'] = i['deliveries'][0]['time_windows'][0]['start_time'].isoformat()
             i['deliveries'][0]['time_windows'][0]['end_time'] = i['deliveries'][0]['time_windows'][0]['end_time'].isoformat()
