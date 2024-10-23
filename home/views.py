@@ -10,14 +10,20 @@ from django.template.loader import render_to_string #for email send
 from django.utils.html import strip_tags #for email send
 from decouple import config
 from django.conf import settings
+from geopy.distance import geodesic
 import google.generativeai as genai
-from .models import *  # Ensure you import your Order model
 from ai_vehicle.models import HeadQuarter
 from django.utils.dateparse import parse_date
 from django.db.models import Q, Sum
 from datetime import datetime
-import requests, os, csv, random
 from time import sleep as timedelay
+from django.db.models.functions import TruncDate
+from collections import defaultdict
+
+from ai_vehicle.views import optimizeroute
+from .models import *  # Ensure you import your Order model
+from ai_vehicle.models import GenRoutes, Truckdata
+import requests, os, csv, random
 
 
 genai.configure(api_key="AIzaSyBIRV_ORrLlXPkxkOlNMeJ-wlkROCarVYI")
@@ -100,6 +106,9 @@ def vehicles(request):
     else:
         all_services=ServiceOrPart.objects.all()
         vehicles=Truck.objects.filter(warehouse__primary= True)
+        for i in vehicles:
+            if (i.routedata and (i.available == False)):
+                i.routeid = GenRoutes.objects.get(truckdata__in=[Truckdata.objects.get(routedata=i.routedata)]).id
         service_vehicles=Truck.objects.filter(warehouse__primary= True,on_service=True)
 
         context={
@@ -1169,10 +1178,6 @@ def post_reports(request):
         }
         return render(request, 'home/post_reports.html', context)
 
-
-
-
-
 @csrf_exempt
 def search_orders(request):
     if request.method == 'POST':
@@ -1186,8 +1191,6 @@ def search_orders(request):
             'warehouses':HeadQuarter.objects.all()
         }
         return render(request, 'home/search_orders.html',context) 
-
-
 
 @csrf_exempt
 def customer_single_order(request,pk):
@@ -1456,6 +1459,7 @@ def single_order(request,pk):
 
 
             order.assigned_truck.driver_travel += distance
+            if (order.assigned_truck.routedata.last_order == order): order.assigned_truck.available = True
             order.assigned_truck.save()
 
             if order.route_distance:
@@ -1513,6 +1517,7 @@ def changedurations(duration_str):
     hours, minutes, seconds = map(float, time_part.split(':'))
     return timedelta(days=int(a[0]), hours=int(hours), minutes=int(minutes), seconds=seconds)
 
+@csrf_exempt
 def fetchinprocess(request):
     checkorders = Order.objects.filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today(), order_status='delivered')
     total, pending = checkorders.count(), checkorders.filter(route_distance=None).count()
@@ -1520,12 +1525,6 @@ def fetchinprocess(request):
     if total and pending: inprocess, status = round(100.00 - ((100*pending)/total), 2), 'pending'
     else: inprocess, status = 0, 'done'
     return JsonResponse({'inprocess':inprocess, 'status':status}, status=200)
-
-from django.db.models.functions import TruncDate
-from datetime import datetime
-from collections import defaultdict
-from ai_vehicle.views import optimizeroute
-from geopy.distance import geodesic
 
 @csrf_exempt
 def upload_orders(request):
@@ -1571,8 +1570,8 @@ def upload_orders(request):
                     long                            =   row[7] if row[7] else None,
                     created_at                      =   datetime.fromisoformat(row[8]),
                     updated_at                      =   datetime.fromisoformat(row[8]),
-                    delivered_date                  =   datetime.fromisoformat(row[9]),
-                    payment_date                    =   datetime.fromisoformat(row[10]),
+                    delivered_date                  =   datetime.fromisoformat(row[9]) if row[9] else None,
+                    payment_date                    =   datetime.fromisoformat(row[10]) if row[10] else None,
                     warehouse                       =   HeadQuarter.objects.get(product_name=row[2]),
                     assigned_truck                  =   None if row[14] == 'pending' else Truck.objects.get(id=random.choice(truckids)),
                     late_payment_status             =   bool(int(row[11])),
@@ -1590,9 +1589,9 @@ def upload_orders(request):
                     # co2_emission_reduction          =   float(mydistance*(random.randint(50, 200)/1000)), # row[27],
                     
                     # hours_worked                    =   row[22],
-                    idle_time                       =   changedurations(row[23]),
+                    idle_time                       =   changedurations(row[23]) if row[23] else None,
                     route_adherence                 =   bool(int(row[24])),
-                    time_saved                      =   changedurations(row[25]),
+                    time_saved                      =   changedurations(row[25]) if row[25] else None,
                     # estimated_delivery_time         =   datetime.datetime.fromisoformat(row[26]),
                     green_route                     =   row[28],
                     adjusted_stops                  =   row[29],
@@ -1631,7 +1630,7 @@ def upload_orders(request):
                 for i in range(0, len(result)):
                     olist = result[i]
                     if ((i % 55 == 0) and (i!=0)): timedelay(60)
-                    dict_output, reqjson, status = optimizeroute(olist, realtime=False)
+                    dict_output, reqjson, status = optimizeroute(olist, action='upload')
                     print("output - ", dict_output, reqjson, status)
                     if status != "done":
                         messages.success(request, 'Reports generations failed, please delete all the orders and try again.')
@@ -1656,7 +1655,7 @@ def upload_orders(request):
                                     # print(round(temp['distance']*(random.randint(1,7)/100), 2))
                                     # print(round(temp['distance']*(random.randint(1,10)/100),2))
                                     # print(round(temp['distance']*(random.randint(50, 200)/1000), 2))
-                                    Order.objects.filter(id=i['shipmentLabel'].split('__')[1]).update( route_distance=temp['distance'], assigned_truck = temp['truck'],
+                                    Order.objects.filter(id=i['shipmentLabel'].split('__')[1]).update( route_distance                  =   temp['distance'], assigned_truck = temp['truck'],
                                     # fuel_consumption                =   round(temp['distance']/float(random.randint(7, 13)), 2),
                                     fuel_savings                    =   round(temp['distance']*(random.randint(1,7)/100), 2),
                                     vehicle_maintenance_savings     =   round(temp['distance']*(random.randint(1,10)/100),2),

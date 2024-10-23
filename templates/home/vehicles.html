@@ -311,6 +311,7 @@
                                     <th class="align-middle">Driver Name</th>
                                     <th class="align-middle">Driver Email</th>
                                     <th class="align-middle">Vehicle Number</th>
+                                    <th class="align-middle">Owned</th>
                                     <th class="align-middle">Warehouse</th>
                                     <th class="align-middle">Capacity</th>
                                     <th class="align-middle">Cost</th>
@@ -321,11 +322,12 @@
                             <tbody>
                                 {% for i in vehicles %}
                                 <tr>
-                                    <td>{{i.id}} </td>
+                                    <td>{{i.id}}</td>
                                     <td>{{i.truck_name}} </td>
                                     <td>{{i.driver_name}}</td>
                                     <td>{{i.driver_email}}</td>
                                     <td>{{i.truck_number}}</td>
+                                    <td>{{i.truck_owner}}</td>
                                     <td>{{i.warehouse.name}}</td>
 
 
@@ -342,17 +344,20 @@
 
                                             <a href="{%url 'admin_single_vehicle' i.id%}" class="btn btn-secondary btn-sm btn-rounded me-1">View</a>
                                             <button type="button" class="btn btn-secondary btn-sm btn-rounded  me-1"  data-bs-toggle="modal" data-bs-target=".add-EditvehicleModal{{i.id}}">Edit</button>
-
+                                            
                                             <button type="button" class="btn btn-primary btn-sm btn-rounded me-1" data-bs-toggle="modal" data-bs-target="#addServiceModal{{i.id}}">
                                                 Add Service
                                             </button>
-
+                                            
                                             <form action="{% url 'delete_vehicle' i.id %}" method="post" enctype="multipart/form-data"
                                             class="d-flex align-items-end">
                                             {% csrf_token %}
                                             <input type="hidden" name="truck_id" value="{{i.id}}">
                                             <button  type="submit" class="btn btn-danger btn-sm btn-rounded" >Delete</button>
-                                            </form>
+                                            {%if i.routeid%}
+                                            <a href="{%url 'reload_getroute' i.routeid%}" class="btn btn-secondary btn-sm btn-rounded me-1">View Route</a>
+                                            {%endif%}
+                                        </form>
 
 
 

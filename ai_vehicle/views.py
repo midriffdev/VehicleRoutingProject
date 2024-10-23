@@ -83,7 +83,7 @@ def fetchorders(request):
         orders.append( [HeadQuarter.objects.get(id=wh).name, temp] )
     return JsonResponse({'orders':orders, 'status':'SENT'}, status = 200)
 
-def optimizeroute(olist, realtime=True):
+def optimizeroute(olist, action='realtime'):
     # print("olist, realtime____________", olist, realtime)
     today = datetime.datetime.now()
     reqjson = {"shipments": [], "vehicles": [], 
@@ -92,7 +92,7 @@ def optimizeroute(olist, realtime=True):
 
     # a, b = get_lat_long('una, hp')
     # return HttpResponse(f'{a}, {b}')
-    if realtime:
+    if action == 'realtime':
         avl_trucks = Truck.objects.filter(available=True, warehouse__primary= True, on_service=False)
         avl_orders = Order.objects.filter(order_status='pending', assigned_truck=None, id__in=olist)
         whstock, less_stock = {}, []
@@ -104,7 +104,10 @@ def optimizeroute(olist, realtime=True):
         print("\n\nStocks__________________",whstock, less_stock)
         if less_stock:
             return less_stock, {}, 'less_stock'
-    else:
+    elif action == 'review':
+        avl_trucks = Truck.objects.filter(id__in=olist[0])
+        avl_orders = Order.objects.filter(id__in=olist[1])
+    elif action == 'upload':
         avl_trucks = Truck.objects.filter()
         avl_orders = Order.objects.filter(id__in=olist).exclude(order_status='pending')
     # print("alv______________", avl_orders, avl_trucks)
@@ -163,7 +166,7 @@ def getroute(request):
     print("\n\nrequest.POST____________", request.POST)    
     hq = HeadQuarter.objects.get(primary=True)
 
-    dict_output, reqjson, status = optimizeroute(request.POST.getlist('orderslist'))
+    dict_output, reqjson, status = optimizeroute(request.POST.getlist('orderslist'), action='realtime')
 
     if status != 'done':
         if status == "no_trucks":
@@ -186,6 +189,7 @@ def getroute(request):
         'truck'     : Truck.objects.get(truck_number=data['vehicleLabel'].split('--')[1]),
         'fstop'     : None,
         'lstop'     : None,
+        'lorder'    : None,
         'stime'     : data.get('vehicleStartTime', None),
         # 'type'      : 'delivery',
         'order'     : [],
@@ -208,6 +212,7 @@ def getroute(request):
         if data.get('visits', []):
             # if data.get('visits', [])[-1]['shipmentLabel']:
             i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('__')[1])
+            temp['lorder'] = i.id
             temp['fstop'], temp['lstop'] = int(len(data.get('visits', []))/2), i.destination
         iroutes.append(temp)
     pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
@@ -235,15 +240,69 @@ def getroute(request):
     gen_route.pendorders.set(pendingorders)
     for i in iroutes:
         if i['order']:
-            b = routedata.objects.create(fstop=i['fstop'], lstop=i['lstop'], timetaken=i['timetaken'], tot_orders=i['tot_orders'], distance=i['distance'])
+            b = routedata.objects.create(fstop=i['fstop'], lstop=i['lstop'], timetaken=i['timetaken'], tot_orders=i['tot_orders'], distance=i['distance'], last_order_id=i['lorder'])
             [b.orders.add(ord['ord']) for ord in i['order']]
             a = gen_route.truckdata.create(truck=i['truck'], routedata = b)
     gen_route.save()
 
     print("\n\niroute______________s", iroutes, obtained_orders, pendingorders)
     # return HttpResponse(json_output['routes'])
-    context={'iroutes':iroutes, 'gen_route_id':gen_route.id, 'pendingorders':pendingorders}
+    context={'iroutes':iroutes, 'gen_route_id':gen_route.id, 'pendingorders':pendingorders, 'notassignedyet':True}
     return render(request, 'home/ai-routes.html',context)
+
+
+# GMPRO DOCUMENTATION API hit trial
+def reload_getroute(request, rid):
+    # hq = HeadQuarter.objects.get(primary=True)
+
+    tlist = []
+    olist = []
+    for trk in GenRoutes.objects.get(id=rid).truckdata.all():
+        tlist.append(trk.truck.id)
+        olist.extend([ordr.id for ordr in trk.routedata.orders.all()])
+    print("tlist, olist__________", tlist, olist)
+
+
+    dict_output, reqjson, status = optimizeroute( (tlist, olist), action='review')
+    print("\n\nresponse or routes____", dict_output)
+    if status != 'done':
+        messages.success(request, 'No available trucks at the moment.' if status=="no_trucks" else 'No available orders.')
+        return redirect('upload_orders')
+
+    iroutes = []
+    obtained_orders = []
+    for data in dict_output['routes']:
+        temp = {
+        'truck'     : Truck.objects.get(truck_number=data['vehicleLabel'].split('--')[1]),
+        'fstop'     : None,
+        'lstop'     : None,
+        'lorder'    : None,
+        'stime'     : data.get('vehicleStartTime', None),
+        # 'type'      : 'delivery',
+        'order'     : [],
+        'distance'  : 0,
+        'tot_orders': 0,
+        'timetaken' : 0,
+        }
+        for i in data.get('visits', []):
+            temp['order'].append( {"ord": Order.objects.get(id=i['shipmentLabel'].split('__')[1]), "is_pickup":'isPickup' in i, "etime":datetime.datetime.strptime(i['startTime'], "%Y-%m-%dT%H:%M:%SZ")} )
+            
+            temp['distance']    = data['metrics']['travelDistanceMeters']/1000.0
+            temp['tot_orders']  = int(data['metrics']['performedShipmentCount'])
+            temp['timetaken']   = datetime.timedelta(seconds=int(data['metrics']['totalDuration'].replace('s', '')))
+            
+        obtained_orders.extend([i['ord'].id for i in temp['order']])
+        if data.get('visits', []):
+            # if data.get('visits', [])[-1]['shipmentLabel']:
+            i = Order.objects.get(id=data.get('visits', [])[-1]['shipmentLabel'].split('__')[1])
+            temp['lorder'] = i.id
+            temp['fstop'], temp['lstop'] = int(len(data.get('visits', []))/2), i.destination
+        iroutes.append(temp)
+    pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
+    pendingorders.quantity = sum([i.quantity for i in Order.objects.filter(order_status='pending').exclude(id__in=obtained_orders)])
+
+    print("\n\niroute______________s", iroutes, obtained_orders, pendingorders)
+    return render(request, 'home/ai-routes.html',{'iroutes':iroutes, 'gen_route_id':rid, 'pendingorders':pendingorders, 'notassignedyet':False})
 
 if True:
     # model={
