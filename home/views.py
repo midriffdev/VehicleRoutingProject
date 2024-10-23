@@ -1688,7 +1688,7 @@ def upload_orders(request):
         return redirect('upload_orders') 
     
     else:
-        orders=Order.objects.filter().order_by('-order_status')
+        orders=Order.objects.filter().order_by('-order_status')[0:50]
         report_orders=Order.objects.filter(report_status=True)
         
         checkorders = Order.objects.filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today()).exclude(order_status='pending')
