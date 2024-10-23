@@ -1705,6 +1705,59 @@ def upload_orders(request):
         }
         return render(request, 'home/orders.html',context) 
 
+
+def edit_order(request):
+    if request.method == "POST":
+        # Retrieve order ID and action from the form
+        order_id = request.POST.get("order_id")
+        action = request.POST.get("action")
+        
+        # Ensure the action is to edit the order
+        if action == "edit_order":
+            # Fetch the order using order_id
+            order = Order.objects.get(id=order_id)
+            
+            # Retrieve form data
+            product_name = request.POST.get("product_name")
+            quantity = request.POST.get("quantity")
+            destination = request.POST.get("destination")
+            payment_amount = request.POST.get("payment_amount")
+            lat = request.POST.get("lat")
+            long = request.POST.get("long")
+            warehouse = request.POST.get("warehouse")
+
+            www=HeadQuarter.objects.get(id=warehouse)
+
+
+
+            opening_time = request.POST.get("opening_time")
+            closing_time = request.POST.get("closing_time")
+            
+            # Update order details
+            order.product_name = product_name
+            order.quantity = quantity
+            order.destination = destination
+            order.payment_amount = payment_amount
+            order.lat = lat
+            order.long = long
+            order.warehouse = www
+            order.opening_time = opening_time
+            order.closing_time = closing_time
+            
+            # Save the updated order
+            order.save()
+            
+            
+            messages.success(request, "Order updated successfully!")
+            
+            # Redirect to a suitable page (e.g., order details or list page)
+            return redirect("upload_orders")  # Replace with your desired redirect URL
+    
+    # If not a POST request, redirect to a relevant page or handle accordingly
+    return redirect("upload_orders")  
+
+
+
 def delete_all_orders(request):
     if request.method == 'POST':
         # Notifications.objects.filter(receiver__warehouse__primary= True).delete()
@@ -1734,6 +1787,8 @@ def check_orders(orders, s_keyword):
 
     print(response.text, "response............................................")
     return response.text.strip()
+
+
 
 @csrf_exempt
 def search_customers(request):

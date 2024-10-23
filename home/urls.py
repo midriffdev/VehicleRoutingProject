@@ -19,6 +19,7 @@ urlpatterns = [
     path('reports', views.reports, name='reports'),
     path('post_reports', views.post_reports, name='post_reports'),
     path('search_orders', views.search_orders, name='search_orders'),
+    path('edit_order', views.edit_order, name='edit_order'),
 
     
 
