@@ -282,7 +282,7 @@
                             <div class="card shadow-lg border border-secondary">
                                 <div class="card-body loaderDiv ">
                                     <div class="d-flex flex-wrap">
-                                        <h4 class="card-title text-dark-primary mb-4 text-center d-block w-100">One Time Shipment</h4>
+                                        <h4 class="card-title text-dark-primary mb-4 text-center d-block w-100">Time Shipment</h4>
                                       
                                        
     
@@ -469,7 +469,7 @@
                             <div class="card shadow-lg">
                                 <div class="card-body loaderDiv ">
                                     <div class="d-flex flex-wrap">
-                                        <h4 class="card-title text-dark-primary mb-4">Warehouse Operations Timeline</h4>
+                                        <h4 class="card-title text-dark-primary mb-4">Time window for delivery</h4>
     
                                         <div class="ms-auto">
                                         </div>
@@ -626,110 +626,91 @@ var chart = AmCharts.makeChart( "chartdiv", {
 
 
 
+// Dummy data for vehicle capacity and load delivered
+var vehicleCapacity = [{% for truck_id, data in truck_loads.items %}'{{ data.capacity }}',{%endfor%}]; // Vehicle capacities in kg
+var loadDelivered = [{% for truck_id, data in truck_loads.items %}'{{ data.total_load }}',{%endfor%}]; // Actual loads delivered in kg
+
+// Calculate Load Efficiency as a percentage
+{% comment %} var loadEfficiency = loadDelivered.map((delivered, index) => ((delivered / vehicleCapacity[index]) * 100).toFixed(2));  {% endcomment %}
+var loadEfficiency = [{% for truck_id, data in truck_loads.items %}'{{ data.load_efficiency }}',{%endfor%}];
 
 
 
+var options = {
+    chart: {
+        height: 500,
+        type: "bar",
+        stacked: true,  // Enable stacked bars
+        toolbar: { show: false }
+    },
+    plotOptions: {
+        bar: {
+            horizontal: false,
+            barHeight: '60px'
+        }
+    },
+    dataLabels: { enabled: false },
+    series: [
+        {
+            name: 'Load Efficiency (%) ',  // Series for load efficiency
+            data: loadEfficiency  // Dummy data for load efficiency
+        },
+        {
+            name: 'Truck Load Capacity (kg)',  // Series for vehicle capacity
+            data: vehicleCapacity  // Dummy data for vehicle capacity
+        },
+        {
+            name: 'Load Delivered (kg)',  // Series for load delivered
+            data: loadDelivered  // Dummy data for load delivered
+        }
+    ],
+    colors: ["#FF4560", "#008FFB", "#00E396"],  // Colors for the three series
+    grid: { borderColor: "#e7e7e7" },
+    xaxis: {
+        categories: [
 
+        {% for truck_id, data in truck_loads.items %}'{{ data.truck_name }}',{%endfor%}
+        ],
+        title: {
+            text: 'Trucks'
+        }
+    },
+    yaxis: [{
+        title: {
+            text: 'Load Efficiency (%)'  // Updated title to reflect percentage
+        },
+        labels: {
+            formatter: function (val) {
+                return val + "%";  // Display as percentage
+            }
+        },
+        min: 0,
+        max: 100,  // Set max to 100 for percentage
+        tickAmount: 5,
+        position: 'left' // Positioning for Load Efficiency
+    }, {
+        opposite: true,
+        title: {
+            text: 'Load (kg)'
+        },
+        min: 0,
+        tickAmount: 5
+    }],
+    tooltip: {
+        y: {
+            formatter: function (val) {
+                if (this.seriesIndex === 0) {
+                    return val + "%"; // Load Efficiency tooltip
+                } else {
+                    return val + " ";  // Load Delivered and Vehicle Capacity tooltip
+                }
+            }
+        }
+    }
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                // Dummy data for vehicle capacity and load delivered
-                var vehicleCapacity = [{% for truck_id, data in truck_loads.items %}'{{ data.capacity }}',{%endfor%}]; // Vehicle capacities in kg
-                var loadDelivered = [{% for truck_id, data in truck_loads.items %}'{{ data.total_load }}',{%endfor%}]; // Actual loads delivered in kg
-
-                // Calculate Load Efficiency as a percentage
-                {% comment %} var loadEfficiency = loadDelivered.map((delivered, index) => ((delivered / vehicleCapacity[index]) * 100).toFixed(2));  {% endcomment %}
-                var loadEfficiency = [{% for truck_id, data in truck_loads.items %}'{{ data.load_efficiency }}',{%endfor%}];
-
-                
-
-                var options = {
-                    chart: {
-                        height: 500,
-                        type: "bar",
-                        stacked: true,  // Enable stacked bars
-                        toolbar: { show: false }
-                    },
-                    plotOptions: {
-                        bar: {
-                            horizontal: false,
-                            barHeight: '60px'
-                        }
-                    },
-                    dataLabels: { enabled: false },
-                    series: [
-                        {
-                            name: 'Load Efficiency (%) ',  // Series for load efficiency
-                            data: loadEfficiency  // Dummy data for load efficiency
-                        },
-                        {
-                            name: 'Truck Load Capacity (kg)',  // Series for vehicle capacity
-                            data: vehicleCapacity  // Dummy data for vehicle capacity
-                        },
-                        {
-                            name: 'Load Delivered (kg)',  // Series for load delivered
-                            data: loadDelivered  // Dummy data for load delivered
-                        }
-                    ],
-                    colors: ["#FF4560", "#008FFB", "#00E396"],  // Colors for the three series
-                    grid: { borderColor: "#e7e7e7" },
-                    xaxis: {
-                        categories: [
-
-                        {% for truck_id, data in truck_loads.items %}'{{ data.truck_name }}',{%endfor%}
-                        ],
-                        title: {
-                            text: 'Trucks'
-                        }
-                    },
-                    yaxis: [{
-                        title: {
-                            text: 'Load Efficiency (%)'  // Updated title to reflect percentage
-                        },
-                        labels: {
-                            formatter: function (val) {
-                                return val + "%";  // Display as percentage
-                            }
-                        },
-                        min: 0,
-                        max: 100,  // Set max to 100 for percentage
-                        tickAmount: 5,
-                        position: 'left' // Positioning for Load Efficiency
-                    }, {
-                        opposite: true,
-                        title: {
-                            text: 'Load (kg)'
-                        },
-                        min: 0,
-                        tickAmount: 5
-                    }],
-                    tooltip: {
-                        y: {
-                            formatter: function (val) {
-                                if (this.seriesIndex === 0) {
-                                    return val + "%"; // Load Efficiency tooltip
-                                } else {
-                                    return val + " ";  // Load Delivered and Vehicle Capacity tooltip
-                                }
-                            }
-                        }
-                    }
-                };
-
-                var chart = new ApexCharts(document.querySelector("#bar_chartEffe"), options);
-                chart.render();
+var chart = new ApexCharts(document.querySelector("#bar_chartEffe"), options);
+chart.render();
 
 
 
