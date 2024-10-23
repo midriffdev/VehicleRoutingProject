@@ -1629,7 +1629,7 @@ def upload_orders(request):
 
                 for i in range(0, len(result)):
                     olist = result[i]
-                    if ((i % 55 == 0) and (i!=0)): timedelay(60)
+                    if ((i % 40 == 0) and (i!=0)): timedelay(60)
                     dict_output, reqjson, status = optimizeroute(olist, action='upload')
                     print("output - ", dict_output, reqjson, status)
                     if status != "done":
@@ -1688,7 +1688,7 @@ def upload_orders(request):
         return redirect('upload_orders') 
     
     else:
-        orders=Order.objects.filter().order_by('-order_status')[0:50]
+        orders=Order.objects.filter().order_by('-order_status')[0:250]
         report_orders=Order.objects.filter(report_status=True)
         
         checkorders = Order.objects.filter(created_at__date__gte='2024-07-01', created_at__date__lte=datetime.today()).exclude(order_status='pending')
