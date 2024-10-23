@@ -8,7 +8,7 @@ class routedata(models.Model):
     lstop       = models.CharField(max_length=30, null=True, blank=True)
     timetaken   = models.DurationField(null=True, blank=True, help_text="Initial estimated time for delivery")
     tot_orders  = models.IntegerField(null=True, blank=True, help_text="Total Orders")
-    last_order  = models.ForeignKey(Order, on_delete=models.CASCADE, related_name = 'last_order', blank=True, null=True)
+    last_order  = models.ForeignKey(Order, on_delete=models.SET_NULL, related_name = 'last_order', blank=True, null=True)
     distance    = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2, help_text="Distance in Kilometers")
     def __str__(self): return str(self.id)
     
