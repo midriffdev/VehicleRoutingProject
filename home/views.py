@@ -1629,7 +1629,7 @@ def upload_orders(request):
 
                 for i in range(0, len(result)):
                     olist = result[i]
-                    if ((i % 55 == 0) and (i!=0)): timedelay(60)
+                    if ((i % 40 == 0) and (i!=0)): timedelay(60)
                     dict_output, reqjson, status = optimizeroute(olist, action='upload')
                     print("output - ", dict_output, reqjson, status)
                     if status != "done":
