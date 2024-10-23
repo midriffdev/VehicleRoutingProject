@@ -335,32 +335,32 @@
                                                             </div>
                                                         </div>
 
-
                                                         <div class="row">
-                                                            <div class="col-md-12 mb-3">
-                                                                <label for="warehouse" class="form-label">warehouse</label>
-                                                                <input name="warehouse" maxlength="10"  required type="text" class="form-control" id="warehouse" placeholder="Enter warehouse" value="{{i.warehouse.id}}">
-                                                            </div>
-                                                        </div>
 
-                                                        {% comment %} <div class="row">
-                                                            <div class="col-md-12 mb-3">
-                                                                <label for="warehouse" class="form-label">warehouse</label>
-                                                                <input name="warehouse" maxlength="10"  required type="text" class="form-control" id="warehouse" placeholder="Enter warehouse" value="{{i.warehouse}}">
-                                                            </div>
-                                                        </div> {% endcomment %}
+                                                        <div class="col-md-6 mb-6">
+                                                            <label for="warehouse{{i.id}}" class="form-label">Warehouse</label>
+
+                                                            <select class="form-select" name="warehouse" id="truck_type{{i.id}}">
+
+                                                                {% for w in warehouses %}
+                                                                <option value="{{w.id}}" {% if w.id == i.warehouse.id %}selected{% endif %}>{{w.name}}</option>
+                                                                {% endfor %}
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
 
                                                     
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-6 mb-3">
                                                             <label for="opening_time" class="form-label">  Delivery OPEN Time</label>
-                                                            <input type="time" required name="opening_time" class="form-control" id="opening_time" placeholder="Enter start time" value="{{i.opening_time}}">
+                                                            <input type="time" required name="opening_time" class="form-control" id="opening_time" placeholder="Enter start time" value="{{ i.opening_time|date:'H:i' }}">
                                                         </div>
                                                         
                                                         <div class="col-md-6 mb-3">
                                                             <label for="closing_time" class="form-label"> Delivery Closing Time</label>
-                                                            <input type="time" required name="closing_time" class="form-control" id="closing_time" placeholder="Enter end time" value="{{i.closing_time}}">
+                                                            <input type="time" required name="closing_time" class="form-control" id="closing_time" placeholder="Enter end time" value="{{ i.closing_time|date:'H:i' }}">
                                                         </div>
                                                 </div>
 
