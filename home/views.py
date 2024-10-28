@@ -1650,19 +1650,22 @@ def upload_orders(request):
                             }
                             for i in data.get('visits', []):
                                 if not 'isPickup' in i:
-                                    # print("temp['distance']________", temp['distance'])
+                                    print("temp['distance']________", temp['distance'])
                                     # print(round(temp['distance']/random.randint(7, 13), 2))
                                     # print(round(temp['distance']*(random.randint(1,7)/100), 2))
                                     # print(round(temp['distance']*(random.randint(1,10)/100),2))
                                     # print(round(temp['distance']*(random.randint(50, 200)/1000), 2))
-                                    Order.objects.filter(id=i['shipmentLabel'].split('__')[1]).update( route_distance                  =   temp['distance'], assigned_truck = temp['truck'],
+                                    orr= Order.objects.get(id=i['shipmentLabel'].split('__')[1])
+                                    orr.route_distance                  =   temp['distance']
+                                    orr.assigned_truck                  =   temp['truck']
                                     # fuel_consumption                =   round(temp['distance']/float(random.randint(7, 13)), 2),
-                                    fuel_savings                    =   round(temp['distance']*(random.randint(1,7)/100), 2),
-                                    vehicle_maintenance_savings     =   round(temp['distance']*(random.randint(1,10)/100),2),
-                                    co2_emission_reduction          =   round(temp['distance']*(random.randint(50, 200)/1000), 2),
+                                    orr.fuel_savings                    =   round(temp['distance']*(random.randint(1,7)/100), 2)
+                                    orr.vehicle_maintenance_savings     =   round(temp['distance']*(random.randint(1,10)/100),2)
+                                    orr.co2_emission_reduction          =   round(temp['distance']*(random.randint(50, 200)/1000), 2)
                                     # delivery_time = temp['seconds'],
                                     # cost = temp['cost'],
-                                    )
+                                    orr.save()
+                                    print("orr___", orr.route_distance, orr.id)
                                     # temp['order'].append( Order.objects.get(id=i['shipmentLabel'].split('__')[1]) )
                             # obtained_orders.extend([i['ord'].id for i in temp['order']])
                     # pendingorders = Order.objects.filter(order_status='pending', warehouse__primary= True, assigned_truck=None).exclude(id__in=obtained_orders)
@@ -1673,8 +1676,8 @@ def upload_orders(request):
                     try:
                         i.fuel_consumption = round(float(i.route_distance)/float(random.randint(7, 13)), 2)
                         i.save()
-                    except:
-                        print("got error at __ ", i)
+                    except Exception as e:
+                        print("got error at __ ", i, e)
 
             # Notifications.objects.create(
             #     content=f"Your Reports are ready. Thank you!",
