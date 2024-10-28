@@ -146,7 +146,7 @@
                                         <div class="routeBox me-3 mb-1">
                                             <div class="text-center">
                                                 <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning fw-bold">Pickup {%if shipment.1|length == 1%}{%else%}({{shipment.1|length}}){%endif%}</p>
+                                                <p class="text-warning fw-bold">Pickup</p>
                                                 <p class="text-warning">(from <b>{{shipment.1.0.warehouse.name}}</b> warehouse)</p>
                                                 <p class="text-warning">Est. Time - <b>{{shipment.2}}</b></p>
                                             </div>
@@ -169,7 +169,7 @@
                                         <div class="routeBox me-3 mb-1">
                                             <div class="text-center">
                                                 <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning fw-bold">Delivery {%if shipment.1|length == 1%}{%else%}({{shipment.1|length}}){%endif%}</p>
+                                                <p class="text-warning fw-bold">Delivery</p>
                                                 <p class="text-warning">(for <b>{{shipment.1.0.destination}}</b>)</p>
                                                 <p class="text-warning">Est. Time - <b>{{shipment.2}}</b></p>
                                             </div>
