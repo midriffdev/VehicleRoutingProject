@@ -180,7 +180,7 @@ def getroute(request):
             messages.success(request, f'Less Stocks: You need to add these stocks: { lstock } to process route analysis for the given orders.')
             return redirect('upload_orders')
 
-    print("\n\nresponse or routes____", dict_output)
+    # print("\n\nresponse or routes____", dict_output)
 
     iroutes = []
     obtained_orders = []
@@ -196,6 +196,7 @@ def getroute(request):
         'distance'  : 0,
         'tot_orders': 0,
         'timetaken' : 0,
+        'fruits'    : [],
         }
         for i in data.get('visits', []):
             # if 'isPickup' in i:
@@ -207,7 +208,20 @@ def getroute(request):
             temp['distance']    = data['metrics']['travelDistanceMeters']/1000.0
             temp['tot_orders']  = int(data['metrics']['performedShipmentCount'])
             temp['timetaken']   = datetime.timedelta(seconds=int(data['metrics']['totalDuration'].replace('s', '')))
-            
+
+        for od in range(0,len(temp['order'])):
+            if od == 0: apple = [temp['order'][od]['is_pickup'], [temp['order'][od]['ord']], temp['order'][od]['etime']]
+            else:
+                prev = temp['order'][od-1]
+                curr = temp['order'][od]
+                if (curr['is_pickup'] and prev['is_pickup'] and (prev['ord'].warehouse == curr['ord'].warehouse)) or ((not curr['is_pickup']) and (not prev['is_pickup']) and (prev['ord'].cname == curr['ord'].cname)): 
+                    apple[1].append(temp['order'][od]['ord'])
+                else:
+                    temp['fruits'].append(apple)
+                    apple = [temp['order'][od]['is_pickup'], [temp['order'][od]['ord']], temp['order'][od]['etime']]
+            if od == len(temp['order'])-1: temp['fruits'].append(apple)
+        print("fruits_______________",temp['truck'].truck_name, temp['fruits'])
+                
         obtained_orders.extend([i['ord'].id for i in temp['order']])
         if data.get('visits', []):
             # if data.get('visits', [])[-1]['shipmentLabel']:
@@ -245,11 +259,10 @@ def getroute(request):
             a = gen_route.truckdata.create(truck=i['truck'], routedata = b)
     gen_route.save()
 
-    print("\n\niroute______________s", iroutes, obtained_orders, pendingorders)
+    # print("\n\niroute______________s", iroutes, obtained_orders, pendingorders)
     # return HttpResponse(json_output['routes'])
     context={'iroutes':iroutes, 'gen_route_id':gen_route.id, 'pendingorders':pendingorders, 'notassignedyet':True}
     return render(request, 'home/ai-routes.html',context)
-
 
 # GMPRO DOCUMENTATION API hit trial
 def reload_getroute(request, rid):

@@ -104,7 +104,7 @@
                                     <strong>{{i.truck.truck_number}}</strong>
                                 </p>
                                 <p class="text-primary font-size-15 mb-2 text-truncate">Truck Capacity :
-                                    <strong>{{i.truck.capacity}}</strong>
+                                    <strong>{{i.truck.capacity}} units</strong>
                                 </p>
                                 <p class="text-primary font-size-15 mb-2 text-truncate">Driver name :
                                     <strong>{{i.truck.driver_name}}</strong>
@@ -137,23 +137,31 @@
                                     <p class="text-white font-size-20 mb-2 text-truncate lineDesign">All Orders Location</p>
                                     <div class="d-flex flex-nowrap pt-4 w-100 overflow-auto scroll-style">
                                         {%if i.order%}
-                                        {%for shipment in i.order%}
-                                        {%if shipment.is_pickup%}
+
+
+                                  
+
+                                        {%for shipment in i.fruits%}
+                                        {%if shipment.0%}
                                         <div class="routeBox me-3 mb-1">
                                             <div class="text-center">
                                                 <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning fw-bold">Pickup</p>
-                                                <p class="text-warning">(from <b>{{shipment.ord.warehouse.name}}</b> warehouse)</p>
+                                                <p class="text-warning fw-bold">Pickup {%if shipment.1|length == 1%}{%else%}({{shipment.1|length}}){%endif%}</p>
+                                                <p class="text-warning">(from <b>{{shipment.1.0.warehouse.name}}</b> warehouse)</p>
+                                                <p class="text-warning">Est. Time - <b>{{shipment.2}}</b></p>
                                             </div>
                                             <div class="card shadow-none">
-                                                <div class="card-body">
+                                                <div class="card-body vrtpscroll scroll-style" >
+                                                    {%for ord in shipment.1%}
                                                     <div class="text-white text-letter-space">
-                                                        <p><span class="yellowColor">Order No</span> <br>#{{shipment.ord.id}}</p>
-                                                        <p><span class="yellowColor">Order Quantity</span> <br>{{shipment.ord.quantity}}</p>
-                                                        <p><span class="yellowColor">Delivery location</span> <br>{{shipment.ord.destination}}</p>
-                                                        <p><span class="yellowColor">Customer</span> <br>{{shipment.ord.cname|title}}</p>
-                                                        <p><span class="yellowColor">Estimated Time</span> <br>{{shipment.etime}}</p>
+                                                        <p><span class="yellowColor">Order No</span> <br>#{{ord.id}} ({{ord.quantity}} units)</p>
+                                                        {% comment %} <p><span class="yellowColor">Order Quantity</span> <br>{{ord.quantity}}</p> {% endcomment %}
+                                                        {% comment %} <p><span class="yellowColor">Delivery location</span> <br>{{ord.destination}}</p>
+                                                        <p><span class="yellowColor">Customer</span> <br>{{shipment.ord.cname|title}}</p> {% endcomment %}
                                                     </div>
+                                                    {% comment %} <hr style="color: #fff;">    {% endcomment %}
+                                                    {%endfor%}
+                                                    {% comment %} <p><span class="yellowColor">Estimated Time</span> <br>{{shipment.2}}</p> {% endcomment %}
                                                 </div>
                                             </div>
                                         </div>
@@ -161,24 +169,30 @@
                                         <div class="routeBox me-3 mb-1">
                                             <div class="text-center">
                                                 <i class="bx bx-map text-warning font-size-20"></i>
-                                                <p class="text-warning fw-bold">Delivery</p>
-                                                <p class="text-warning">(for <b>{{shipment.ord.destination}}</b>)</p>
+                                                <p class="text-warning fw-bold">Delivery {%if shipment.1|length == 1%}{%else%}({{shipment.1|length}}){%endif%}</p>
+                                                <p class="text-warning">(for <b>{{shipment.1.0.destination}}</b>)</p>
+                                                <p class="text-warning">Est. Time - <b>{{shipment.2}}</b></p>
                                             </div>
                                             <div class="card shadow-none">
-                                                <div class="card-body">
+                                                <div class="card-body  vrtpscroll scroll-style">
+                                                    {%for ord in shipment.1%}
                                                     <div class="text-white text-letter-space">
-                                                        <p><span class="yellowColor">Order No</span> <br>#{{shipment.ord.id}}</p>
-                                                        <p><span class="yellowColor">Order Quantity</span> <br>{{shipment.ord.quantity}}</p>
-                                                        <p><span class="yellowColor">Pickup location</span> <br>{{shipment.ord.warehouse.name}}</p>
-                                                        <p><span class="yellowColor">Customer</span> <br>{{shipment.ord.cname|title}}</p>
-                                                        <p><span class="yellowColor">Estimated Time</span> <br>{{shipment.etime}}</p>
-                                                        <p><span class="yellowColor">Time window</span> <br>{{shipment.ord.opening_time}}-{{shipment.ord.closing_time}}</p>
+                                                        <p><span class="yellowColor">Order </span> <br>#{{ord.id}} ({{ord.quantity}} units)<br>({{ord.opening_time}}-{{ord.closing_time}})</p>
+                                                        {% comment %} <p><span class="yellowColor">Order Quantity</span> <br>{{ord.quantity}}</p> {% endcomment %}
+                                                        {% comment %} <p><span class="yellowColor">Pickup location</span> <br>{{ord.warehouse.name}}</p>
+                                                        <p><span class="yellowColor">Customer</span> <br>{{ord.cname|title}}</p> {% endcomment %}
+                                                        {% comment %} <p><span class="yellowColor">Time window</span> <br>{{ord.opening_time}}-{{ord.closing_time}}</p> {% endcomment %}
                                                     </div>
+                                                    {% comment %} <hr style="color: #fff;">   {% endcomment %}
+                                                    {%endfor%} 
+                                                    {% comment %} <p><span class="yellowColor">Estimated Time</span> <br>{{shipment.2}}</p> {% endcomment %}
                                                 </div>
                                             </div>
                                         </div>
                                         {%endif%}
                                         {%endfor%}
+
+
                                         {%else%}
                                             No orders for this truck to assign.
                                         {%endif%}                                        
