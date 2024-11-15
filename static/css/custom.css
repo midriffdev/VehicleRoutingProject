@@ -297,3 +297,7 @@
     height: 200px;
     overflow :auto;
 }
+.scrollSet .select2-selection__rendered {
+    height: 200px;
+    overflow-y: auto !important;
+}
